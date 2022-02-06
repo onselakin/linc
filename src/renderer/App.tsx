@@ -1,50 +1,42 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
 import './App.css';
 
-const Hello = () => {
+import Scenario, { MarkDownSection, XTermSection } from 'model/scenario';
+import { useEffect, useState } from 'react';
+
+import Markdown from './scenario/Markdown';
+import XTerm from './scenario/XTerm';
+import jsyaml from 'js-yaml';
+
+const App = () => {
+  const [scenario, setScenario] = useState<Scenario>();
+
+  useEffect(() => {
+    async function fetchYaml() {
+      fetch('http://127.0.0.1:8080/inline-terminal.yaml')
+        .then((res) => res.blob())
+        .then((blob) => blob.text())
+        .then((yaml) => {
+          const loaded = jsyaml.load(yaml) as Scenario;
+          setScenario(loaded);
+        })
+        .catch((err) => console.log('yaml err:', err));
+    }
+    fetchYaml();
+  }, []);
+
   return (
     <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
+      <h1>{scenario?.title}</h1>
+
+      {scenario?.sections.map((section) => {
+        switch (section.type) {
+          case 'markdown':
+            return <Markdown markdown={section as MarkDownSection} />;
+          default:
+            return <XTerm configuration={section as XTermSection} />;
+        }
+      })}
     </div>
   );
 };
-
-export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
-  );
-}
+export default App;

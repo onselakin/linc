@@ -1,0 +1,39 @@
+title: Minimal K8s Scenario
+description: This scenario will help you learn how to create and destroy pods
+container:
+  image: nginx:1.14.2
+settings:
+  vscodeEnabled: false
+  terminalEnabled: false
+sections:
+  - type: markdown
+    content: Start with creating and destroying pods. More info on [kubernetes-docs](https://kubernetes.io)
+
+  - type: task
+    tool: xterm
+    title: Use terminal shell to create the required resources
+    hint: You need to use `kubectl` commands to make this happen. You can use an `nginx` image.
+    initialization:
+      message: Creating your environment
+      script:
+        type: bash
+        run: |
+          kubectl create namespace some-namespace
+    verification:
+      message: Please wait while I validate your work
+      script:
+        type: nodejs
+        run: |
+          const k8s = require('@kubernetes/client-node');
+
+          const kc = new k8s.KubeConfig();
+          kc.loadFromDefault();
+
+          const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
+          k8sApi.readNamespace(namespace.metadata.name).then((response) => new Promise((resolve, reject) => resolve())
+    solution:
+      script:
+        type: sh
+        run: |
+          kubectl create deployment nginx --image=nginx
