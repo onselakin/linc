@@ -1,4 +1,4 @@
-import { MarkDownSection } from '../../model/scenario';
+import { MarkDownSection } from '../../types/scenario';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 

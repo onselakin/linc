@@ -10,12 +10,15 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+
+import { BrowserWindow, app, ipcMain, shell } from 'electron';
+
+import MenuBuilder from './menu';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
+import path from 'path';
 import { resolveHtmlPath } from './util';
+import store from './store';
 
 export default class AppUpdater {
   constructor() {
@@ -27,10 +30,14 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.on('store:settings', async (event, settings) => {
+  const currentSettings = store.get('settings');
+  if (!settings) {
+    event.returnValue = currentSettings;
+    return;
+  }
+  const merged = store.set('settings', { ...currentSettings, ...settings });
+  event.returnValue = merged;
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -52,7 +59,7 @@ const installExtensions = async () => {
 
   return installer
     .default(
-      extensions.map((name) => installer[name]),
+      extensions.map(name => installer[name]),
       forceDownload
     )
     .catch(console.log);

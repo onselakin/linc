@@ -1,4 +1,4 @@
-import { XTermSection } from '../../model/scenario';
+import { XTermSection } from '../../types/scenario';
 
 interface MarkdownProps {
   configuration: XTermSection;
