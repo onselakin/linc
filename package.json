@@ -233,11 +233,13 @@
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
     "history": "^5.2.0",
+    "isomorphic-git": "^1.11.2",
     "js-yaml": "^4.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-markdown": "^8.0.0",
     "react-router-dom": "^6.2.1",
+    "recoil": "^0.6.1",
     "regenerator-runtime": "^0.13.9",
     "remark-gfm": "^3.0.1"
   },

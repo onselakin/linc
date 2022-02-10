@@ -1,19 +1,13 @@
 import './App.css';
 
-import { useEffect } from 'react';
+import Loader from './Loader';
+import { RecoilRoot } from 'recoil';
 
 const App = () => {
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => {
-          console.log(window.electron.store.settings().courseRepos[0]);
-        }}
-      >
-        Click Me!
-      </button>
-    </div>
+    <RecoilRoot>
+      <Loader />
+    </RecoilRoot>
   );
 };
 export default App;

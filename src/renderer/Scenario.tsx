@@ -7,7 +7,7 @@ import Markdown from './scenario/Markdown';
 import XTerm from './scenario/XTerm';
 
 function App() {
-  const [scenario, setScenario] = useState<Scenario>();
+  const [scenario] = useState<Scenario>();
 
   useEffect(() => {
     async function readRepos() {
