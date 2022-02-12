@@ -8,6 +8,12 @@ const Loader = () => {
   const [settings, updateSettings] = useRecoilState(settingsState);
 
   useEffect(() => {
+    // EmitAction<number, number>('hello-world', 'hello', notf =>
+    //   console.log(notf)
+    // )
+    //   .then(res => console.log(res))
+    //   .catch(err => console.log(err));
+
     updateSettings(window.electron.store.settings());
   }, [updateSettings]);
 
