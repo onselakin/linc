@@ -12,14 +12,11 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import { BrowserWindow, app, ipcMain, shell } from 'electron';
-import SetupMainProcessHandler, {
-  Action,
-  ActionRequest,
-  ActionResponse,
-} from '../ipc/ipc-handler';
 
 import MenuBuilder from './menu';
+import SetupMainProcessHandler from '../ipc/ipc-handler';
 import { autoUpdater } from 'electron-updater';
+import githubActions from '../actions/github';
 import log from 'electron-log';
 import path from 'path';
 import { resolveHtmlPath } from './util';
@@ -35,23 +32,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-const settingsActions: Record<string, Action<any, any>> = {
-  'hello-world': (
-    req: ActionRequest<{ input: string }>,
-    res: ActionResponse<{ output: number }>
-  ) => {
-    setTimeout(() => {
-      res.send({ output: 100 });
-    }, 10000);
-    let counter = 0;
-    setInterval(() => {
-      counter += 1;
-      if (counter < 5) res.notify({ output: counter });
-    }, 1000);
-  },
-};
-
-SetupMainProcessHandler(ipcMain, settingsActions);
+SetupMainProcessHandler(ipcMain, githubActions);
 
 ipcMain.on('store:settings', async (event, settings) => {
   const currentSettings = store.get('settings');

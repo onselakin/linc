@@ -13,10 +13,12 @@ const Loader = () => {
   }, [updateSettings]);
 
   const emitAction = () => {
-    EmitAction<number, number>('hello-world', 'hello', notf =>
-      console.log(notf)
+    EmitAction<unknown, { phase: string; loaded: number; total: number }>(
+      'clone-repo',
+      { url: 'https://github.com/onselakin/kubectl-aliases' },
+      notf => console.log(`${notf.phase}: ${notf.loaded}/${notf.total}`)
     )
-      .then(res => console.log('Response: ', res))
+      .then(() => console.log('Cloned'))
       .catch(err => console.log('Error:', err));
   };
 
