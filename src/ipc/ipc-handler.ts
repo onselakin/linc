@@ -29,22 +29,27 @@ const SetupMainProcessHandler = <
   ipcMain: IpcMain,
   actions: Actions
 ) => {
-  ipcMain.handle(
+  Object.keys(actions).forEach(k => console.log(k));
+
+  ipcMain.on(
     'asyncRequest',
     (
       event: IpcMainInvokeEvent,
-      requestId: string,
-      action: string,
-      payload: unknown
+      [actionId, action, payload]: [string, string, any]
     ) => {
+      console.log('[Ipc Handler] Action Id: ', actionId);
+      console.log('[Ipc Handler] Action: ', action);
+      console.log('[Ipc Handler] Payload: ', payload);
+
       const response: ActionResponse<typeof payload> = {
-        send: result => event.sender.send('asyncResponse', requestId, result),
+        send: result => event.sender.send('asyncResponse', actionId, result),
         notify: message =>
-          event.sender.send('asyncResponseNotify', requestId, message),
-        error: err => event.sender.send('errorResponse', requestId, err),
+          event.sender.send('asyncResponseNotify', actionId, message),
+        error: err => event.sender.send('errorResponse', actionId, err),
       };
 
       const requestedAction = actions[action];
+      console.log(actions[action]);
 
       if (!requestedAction) {
         response.error({ message: 'Action not found.' });

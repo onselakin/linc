@@ -1,10 +1,6 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { IpcRenderer } from 'electron';
-
-let ipcRenderer: IpcRenderer;
-
 let pendingActions: { [key: string]: any } = {};
 
 const removePendingAction = (actionId: string) => {
@@ -36,28 +32,26 @@ const EmitAction = <Result, Notification>(
 ): Promise<Result> => {
   const actionId = Math.random().toString(36).slice(-5);
 
-  ipcRenderer.send('asynRequest', actionId, payload);
   const deferred = new Deferred<Result>();
   pendingActions[actionId] = { deferred, action, payload, notifier };
+  window.electron.ipcRenderer.send('asyncRequest', actionId, action, payload);
   return deferred.promise;
 };
 
-const SetupRendererProcessListener = (electronIpcRenderer: IpcRenderer) => {
-  console.log(electronIpcRenderer);
-  ipcRenderer = electronIpcRenderer;
-
-  ipcRenderer.on('asyncResponseNotify', (_event, actionId, res) => {
+const SetupRendererProcessListener = () => {
+  window.electron.ipcRenderer.on('asyncResponseNotify', ([actionId, res]) => {
+    console.log(pendingActions);
     const { notifier } = pendingActions[actionId];
     notifier(res);
   });
 
-  ipcRenderer.on('asyncResponse', (_event, actionId, res) => {
+  window.electron.ipcRenderer.on('asyncResponse', ([actionId, res]) => {
     const { deferred } = pendingActions[actionId];
     removePendingAction(actionId);
     deferred.resolve(res);
   });
 
-  ipcRenderer.on('errorResponse', (_event, actionId, err) => {
+  window.electron.ipcRenderer.on('errorResponse', ([actionId, err]) => {
     const { deferred } = pendingActions[actionId];
     removePendingAction(actionId);
     deferred.reject(err);
