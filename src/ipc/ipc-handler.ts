@@ -2,45 +2,35 @@
 
 import { IpcMain, IpcMainInvokeEvent } from 'electron';
 
-export interface ActionError {
-  message: string;
-}
-
 export interface ActionRequest<Payload> {
   payload: Payload;
 }
 
-export interface ActionResponse<Payload> {
+export interface ActionResponse<Payload = void, Notification = void> {
   send: (response?: Payload) => void;
-  notify: (response?: Payload) => void;
-  error: (error?: ActionError) => void;
+  notify: (data?: Notification) => void;
+  error: (error: unknown) => void;
 }
 
-export interface Action<RequestPayload, ResponsePayload> {
+export interface Action<RequestPayload, ResponsePayload, Notification> {
   (
     request: ActionRequest<RequestPayload>,
-    response: ActionResponse<ResponsePayload>
+    response: ActionResponse<ResponsePayload, Notification>
   ): void;
 }
 
 const SetupMainProcessHandler = <
-  Actions extends Record<string, Action<any, any>>
+  Actions extends Record<string, Action<any, any, any>>
 >(
   ipcMain: IpcMain,
   actions: Actions
 ) => {
-  Object.keys(actions).forEach(k => console.log(k));
-
   ipcMain.on(
     'asyncRequest',
     (
       event: IpcMainInvokeEvent,
       [actionId, action, payload]: [string, string, any]
     ) => {
-      console.log('[Ipc Handler] Action Id: ', actionId);
-      console.log('[Ipc Handler] Action: ', action);
-      console.log('[Ipc Handler] Payload: ', payload);
-
       const response: ActionResponse<typeof payload> = {
         send: result => event.sender.send('asyncResponse', actionId, result),
         notify: message =>
@@ -49,22 +39,19 @@ const SetupMainProcessHandler = <
       };
 
       const requestedAction = actions[action];
-      console.log(actions[action]);
 
       if (!requestedAction) {
-        response.error({ message: 'Action not found.' });
+        response.error(new Error('Action not found.'));
       }
 
       try {
         requestedAction({ payload }, response);
       } catch (e) {
-        const error: ActionError = { message: ' ' };
         if (typeof e === 'string') {
-          error.message = e.toUpperCase();
+          response.error(new Error(e));
         } else if (e instanceof Error) {
-          error.message = e.message;
+          response.error(e);
         }
-        response.error(error);
       }
     }
   );
