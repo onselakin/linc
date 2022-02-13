@@ -2,7 +2,7 @@
 
 import { IpcMain, IpcMainInvokeEvent } from 'electron';
 
-export interface ActionRequest<Payload> {
+export interface ActionRequest<Payload = void> {
   payload: Payload;
 }
 

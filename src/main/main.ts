@@ -20,7 +20,6 @@ import githubActions from '../actions/github';
 import log from 'electron-log';
 import path from 'path';
 import { resolveHtmlPath } from './util';
-import store from './store';
 
 export default class AppUpdater {
   constructor() {
@@ -33,16 +32,6 @@ export default class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 
 SetupMainProcessHandler(ipcMain, githubActions);
-
-ipcMain.on('store:settings', async (event, settings) => {
-  const currentSettings = store.get('settings');
-  if (!settings) {
-    event.returnValue = currentSettings;
-    return;
-  }
-  const merged = store.set('settings', { ...currentSettings, ...settings });
-  event.returnValue = merged;
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
