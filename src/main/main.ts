@@ -15,8 +15,8 @@ import { BrowserWindow, app, ipcMain, shell } from 'electron';
 
 import MenuBuilder from './menu';
 import SetupMainProcessHandler from '../ipc/ipc-handler';
+import actions from '../actions';
 import { autoUpdater } from 'electron-updater';
-import githubActions from '../actions/github';
 import log from 'electron-log';
 import path from 'path';
 import { resolveHtmlPath } from './util';
@@ -31,7 +31,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-SetupMainProcessHandler(ipcMain, githubActions);
+SetupMainProcessHandler(ipcMain, actions);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
