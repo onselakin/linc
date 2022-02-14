@@ -1,6 +1,6 @@
 import './App.css';
 
-import Loader from './Loader';
+import Home from './Home';
 import { RecoilRoot } from 'recoil';
 import { SetupRendererProcessListener } from 'ipc';
 
@@ -9,7 +9,7 @@ SetupRendererProcessListener();
 const App = () => {
   return (
     <RecoilRoot>
-      <Loader />
+      <Home />
     </RecoilRoot>
   );
 };

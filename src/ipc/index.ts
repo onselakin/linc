@@ -1,4 +1,4 @@
-import { EmitAction, SetupRendererProcessListener } from './ipc-emitter';
+import { InvokeAction, SetupRendererProcessListener } from './ipc-emitter';
 import SetupMainProcessHandler, {
   ActionRequest,
   ActionResponse,
@@ -9,5 +9,5 @@ export {
   SetupRendererProcessListener,
   ActionRequest,
   ActionResponse,
-  EmitAction,
+  InvokeAction,
 };

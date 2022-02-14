@@ -1,6 +1,6 @@
 import './App.css';
 
-import { EmitAction } from 'ipc';
+import { InvokeAction } from 'ipc';
 import settingsState from './state/settings';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -13,7 +13,7 @@ const Loader = () => {
   }, [updateSettings]);
 
   const emitAction = () => {
-    EmitAction<unknown, { phase: string; loaded: number; total: number }>(
+    InvokeAction<unknown, { phase: string; loaded: number; total: number }>(
       'clone-repo',
       { url: 'https://github.com/onselakin/kubectl-aliases' },
       notf => console.log(`${notf.phase}: ${notf.loaded}/${notf.total}`)

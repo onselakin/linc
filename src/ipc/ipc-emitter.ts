@@ -25,10 +25,10 @@ class Deferred<T> {
   }
 }
 
-const EmitAction = <Result, Notification>(
+const InvokeAction = <Result = void, Notification = void>(
   action: string,
-  payload: any,
-  notifier: (notification: Notification) => void
+  payload?: any,
+  notifier?: (notification: Notification) => void
 ): Promise<Result> => {
   const actionId = Math.random().toString(36).slice(-5);
 
@@ -58,4 +58,4 @@ const SetupRendererProcessListener = () => {
   });
 };
 
-export { EmitAction, SetupRendererProcessListener };
+export { InvokeAction, SetupRendererProcessListener };
