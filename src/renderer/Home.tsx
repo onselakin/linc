@@ -18,6 +18,6 @@ const Home = () => {
     loadSettings();
   }, [updateSettings]);
 
-  return <div>Checking Scenario Repositories: {settings.courseRepos[0]}</div>;
+  return <div className="bg-yellow-500 w-auto grid grid-cols-3 gap-8" />;
 };
 export default Home;

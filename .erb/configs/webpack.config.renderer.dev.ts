@@ -1,14 +1,15 @@
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
+import { execSync, spawn } from 'child_process';
+
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import chalk from 'chalk';
-import { merge } from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths';
-import checkNodeEnv from '../scripts/check-node-env';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import baseConfig from './webpack.config.base';
+import chalk from 'chalk';
+import checkNodeEnv from '../scripts/check-node-env';
+import fs from 'fs';
+import { merge } from 'webpack-merge';
+import path from 'path';
+import webpack from 'webpack';
+import webpackPaths from './webpack.paths';
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -76,12 +77,13 @@ const configuration: webpack.Configuration = {
             },
           },
           'sass-loader',
+          'postcss-loader',
         ],
         include: /\.module\.s?(c|a)ss$/,
       },
       {
         test: /\.s?css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
         exclude: /\.module\.s?(c|a)ss$/,
       },
       // Fonts
@@ -171,7 +173,7 @@ const configuration: webpack.Configuration = {
         stdio: 'inherit',
       })
         .on('close', (code: number) => process.exit(code!))
-        .on('error', (spawnError) => console.error(spawnError));
+        .on('error', spawnError => console.error(spawnError));
     },
   },
 };
