@@ -6,10 +6,10 @@ import store from '../electron-store';
 const storeActions = {
   'load-settings': async (
     _req: ActionRequest,
-    res: ActionResponse<{ settings: Settings }>
+    res: ActionResponse<Settings>
   ) => {
     try {
-      res.send({ settings: store.get('settings') });
+      res.send(store.get('settings'));
     } catch (error) {
       res.error(error);
     }
