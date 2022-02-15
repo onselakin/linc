@@ -19,12 +19,8 @@ const Home = () => {
       const s = await InvokeAction<Settings>('load-settings');
       updateSettings(s);
 
-      console.log(s);
-
-      InvokeAction<void, { phase: string; loaded: number; total: number }>(
-        'clone-lab',
-        s.labs[0],
-        notf => console.log(`${notf.phase}: ${notf.loaded}/${notf.total}`)
+      InvokeAction<void, { phase: string; loaded: number; total: number }>('clone-lab', s.labs[0], notf =>
+        console.log(`${notf.phase}: ${notf.loaded}/${notf.total}`)
       )
         .then(() => console.log('Cloned'))
         .catch(err => console.log('Error:', err));
