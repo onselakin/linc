@@ -24,7 +24,7 @@ const Loader = () => {
 
   return (
     <div>
-      Checking Scenario Repositories: {settings.courseRepos[0]}
+      Checking Scenario Repositories: {settings.labs[0]}
       <button type="button" onClick={emitAction}>
         Click me!
       </button>

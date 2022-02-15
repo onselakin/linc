@@ -1,3 +1,7 @@
 export interface Settings {
-  courseRepos: string[];
+  labs: {
+    url: string;
+    username: string;
+    password: string;
+  }[];
 }

@@ -1,7 +1,7 @@
 import { ActionRequest, ActionResponse } from 'ipc';
 
 import { Settings } from 'types/settings';
-import store from '../electron-store';
+import store from '../store';
 
 const storeActions = {
   'load-settings': async (
@@ -16,15 +16,16 @@ const storeActions = {
   },
   'save-settings': async (
     req: ActionRequest<{ settings: Settings }>,
-    res: ActionResponse<{ settings: Settings }>
+    res: ActionResponse
   ) => {
     try {
       const currentSettings = store.get('settings');
-      const merged = store.set('settings', {
+      const merged = {
         ...currentSettings,
         ...req.payload.settings,
-      });
-      res.send({ settings: merged });
+      };
+      store.set('settings', merged);
+      res.send();
     } catch (error) {
       res.error(error);
     }

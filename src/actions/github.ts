@@ -16,13 +16,17 @@ const githubActions = {
   ) => {
     try {
       const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
-      const str = `https://github.com/onselakin/kubectl-aliases.git`;
+      const str = `https://github.com/onselakin/k8s-lab.git`;
       const match = regex.exec(str);
       if (match != null) {
         await git.clone({
           fs,
           http,
           dir: path.join(app.getPath('home'), 'lab', 'courses', match[5]),
+          onAuth: () => ({
+            username: 'onselakin',
+            password: '***REMOVED***',
+          }),
           url: req.payload.url,
           onProgress: progress => {
             res.notify(progress);
