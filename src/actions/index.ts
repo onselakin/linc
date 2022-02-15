@@ -1,5 +1,5 @@
-import githubActions from './github';
+import labActions from './labs';
 import storeActions from './store';
 
-const actions = { ...githubActions, ...storeActions };
+const actions = { ...labActions, ...storeActions };
 export default actions;

@@ -12,7 +12,7 @@ const store: Store<AppStore> = new Store<AppStore>({
         {
           username: 'onselakin',
           password: '***REMOVED***',
-          url: 'https://github.com/onselakin/k8s-lab.git',
+          url: 'https://github.com/onselakin/rebase-test.git',
         },
       ],
     },

@@ -11,10 +11,4 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(channel, args);
     },
   },
-  store: {
-    settings(value) {
-      const result = ipcRenderer.sendSync('store:settings', value);
-      return result;
-    },
-  },
 });

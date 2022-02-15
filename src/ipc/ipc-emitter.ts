@@ -32,6 +32,9 @@ const InvokeAction = <Result = void, Notification = void>(
 ): Promise<Result> => {
   const actionId = Math.random().toString(36).slice(-5);
 
+  console.log(`Calling action: ${action}`);
+  console.dir(payload);
+
   const deferred = new Deferred<Result>();
   pendingActions[actionId] = { deferred, action, payload, notifier };
   window.electron.ipcRenderer.send('asyncRequest', actionId, action, payload);

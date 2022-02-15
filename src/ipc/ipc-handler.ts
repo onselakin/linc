@@ -14,7 +14,7 @@ export interface ActionResponse<Payload = void, Notification = void> {
 
 export interface Action<RequestPayload, ResponsePayload, Notification> {
   (
-    request: ActionRequest<RequestPayload>,
+    request: RequestPayload,
     response: ActionResponse<ResponsePayload, Notification>
   ): void;
 }
@@ -38,6 +38,11 @@ const SetupMainProcessHandler = <
         error: err => event.sender.send('errorResponse', actionId, err),
       };
 
+      console.log(`Action called: ${action}`);
+      console.log('--------------------');
+      console.dir(payload);
+      console.log('--------------------');
+
       const requestedAction = actions[action];
 
       if (!requestedAction) {
@@ -45,7 +50,6 @@ const SetupMainProcessHandler = <
       }
 
       try {
-        console.log(requestedAction);
         requestedAction(payload, response);
       } catch (e) {
         if (typeof e === 'string') {
