@@ -40,7 +40,6 @@ const InvokeAction = <Result = void, Notification = void>(
 
 const SetupRendererProcessListener = () => {
   window.electron.ipcRenderer.on('asyncResponseNotify', ([actionId, res]) => {
-    console.log(pendingActions);
     const { notifier } = pendingActions[actionId];
     notifier(res);
   });

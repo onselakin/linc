@@ -18,7 +18,6 @@ const Home = () => {
 
       const s = await InvokeAction<Settings>('load-settings');
       updateSettings(s);
-      console.log(s);
 
       updateStatus({
         message: `Settings loaded. Using repo: ${s.labs[0]}`,
