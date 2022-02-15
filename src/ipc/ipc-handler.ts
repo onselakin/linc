@@ -45,7 +45,7 @@ const SetupMainProcessHandler = <
       }
 
       try {
-        requestedAction({ payload }, response);
+        requestedAction(payload, response);
       } catch (e) {
         if (typeof e === 'string') {
           response.error(new Error(e));
