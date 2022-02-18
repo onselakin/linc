@@ -1,4 +1,4 @@
-import { InvokeAction, SetupRendererProcessListener } from './ipc-emitter';
-import SetupMainProcessHandler, { ActionRequest, ActionResponse } from './ipc-handler';
+import { InvokeChannel, SetupRendererProcessListener } from './ipc-emitter';
+import SetupMainProcessHandler, { Channel, ChannelRequest } from './ipc-handler';
 
-export { SetupMainProcessHandler, SetupRendererProcessListener, ActionRequest, ActionResponse, InvokeAction };
+export { SetupMainProcessHandler, SetupRendererProcessListener, ChannelRequest, Channel, InvokeChannel };

@@ -1,8 +1,11 @@
 import './App.css';
 
-import { InvokeAction } from 'ipc';
+import { InvokeChannel } from 'ipc';
+import LabCard from './LabCard';
 import { Settings } from 'types/settings';
+import SideBar from './SideBar';
 import Status from './Status';
+import TopBar from './TopBar';
 import settingsState from './state/settings';
 import statusState from './state/status';
 import { useEffect } from 'react';
@@ -14,34 +17,35 @@ const Home = () => {
 
   useEffect(() => {
     async function loadSettings() {
-      updateStatus({ message: 'Loading settings' });
-
-      const s = await InvokeAction<Settings>('load-settings');
+      const s = await InvokeChannel<Settings>('load-settings');
       updateSettings(s);
 
-      InvokeAction<void, { phase: string; loaded: number; total: number }>('clone-lab', s.labs[0], notf =>
-        console.log(`${notf.phase}: ${notf.loaded}/${notf.total}`)
-      )
-        .then(() => console.log('Cloned'))
-        .catch(err => console.log('Error:', err));
+      const results = await Promise.all(
+        s.labs.map(async lab => {
+          updateStatus({ message: `Cloning lab: ${lab.url}` });
 
-      updateStatus({
-        message: `Settings loaded. Using repo: ${s.labs[0].username}`,
-      });
+          const result = await InvokeChannel<
+            { name: string; success: boolean },
+            { repo: string; phase: string; loaded: number; total: number }
+          >('clone-lab', lab);
+          return result;
+        })
+      );
+
+      updateStatus({ message: '' });
     }
 
     loadSettings();
   }, [updateSettings, updateStatus]);
 
   return (
-    <div className="flex flex-col h-full bg-pink-600">
-      <div className="h-14 grid content-center bg-green-500">Top</div>
-      <div className="flex bg-yellow-500 h-full flex-grow">
-        <div className="w-14 grid justify-center p-3 bg-red-800">1</div>
-        <div className="flex-grow p-10 bg-blue-800">1</div>
-      </div>
-      <div className="h-12 grid ml-1 content-center bg-green-500">
-        <Status />
+    <div className="absolute top-0 right-0 bottom-0 left-0">
+      <TopBar />
+      <SideBar />
+      <Status />
+      <div className="absolute top-14 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap overflow-scroll no-scrollbar gap-5 border-2 border-yellow-500 bg-green-500">
+        <LabCard />
+        <LabCard />
       </div>
     </div>
   );

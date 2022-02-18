@@ -4,20 +4,14 @@ import { Settings } from 'types/settings';
 import store from '../store';
 
 const storeActions = {
-  'load-settings': async (
-    _req: ActionRequest,
-    res: ActionResponse<Settings>
-  ) => {
+  'load-settings': async (_req: ActionRequest, res: ActionResponse<Settings>) => {
     try {
-      res.send(store.get('settings'));
+      res.reply(store.get('settings'));
     } catch (error) {
       res.error(error);
     }
   },
-  'save-settings': async (
-    req: ActionRequest<{ settings: Settings }>,
-    res: ActionResponse
-  ) => {
+  'save-settings': async (req: ActionRequest<{ settings: Settings }>, res: ActionResponse) => {
     try {
       const currentSettings = store.get('settings');
       const merged = {
@@ -25,7 +19,7 @@ const storeActions = {
         ...req.payload.settings,
       };
       store.set('settings', merged);
-      res.send();
+      res.reply();
     } catch (error) {
       res.error(error);
     }

@@ -1,6 +1,7 @@
 import git, { GitProgressEvent } from 'isomorphic-git';
 
-import { ActionResponse } from 'ipc';
+import { Channel } from 'ipc';
+import { Lab } from 'types/lab';
 import { app } from 'electron';
 import fs from 'fs';
 import http from 'isomorphic-git/http/node';
@@ -8,32 +9,35 @@ import path from 'path';
 
 const labActions = {
   'clone-lab': async (
-    req: { url: string; username: string; password: string },
-    res: ActionResponse<{ name: string }, { repo: string; phase: string; loaded: number; total: number }>
+    payload: { url: string; username: string; password: string },
+    channel: Channel<{ name: string; success: boolean }, { repo: string; phase: string; loaded: number; total: number }>
   ) => {
     const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
-    const match = regex.exec(req.url);
+    const match = regex.exec(payload.url);
     if (match != null) {
       const repoName = match[5];
-      console.log(path.join(app.getPath('userData'), 'labwiz', 'labs', repoName));
       try {
         await git.clone({
           fs,
           http,
           dir: path.join(app.getPath('userData'), 'labwiz', 'labs', repoName),
-          url: req.url,
+          url: payload.url,
           onAuth: () => ({
-            username: req.username,
-            password: req.password,
+            username: payload.username,
+            password: payload.password,
           }),
           onProgress: (progress: GitProgressEvent) => {
-            res.notify({ repo: repoName, ...progress });
+            channel.notify({ repo: repoName, ...progress });
           },
         });
+        channel.reply({ name: repoName, success: true });
       } catch (error) {
-        res.error(error);
+        channel.reply({ name: repoName, success: false });
       }
     }
+  },
+  'load-lab': async (payload: { name: string }, channel: Channel<Lab>) => {
+    console.log('');
   },
 };
 

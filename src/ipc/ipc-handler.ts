@@ -2,52 +2,42 @@
 
 import { IpcMain, IpcMainInvokeEvent } from 'electron';
 
-export interface ActionRequest<Payload = void> {
+export interface ChannelRequest<Payload = void> {
   payload: Payload;
 }
 
-export interface ActionResponse<Payload = void, Notification = void> {
-  send: (response?: Payload) => void;
-  notify: (data?: Notification) => void;
+export interface Channel<ReplyPayload = void, NotificationPayload = void> {
+  reply: (payload?: ReplyPayload) => void;
+  notify: (payload?: NotificationPayload) => void;
   error: (error: unknown) => void;
 }
 
-export interface Action<RequestPayload, ResponsePayload, Notification> {
-  (request: RequestPayload, response: ActionResponse<ResponsePayload, Notification>): void;
+export interface Bridge<RequestPayload, ResponsePayload, Notification> {
+  (request: RequestPayload, channel: Channel<ResponsePayload, Notification>): void;
 }
 
-const SetupMainProcessHandler = <Actions extends Record<string, Action<any, any, any>>>(
+const SetupMainProcessHandler = <Bridges extends Record<string, Bridge<any, any, any>>>(
   ipcMain: IpcMain,
-  actions: Actions
+  bridges: Bridges
 ) => {
-  ipcMain.on('asyncRequest', (event: IpcMainInvokeEvent, [actionId, action, payload]: [string, string, any]) => {
-    const response: ActionResponse<typeof payload> = {
-      send: result => event.sender.send('asyncResponse', actionId, result),
-      notify: message => event.sender.send('asyncResponseNotify', actionId, message),
-      error: err => event.sender.send('errorResponse', actionId, err),
-    };
+  ipcMain.on(
+    'asyncRequest',
+    (event: IpcMainInvokeEvent, [invocationId, channelName, payload]: [string, string, any]) => {
+      const channel: Channel = {
+        reply: result => event.sender.send('asyncResponse', invocationId, result),
+        notify: message => event.sender.send('asyncResponseNotify', invocationId, message),
+        error: err => event.sender.send('errorResponse', invocationId, err),
+      };
 
-    console.log(`Action called: ${action}`);
-    console.log('--------------------');
-    console.dir(payload);
-    console.log('--------------------');
+      const requestedChannel = bridges[channelName];
 
-    const requestedAction = actions[action];
-
-    if (!requestedAction) {
-      response.error(new Error('Action not found.'));
-    }
-
-    try {
-      requestedAction(payload, response);
-    } catch (e) {
-      if (typeof e === 'string') {
-        response.error(new Error(e));
-      } else if (e instanceof Error) {
-        response.error(e);
+      if (!requestedChannel) {
+        channel.error(new Error('Channel not found.'));
       }
+
+      requestedChannel(payload, channel);
     }
-  });
+  );
 };
 
 export default SetupMainProcessHandler;

@@ -1,60 +1,55 @@
-/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-let pendingActions: { [key: string]: any } = {};
+let pendingInvocations: { [key: string]: any } = {};
 
-const removePendingAction = (actionId: string) => {
-  pendingActions = Object.keys(pendingActions)
-    .filter(k => k !== actionId)
-    .map(k => ({ [k]: pendingActions[k] }))
+const removePendingInvocation = (invocationId: string) => {
+  pendingInvocations = Object.keys(pendingInvocations)
+    .filter(k => k !== invocationId)
+    .map(k => ({ [k]: pendingInvocations[k] }))
     .reduce((accumulator, current) => ({ ...accumulator, ...current }), {});
 };
 
-class Deferred<T> {
+export class Deferred<T> {
   resolve!: (value: T) => void;
 
-  reject!: (value: T) => void;
+  reject!: (reason: any) => void;
 
-  promise!: Promise<T>;
-
-  constructor() {
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-    });
-  }
+  promise = new Promise<T>((resolve, reject) => {
+    this.resolve = resolve;
+    this.reject = reject;
+  });
 }
 
-const InvokeAction = <Result = void, Notification = void>(
-  action: string,
+const InvokeChannel = <ReplyType, Notification = void>(
+  channelName: string,
   payload?: any,
   notifier?: (notification: Notification) => void
-): Promise<Result> => {
-  const actionId = Math.random().toString(36).slice(-5);
+): Promise<ReplyType> => {
+  const invocationId = Math.random().toString(36).slice(-5);
 
-  const deferred = new Deferred<Result>();
-  pendingActions[actionId] = { deferred, action, payload, notifier };
-  window.electron.ipcRenderer.send('asyncRequest', actionId, action, payload);
+  const deferred = new Deferred<ReplyType>();
+  pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
+  window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
   return deferred.promise;
 };
 
 const SetupRendererProcessListener = () => {
-  window.electron.ipcRenderer.on('asyncResponseNotify', ([actionId, res]) => {
-    const { notifier } = pendingActions[actionId];
-    notifier(res);
+  window.electron.ipcRenderer.on('asyncResponseNotify', ([invocationId, channel]) => {
+    const { notifier } = pendingInvocations[invocationId];
+    if (notifier) notifier(channel);
   });
 
-  window.electron.ipcRenderer.on('asyncResponse', ([actionId, res]) => {
-    const { deferred } = pendingActions[actionId];
-    removePendingAction(actionId);
-    deferred.resolve(res);
+  window.electron.ipcRenderer.on('asyncResponse', ([invocationId, channel]) => {
+    const { deferred } = pendingInvocations[invocationId];
+    removePendingInvocation(invocationId);
+    deferred.resolve(channel);
   });
 
-  window.electron.ipcRenderer.on('errorResponse', ([actionId, err]) => {
-    const { deferred } = pendingActions[actionId];
-    removePendingAction(actionId);
+  window.electron.ipcRenderer.on('errorResponse', ([invocationId, err]) => {
+    const { deferred } = pendingInvocations[invocationId];
+    removePendingInvocation(invocationId);
     deferred.reject(err);
   });
 };
 
-export { InvokeAction, SetupRendererProcessListener };
+export { InvokeChannel, SetupRendererProcessListener };
