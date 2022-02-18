@@ -1,19 +1,25 @@
 import './App.css';
 
+import { atom, useSetRecoilState } from 'recoil';
+
 import { InvokeChannel } from 'ipc';
 import LabCard from './LabCard';
 import { Settings } from 'types/settings';
 import SideBar from './SideBar';
 import Status from './Status';
 import TopBar from './TopBar';
-import settingsState from './state/settings';
-import statusState from './state/status';
+import settingsAtom from './atoms/settings';
+import statusAtom from './atoms/status';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+
+const labsState = atom({
+  key: 'labsState',
+  default: [],
+});
 
 const Home = () => {
-  const updateSettings = useSetRecoilState(settingsState);
-  const updateStatus = useSetRecoilState(statusState);
+  const updateSettings = useSetRecoilState(settingsAtom);
+  const updateStatus = useSetRecoilState(statusAtom);
 
   useEffect(() => {
     async function loadSettings() {

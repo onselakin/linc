@@ -37,7 +37,7 @@ const labActions = {
     }
   },
   'load-lab': async (payload: { name: string }, channel: Channel<Lab>) => {
-    console.log('');
+
   },
 };
 

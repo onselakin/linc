@@ -1,11 +1,11 @@
 import { Status } from 'types/status';
 import { atom } from 'recoil';
 
-const statusState = atom<Status>({
+const statusAtom = atom<Status>({
   key: 'statusState',
   default: {
     message: '',
   },
 });
 
-export default statusState;
+export default statusAtom;

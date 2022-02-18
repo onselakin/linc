@@ -1,12 +1,12 @@
 import './App.css';
 
 import { InvokeAction } from 'ipc';
-import settingsState from './state/settings';
+import settingsAtom from './atoms/settings';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 const Loader = () => {
-  const [settings, updateSettings] = useRecoilState(settingsState);
+  const [settings, updateSettings] = useRecoilState(settingsAtom);
 
   useEffect(() => {
     updateSettings(window.electron.store.settings());
