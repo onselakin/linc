@@ -2,7 +2,7 @@ import { Settings } from 'types/settings';
 import { atom } from 'recoil';
 
 const settingsAtom = atom<Settings>({
-  key: 'settingsState',
+  key: 'settingsAtom',
   default: {
     labs: [],
   },

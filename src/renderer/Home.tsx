@@ -1,21 +1,18 @@
 import './App.css';
 
-import { atom, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { InvokeChannel } from 'ipc';
+import { Lab } from 'types/lab';
 import LabCard from './LabCard';
 import { Settings } from 'types/settings';
 import SideBar from './SideBar';
 import Status from './Status';
 import TopBar from './TopBar';
+import labsAtom from './atoms/labsAtom';
 import settingsAtom from './atoms/settings';
 import statusAtom from './atoms/status';
 import { useEffect } from 'react';
-
-const labsState = atom({
-  key: 'labsState',
-  default: [],
-});
 
 const Home = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
@@ -37,6 +34,12 @@ const Home = () => {
           return result;
         })
       );
+
+      results
+        .filter(r => r.success)
+        .forEach(async r => {
+          const lab = await InvokeChannel<Lab>('load-lab', { name: r });
+        });
 
       updateStatus({ message: '' });
     }
