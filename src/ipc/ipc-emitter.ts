@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Channel } from './ipc-handler';
+import type actions from '../actions';
+
 let pendingInvocations: { [key: string]: any } = {};
 
 const removePendingInvocation = (invocationId: string) => {
@@ -20,18 +23,33 @@ export class Deferred<T> {
   });
 }
 
-const InvokeChannel = <ReplyType, Notification = void>(
-  channelName: string,
-  payload?: any,
-  notifier?: (notification: Notification) => void
-): Promise<ReplyType> => {
+const InvokeChannel = <
+  ChannelName extends keyof typeof actions,
+  Payload extends Parameters<typeof actions[ChannelName]>[0]
+>(
+  channelName: ChannelName,
+  payload?: Payload
+): Promise<Parameters<typeof actions[ChannelName]>[1] extends Channel<infer T, any> ? T : null> => {
   const invocationId = Math.random().toString(36).slice(-5);
 
-  const deferred = new Deferred<ReplyType>();
-  pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
+  const deferred = new Deferred<any>();
+  pendingInvocations[invocationId] = { deferred, channelName, parameters: payload };
   window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
   return deferred.promise;
 };
+
+// const InvokeChannel = <ReplyType, Notification = void>(
+//   channelName: string,
+//   payload?: any,
+//   notifier?: (notification: Notification) => void
+// ): Promise<ReplyType> => {
+//   const invocationId = Math.random().toString(36).slice(-5);
+
+//   const deferred = new Deferred<ReplyType>();
+//   pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
+//   window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
+//   return deferred.promise;
+// };
 
 const SetupRendererProcessListener = () => {
   window.electron.ipcRenderer.on('asyncResponseNotify', ([invocationId, channel]) => {

@@ -1,6 +1,6 @@
 import git, { GitProgressEvent } from 'isomorphic-git';
 
-import { Channel } from 'ipc';
+import { Bridge } from 'ipc/ipc-handler';
 import { Lab } from 'types/lab';
 import { app } from 'electron';
 import fs from 'fs';
@@ -10,10 +10,11 @@ import yaml from 'js-yaml';
 
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
-const cloneLab = async (
-  payload: { url: string; username: string; password: string },
-  channel: Channel<{ name: string; success: boolean }, { repo: string; phase: string; loaded: number; total: number }>
-) => {
+const cloneLab: Bridge<
+  { url: string; username: string; password: string },
+  { name: string; success: boolean },
+  { repo: string; phase: string; loaded: number; total: number }
+> = async (payload, channel) => {
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
   const match = regex.exec(payload.url);
   if (match != null) {
@@ -39,7 +40,7 @@ const cloneLab = async (
   }
 };
 
-const loadLab = async (payload: { name: string }, channel: Channel<Lab>) => {
+const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel) => {
   const labFile = path.join(labsPath, payload.name);
   if (!fs.existsSync(labFile)) {
     channel.error(new Error('Lab file not found.'));
@@ -54,9 +55,7 @@ const loadLab = async (payload: { name: string }, channel: Channel<Lab>) => {
   }
 };
 
-const labActions = {
+export default {
   'clone-lab': cloneLab,
   'load-lab': loadLab,
 };
-
-export default labActions;

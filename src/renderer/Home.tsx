@@ -1,7 +1,5 @@
 import './App.css';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
-
 import { InvokeChannel } from 'ipc';
 import { Lab } from 'types/lab';
 import LabCard from './LabCard';
@@ -9,10 +7,10 @@ import { Settings } from 'types/settings';
 import SideBar from './SideBar';
 import Status from './Status';
 import TopBar from './TopBar';
-import labsAtom from './atoms/labsAtom';
 import settingsAtom from './atoms/settings';
 import statusAtom from './atoms/status';
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 const Home = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
@@ -20,17 +18,14 @@ const Home = () => {
 
   useEffect(() => {
     async function loadSettings() {
-      const s = await InvokeChannel<Settings>('load-settings');
+      const s = await InvokeChannel('load-settings');
       updateSettings(s);
 
       const results = await Promise.all(
         s.labs.map(async lab => {
           updateStatus({ message: `Cloning lab: ${lab.url}` });
 
-          const result = await InvokeChannel<
-            { name: string; success: boolean },
-            { repo: string; phase: string; loaded: number; total: number }
-          >('clone-lab', lab);
+          const result = await InvokeChannel('clone-lab', lab);
           return result;
         })
       );
@@ -38,7 +33,7 @@ const Home = () => {
       results
         .filter(r => r.success)
         .forEach(async r => {
-          const lab = await InvokeChannel<Lab>('load-lab', { name: r });
+          const lab = await InvokeChannel('load-lab', { name: r.name });
         });
 
       updateStatus({ message: '' });
