@@ -38,19 +38,6 @@ const InvokeChannel = <
   return deferred.promise;
 };
 
-// const InvokeChannel = <ReplyType, Notification = void>(
-//   channelName: string,
-//   payload?: any,
-//   notifier?: (notification: Notification) => void
-// ): Promise<ReplyType> => {
-//   const invocationId = Math.random().toString(36).slice(-5);
-
-//   const deferred = new Deferred<ReplyType>();
-//   pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
-//   window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
-//   return deferred.promise;
-// };
-
 const SetupRendererProcessListener = () => {
   window.electron.ipcRenderer.on('asyncResponseNotify', ([invocationId, channel]) => {
     const { notifier } = pendingInvocations[invocationId];
