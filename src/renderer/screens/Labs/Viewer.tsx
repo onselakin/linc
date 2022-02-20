@@ -1,4 +1,4 @@
-import '../../App.css';
+import 'renderer/App.css';
 
 import Scenario, { MarkDownSection, XTermSection } from 'types/scenario';
 import { useEffect, useState } from 'react';
