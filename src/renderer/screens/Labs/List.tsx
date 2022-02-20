@@ -1,19 +1,19 @@
-import './App.css';
+import '../../App.css';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { InvokeChannel } from 'ipc';
-import LabCard from './LabCard';
-import SideBar from './SideBar';
-import Status from './Status';
-import TopBar from './TopBar';
-import labsAtom from './atoms/labsAtom';
-import settingsAtom from './atoms/settings';
-import statusAtom from './atoms/status';
+import LabCard from '../../components/Labs/LabCard';
+import SideBar from '../../components/App/SideBar';
+import Status from '../../components/App/Status';
+import TopBar from '../../components/App/TopBar';
+import labsAtom from '../../atoms/labsAtom';
+import settingsAtom from '../../atoms/settings';
+import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';
-import { Lab } from '../types/lab';
+import { Lab } from '../../../types/lab';
 
-const Home = () => {
+const List = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
   const updateStatus = useSetRecoilState(statusAtom);
   const [labs, updateLabs] = useRecoilState(labsAtom);
@@ -57,4 +57,4 @@ const Home = () => {
     </div>
   );
 };
-export default Home;
+export default List;

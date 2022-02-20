@@ -1,4 +1,4 @@
-import { MarkDownSection } from '../../types/scenario';
+import { MarkDownSection } from 'types/scenario';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -9,9 +9,7 @@ interface MarkdownProps {
 const Markdown = ({ markdown }: MarkdownProps) => {
   return (
     <div>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {markdown.content}
-      </ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown.content}</ReactMarkdown>
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import './App.css';
+import '../../App.css';
 
 import Scenario, { MarkDownSection, XTermSection } from 'types/scenario';
 import { useEffect, useState } from 'react';
 
-import Markdown from './scenario/Markdown';
-import XTerm from './scenario/XTerm';
+import Markdown from '../../components/Scenario/Markdown';
+import XTerm from '../../components/Scenario/XTerm';
 
 function App() {
   const [scenario] = useState<Scenario>();
@@ -13,6 +13,7 @@ function App() {
     async function readRepos() {
       return '';
     }
+
     readRepos();
   }, []);
 
@@ -31,4 +32,5 @@ function App() {
     </div>
   );
 }
+
 export default App;

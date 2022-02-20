@@ -1,5 +1,5 @@
 title: Minimal K8s Scenario
-description: This scenario will help you learn how to create and destroy pods
+description: This Scenario will help you learn how to create and destroy pods
 container:
   image: nginx:1.14.2
 settings:

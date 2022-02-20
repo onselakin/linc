@@ -1,5 +1,5 @@
-import './App.css';
-import { Lab } from '../types/lab';
+import 'renderer/App.css';
+import { Lab } from 'types/lab';
 
 type LabCardProps = {
   lab: Lab;

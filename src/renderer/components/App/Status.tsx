@@ -1,6 +1,6 @@
-import './App.css';
+import 'renderer/App.css';
 
-import statusAtom from './atoms/status';
+import statusAtom from '../../atoms/status';
 import { useRecoilValue } from 'recoil';
 
 const Status = () => {

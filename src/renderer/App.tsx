@@ -1,6 +1,6 @@
 import './App.css';
-
-import Home from './Home';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import List from './screens/Labs/List';
 import { RecoilRoot } from 'recoil';
 import { SetupRendererProcessListener } from 'ipc';
 
@@ -9,7 +9,11 @@ SetupRendererProcessListener();
 const App = () => {
   return (
     <RecoilRoot>
-      <Home />
+      <Router>
+        <Routes>
+          <Route path="/" element={<List />} />
+        </Routes>
+      </Router>
     </RecoilRoot>
   );
 };
