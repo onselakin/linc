@@ -1,6 +1,6 @@
 import { Bridge } from 'ipc/ipc-handler';
 import { Settings } from 'types/settings';
-import store from 'store';
+import store from '../store';
 
 const loadSettings: Bridge<unknown, Settings> = async (_payload, channel) => {
   try {

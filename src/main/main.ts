@@ -11,9 +11,8 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import { BrowserWindow, app, ipcMain, shell } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
 
-import MenuBuilder from './menu';
 import SetupMainProcessHandler from '../ipc/ipc-handler';
 import actions from '../bridges';
 import { autoUpdater } from 'electron-updater';
@@ -72,7 +71,7 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    fullscreen: true,
+    fullscreen: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -96,14 +95,14 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler(edata => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
+  // mainWindow.webContents.setWindowOpenHandler(edata => {
+  //   shell.openExternal(edata.url);
+  //   return { action: 'deny' };
+  // });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
