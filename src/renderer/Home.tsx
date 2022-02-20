@@ -1,55 +1,58 @@
 import './App.css';
 
+import { useRecoilState, useSetRecoilState } from 'recoil';
+
 import { InvokeChannel } from 'ipc';
-import { Lab } from 'types/lab';
 import LabCard from './LabCard';
-import { Settings } from 'types/settings';
 import SideBar from './SideBar';
 import Status from './Status';
 import TopBar from './TopBar';
+import labsAtom from './atoms/labsAtom';
 import settingsAtom from './atoms/settings';
 import statusAtom from './atoms/status';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { Lab } from '../types/lab';
 
 const Home = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
   const updateStatus = useSetRecoilState(statusAtom);
+  const [labs, updateLabs] = useRecoilState(labsAtom);
 
   useEffect(() => {
-    async function loadSettings() {
+    const loadSettings = async () => {
       const s = await InvokeChannel('load-settings');
       updateSettings(s);
 
       const results = await Promise.all(
-        s.labs.map(async lab => {
-          updateStatus({ message: `Cloning lab: ${lab.url}` });
+        s.labs
+          .map(async l => {
+            updateStatus({ message: `Cloning lab: ${l.url}` });
 
-          const result = await InvokeChannel('clone-lab', lab);
-          return result;
-        })
+            const result = await InvokeChannel('clone-lab', l);
+            if (result.success) {
+              return InvokeChannel('load-lab', { name: result.name });
+            }
+            return undefined;
+          })
+          .filter(l => l !== undefined)
       );
-
-      results
-        .filter(r => r.success)
-        .forEach(async r => {
-          const lab = await InvokeChannel('load-lab', { name: r.name });
-        });
+      updateLabs(results as Lab[]);
 
       updateStatus({ message: '' });
-    }
+    };
 
     loadSettings();
-  }, [updateSettings, updateStatus]);
+  }, [updateSettings, updateStatus, updateLabs]);
 
   return (
     <div className="absolute top-0 right-0 bottom-0 left-0">
       <TopBar />
       <SideBar />
       <Status />
-      <div className="absolute top-14 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap overflow-scroll no-scrollbar gap-5 border-2 border-yellow-500 bg-green-500">
-        <LabCard />
-        <LabCard />
+      <div className="absolute top-14 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap content-start overflow-scroll no-scrollbar gap-5 border-2 border-yellow-500 bg-green-500">
+        {labs.map(l => (
+          <LabCard lab={l} />
+        ))}
       </div>
     </div>
   );

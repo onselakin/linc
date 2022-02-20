@@ -15,6 +15,7 @@ const cloneLab: Bridge<
   { name: string; success: boolean },
   { repo: string; phase: string; loaded: number; total: number }
 > = async (payload, channel) => {
+  console.log(`Cloning repo: ${payload}`);
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
   const match = regex.exec(payload.url);
   if (match != null) {
@@ -30,18 +31,20 @@ const cloneLab: Bridge<
           password: payload.password,
         }),
         onProgress: (progress: GitProgressEvent) => {
-          channel.notify({ repo: repoName, ...progress });
+          console.log(`${repoName}: ${progress.loaded}/${progress.total} `);
         },
       });
       channel.reply({ name: repoName, success: true });
     } catch (error) {
+      console.log(`Error cloning repo: ${repoName}`);
       channel.reply({ name: repoName, success: false });
     }
   }
 };
 
 const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel) => {
-  const labFile = path.join(labsPath, payload.name);
+  const labFile = path.join(labsPath, payload.name, 'lab.yaml');
+  console.log(labFile);
   if (!fs.existsSync(labFile)) {
     channel.error(new Error('Lab file not found.'));
     return;
@@ -51,6 +54,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
     const labYaml = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     channel.reply(labYaml);
   } catch (e) {
+    console.log(e);
     channel.error(e);
   }
 };

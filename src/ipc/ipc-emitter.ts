@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Channel } from './ipc-handler';
-import type actions from '../actions';
+import type actions from '../bridges';
 
 let pendingInvocations: { [key: string]: any } = {};
 
@@ -31,6 +31,7 @@ const InvokeChannel = <
   payload?: Payload
 ): Promise<Parameters<typeof actions[ChannelName]>[1] extends Channel<infer T, any> ? T : null> => {
   const invocationId = Math.random().toString(36).slice(-5);
+  console.log(`${channelName} invoked with id: ${invocationId}`);
 
   const deferred = new Deferred<any>();
   pendingInvocations[invocationId] = { deferred, channelName, parameters: payload };

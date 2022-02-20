@@ -2,7 +2,7 @@ import { Bridge } from 'ipc/ipc-handler';
 import { Settings } from 'types/settings';
 import store from '../store';
 
-const loadSettings: Bridge<never, Settings> = async (_payload, channel) => {
+const loadSettings: Bridge<unknown, Settings> = async (_payload, channel) => {
   try {
     channel.reply(store.get('settings'));
   } catch (error) {

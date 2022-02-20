@@ -15,7 +15,7 @@ import { BrowserWindow, app, ipcMain, shell } from 'electron';
 
 import MenuBuilder from './menu';
 import SetupMainProcessHandler from '../ipc/ipc-handler';
-import actions from '../actions';
+import actions from '../bridges';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import path from 'path';
@@ -38,8 +38,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDevelopment = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDevelopment) {
   require('electron-debug')();

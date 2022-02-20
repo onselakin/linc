@@ -12,7 +12,7 @@ const store: Store<AppStore> = new Store<AppStore>({
         {
           username: 'onselakin',
           password: '***REMOVED***',
-          url: 'https://github.com/onselakin/a-guided-tour-of-go/tree/main',
+          url: 'https://github.com/onselakin/a-guided-tour-of-go.git',
         },
       ],
     },

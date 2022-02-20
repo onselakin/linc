@@ -20,9 +20,13 @@ const SetupMainProcessHandler = <Bridges extends Record<string, Bridge<any, any,
   ipcMain: IpcMain,
   bridges: Bridges
 ) => {
+  Object.keys(bridges).forEach(k => console.log(`Registering ipc handler: ${k}`));
+
   ipcMain.on(
     'asyncRequest',
     (event: IpcMainInvokeEvent, [invocationId, channelName, payload]: [string, string, any]) => {
+      console.log(`Handling ${invocationId} on channel ${channelName}`);
+
       const channel: Channel = {
         reply: result => event.sender.send('asyncResponse', invocationId, result),
         notify: message => event.sender.send('asyncResponseNotify', invocationId, message),
