@@ -1,4 +1,4 @@
-export interface MarkDownSection {
+export interface MarkDownStep {
   type: string;
   content: string;
 }
@@ -22,5 +22,5 @@ export default interface Scenario {
     terminalEnabled: boolean;
   };
 
-  sections: Array<MarkDownSection | XTermSection>;
+  sections: Array<MarkDownStep | XTermSection>;
 }
