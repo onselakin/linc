@@ -3,7 +3,7 @@ import '../../App.css';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { InvokeChannel } from 'ipc';
-import LabCard from '../../components/Labs/LabCard';
+import LabCard from './LabCard';
 import labsAtom from '../../atoms/labsAtom';
 import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';

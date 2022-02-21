@@ -10,6 +10,13 @@ body {
   @apply h-full w-full
 }
 
+@layer base {
+  html {
+    font-family: "Ubuntu Mono", system-ui, sans-serif;
+    font-size: 18px;
+  }
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {

@@ -1,12 +1,13 @@
 import './App.css';
 import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import LabList from './screens/Labs/LabList';
-import LabInformation from './screens/Labs/LabInformation';
+import Root from './screens/Labs/Root';
 import { RecoilRoot } from 'recoil';
 import { SetupRendererProcessListener } from 'ipc';
 import TopBar from './components/App/TopBar';
 import SideBar from './components/App/SideBar';
 import Status from './components/App/Status';
+import LabInformation from './screens/Labs/LabInformation';
 
 SetupRendererProcessListener();
 
@@ -28,9 +29,12 @@ const App = () => {
     <RecoilRoot>
       <Router>
         <Routes>
-          <Route element={<Layout />}>
-            <Route path="/lab/:labId" element={<LabInformation />} />
-            <Route path="/" element={<LabList />} />
+          <Route path="/" element={<Layout />}>
+            <Route path="labs" element={<LabList />} />
+            <Route path="lab/:labId" element={<Root />}>
+              <Route path="info" element={<LabInformation />} />
+              <Route path="scenario/:scenarioId" element={<div>Scenario Container</div>} />
+            </Route>
           </Route>
         </Routes>
       </Router>

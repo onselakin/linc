@@ -12,8 +12,8 @@ const LabCard = ({ lab }: LabCardProps) => {
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{lab.title}</div>
         <p className="text-gray-700 text-base">{lab.description}</p>
+        <Link to={`/lab/${lab.id}/info`}>More...</Link>
       </div>
-      <Link to={`/lab/${lab.id}`}>Scenarios</Link>
     </div>
   );
 };
