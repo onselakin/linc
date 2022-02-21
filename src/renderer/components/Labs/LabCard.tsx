@@ -13,7 +13,7 @@ const LabCard = ({ lab }: LabCardProps) => {
         <div className="font-bold text-xl mb-2">{lab.title}</div>
         <p className="text-gray-700 text-base">{lab.description}</p>
       </div>
-      <Link to="/lab">Scenarios</Link>
+      <Link to={`/lab/${lab.id}`}>Scenarios</Link>
     </div>
   );
 };

@@ -9,6 +9,7 @@ export interface XTermSection {
 }
 
 export default interface Scenario {
+  id: string;
   title: string;
 
   description: string;

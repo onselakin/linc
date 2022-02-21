@@ -1,7 +1,7 @@
 import './App.css';
 import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import LabList from './screens/Labs/LabList';
-import ScenarioList from './screens/Labs/ScenarioList';
+import LabInformation from './screens/Labs/LabInformation';
 import { RecoilRoot } from 'recoil';
 import { SetupRendererProcessListener } from 'ipc';
 import TopBar from './components/App/TopBar';
@@ -29,7 +29,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/lab" element={<ScenarioList />} />
+            <Route path="/lab/:labId" element={<LabInformation />} />
             <Route path="/" element={<LabList />} />
           </Route>
         </Routes>
