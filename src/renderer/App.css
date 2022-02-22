@@ -15,6 +15,14 @@ body {
     font-family: "Ubuntu Mono", system-ui, sans-serif;
     font-size: 18px;
   }
+
+  h1 {
+    @apply text-2xl mb-4
+  }
+
+  h2 {
+    @apply text-xl mb-4
+  }
 }
 
 @layer utilities {

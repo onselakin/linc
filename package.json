@@ -245,6 +245,7 @@
     "react-router-dom": "^6.2.1",
     "recoil": "^0.6.1",
     "regenerator-runtime": "^0.13.9",
+    "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1"
   },
   "devEngines": {

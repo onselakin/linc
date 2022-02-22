@@ -20,12 +20,17 @@ const cloneLab: Bridge<
   const match = regex.exec(payload.url);
   if (match != null) {
     const repoName = match[5];
+    const dir = path.join(labsPath, repoName);
     try {
-      await git.clone({
+      const gitConfig = {
         fs,
         http,
-        dir: path.join(labsPath, repoName),
+        dir,
         url: payload.url,
+        author: {
+          name: 'Onsel Akin',
+          email: 'onsela@outlook.com',
+        },
         onAuth: () => ({
           username: payload.username,
           password: payload.password,
@@ -33,7 +38,12 @@ const cloneLab: Bridge<
         onProgress: (progress: GitProgressEvent) => {
           console.log(`${repoName}: ${progress.loaded}/${progress.total} `);
         },
-      });
+      };
+      if (fs.existsSync(dir)) {
+        await git.pull(gitConfig);
+      } else {
+        await git.clone(gitConfig);
+      }
       channel.reply({ name: repoName, success: true });
     } catch (error) {
       console.log(`Error cloning repo: ${repoName}`);

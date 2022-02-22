@@ -9,7 +9,7 @@ const LabInformation = () => {
   const lab = labs.find(l => l.id === labId);
 
   return (
-    <div>
+    <div className="ml-4">
       <h1>Lab: {lab?.title}</h1>
     </div>
   );

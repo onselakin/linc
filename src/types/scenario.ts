@@ -23,5 +23,5 @@ export default interface Scenario {
     terminalEnabled: boolean;
   };
 
-  sections: Array<MarkDownStep | XTermSection>;
+  steps: Array<MarkDownStep | XTermSection>;
 }

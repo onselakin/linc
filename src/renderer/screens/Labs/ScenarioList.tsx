@@ -9,7 +9,7 @@ const ScenarioList = () => {
   const lab = labs.find(l => l.id === labId);
 
   return (
-    <div className="w-64 h-full border-2 border-yellow-500">
+    <div className="w-64 h-full border-r-2 border-gray-500">
       <h2>Scenarios in the lab:</h2>
       <ul>
         {lab?.scenarios.map(scenario => (
