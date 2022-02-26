@@ -5,18 +5,21 @@ import { MarkDownStep, XTermSection } from 'types/scenario';
 
 import Markdown from '../../components/Scenario/Markdown';
 import XTerm from '../../components/Scenario/XTerm';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
 
 function App() {
-  const { labId, scenarioId } = useParams();
+  // const { labId, scenarioId } = useParams();
+  // const labs = useRecoilValue(labsAtom);
+  // const lab = labs.find(l => l.id === labId);
+  // const scenario = lab?.scenarios.find(s => s.id === scenarioId);
+
   const labs = useRecoilValue(labsAtom);
-  const lab = labs.find(l => l.id === labId);
-  const scenario = lab?.scenarios.find(s => s.id === scenarioId);
+  const scenario = labs[0].scenarios[0];
 
   return (
-    <div className="ml-4">
+    <div className="prose lg:prose-l max-w-none">
       <h1>{scenario?.title}</h1>
 
       {scenario?.steps.map((step, idx) => {

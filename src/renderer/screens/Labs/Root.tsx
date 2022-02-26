@@ -6,7 +6,7 @@ const Root = () => {
   return (
     <div className="flex h-full w-full">
       <ScenarioList />
-      <div>
+      <div className="w-full mx-4">
         <Outlet />
       </div>
     </div>

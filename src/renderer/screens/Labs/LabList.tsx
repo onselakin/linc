@@ -9,6 +9,7 @@ import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';
 import { Lab } from '../../../types/lab';
+import ScenarioRunner from './ScenarioRunner';
 
 const LabList = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
@@ -43,9 +44,14 @@ const LabList = () => {
 
   return (
     <>
-      {labs.map(l => (
-        <LabCard lab={l} />
-      ))}
+      {/*{labs.map(l => (*/}
+      {/*  <LabCard lab={l} />*/}
+      {/*))}*/}
+      {labs.length > 0 && (
+        <div className="p-10">
+          <ScenarioRunner />
+        </div>
+      )}
     </>
   );
 };
