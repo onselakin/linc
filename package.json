@@ -238,8 +238,6 @@
     "electron-log": "^4.4.4",
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
-    "hastscript": "^7.0.2",
-    "history": "^5.2.0",
     "isomorphic-git": "^1.11.2",
     "js-yaml": "^4.1.0",
     "react": "^17.0.2",
@@ -249,12 +247,7 @@
     "react-router-dom": "^6.2.1",
     "recoil": "^0.6.1",
     "regenerator-runtime": "^0.13.9",
-    "rehype-highlight": "^5.0.2",
-    "rehype-raw": "^6.1.1",
-    "remark-directive": "^2.0.1",
-    "remark-directive-rehype": "^0.4.0",
-    "remark-gfm": "^3.0.1",
-    "unist-util-visit": "^4.1.0"
+    "remark-gfm": "^3.0.1"
   },
   "devEngines": {
     "node": ">=14.x",
@@ -279,5 +272,6 @@
     "singleQuote": true,
     "arrowParens": "avoid",
     "printWidth": 120
-  }
+  },
+  "packageManager": "yarn@3.2.0"
 }
