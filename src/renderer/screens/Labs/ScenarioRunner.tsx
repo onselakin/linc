@@ -8,6 +8,8 @@ import Markdown from '../../components/Scenario/Markdown';
 import { useRecoilValue } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
 import { Container, Section, Bar } from 'react-simple-resizer';
+import Term from 'renderer/components/Scenario/Terminal';
+import { useState } from 'react';
 
 function App() {
   // const { labId, scenarioId } = useParams();
@@ -17,6 +19,7 @@ function App() {
 
   const labs = useRecoilValue(labsAtom);
   const scenario = labs[0].scenarios[0];
+  const [size, setSize] = useState(500);
 
   return (
     <Container className="h-full">
@@ -35,7 +38,9 @@ function App() {
         </div>
       </Section>
       <Bar className="bg-gray-300" size={4} style={{ cursor: 'col-resize' }} />
-      <Section style={{ background: '#d3d3d3' }} minSize={100} />
+      <Section minSize={250} onSizeChanged={currentSize => setSize(currentSize)}>
+        <Term value={size} />
+      </Section>
     </Container>
   );
 }

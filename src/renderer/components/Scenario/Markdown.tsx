@@ -89,9 +89,7 @@ const Markdown = ({ markdown }: MarkdownProps) => {
             let config: CodeBlockConfig = {};
             const dm = configRegex.exec(contents);
             if (dm !== null) {
-              console.log(dm[1]);
               config = yaml.load(dm[1]) as CodeBlockConfig;
-              console.log(config);
             }
 
             // Remove config from the final output
