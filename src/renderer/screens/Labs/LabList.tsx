@@ -42,17 +42,6 @@ const LabList = () => {
     loadSettings();
   }, [updateSettings, updateStatus, updateLabs]);
 
-  return (
-    <>
-      {/*{labs.map(l => (*/}
-      {/*  <LabCard lab={l} />*/}
-      {/*))}*/}
-      {labs.length > 0 && (
-        <div className="p-10">
-          <ScenarioRunner />
-        </div>
-      )}
-    </>
-  );
+  return <>{labs.length > 0 && <ScenarioRunner />}</>;
 };
 export default LabList;
