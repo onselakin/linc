@@ -28,13 +28,14 @@ const InvokeChannel = <
   Payload extends Parameters<typeof actions[ChannelName]>[0]
 >(
   channelName: ChannelName,
-  payload?: Payload
+  payload?: Payload,
+  notifier?: (payload: Parameters<typeof actions[ChannelName]>[1] extends Channel<any, infer T> ? T : null) => void
 ): Promise<Parameters<typeof actions[ChannelName]>[1] extends Channel<infer T, any> ? T : null> => {
   const invocationId = Math.random().toString(36).slice(-5);
   console.log(`${channelName} invoked with id: ${invocationId}`);
 
   const deferred = new Deferred<any>();
-  pendingInvocations[invocationId] = { deferred, channelName, parameters: payload };
+  pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
   window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
   return deferred.promise;
 };

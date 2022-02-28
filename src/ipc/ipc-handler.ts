@@ -12,8 +12,8 @@ export interface Channel<ReplyPayload = void, NotificationPayload = void> {
   error: (error: unknown) => void;
 }
 
-export interface Bridge<RequestPayload, ResponsePayload, Notification = void> {
-  (payload: RequestPayload, channel: Channel<ResponsePayload, Notification>): void;
+export interface Bridge<RequestPayload, ResponsePayload, NotificationPayload = void> {
+  (payload: RequestPayload, channel: Channel<ResponsePayload, NotificationPayload>): void;
 }
 
 const SetupMainProcessHandler = <Bridges extends Record<string, Bridge<any, any, any>>>(

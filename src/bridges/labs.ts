@@ -37,6 +37,7 @@ const cloneLab: Bridge<
         }),
         onProgress: (progress: GitProgressEvent) => {
           console.log(`${repoName}: ${progress.loaded}/${progress.total} `);
+          channel.notify({ ...progress, repo: repoName });
         },
       };
       if (fs.existsSync(dir)) {
