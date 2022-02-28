@@ -2,12 +2,18 @@ import { MarkDownStep } from 'types/scenario';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Highlight from 'react-highlight';
+import yaml from 'js-yaml';
+import { useState } from 'react';
+import checkIcon from '../../../../assets/check.png';
 
-const directiveRegex = /~~[^{]*\{([^}]*)}\n?~~\n?/gm;
+const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
 
-interface Directive {
-  executable: boolean;
-  clipboard: boolean;
+interface CodeBlockConfig {
+  title?: string;
+  executable?: boolean;
+  editable?: boolean;
+  clipboard?: boolean;
+  hint?: string;
 }
 
 interface MarkdownProps {
@@ -15,19 +21,58 @@ interface MarkdownProps {
 }
 
 interface CodeBlockProps {
+  config: CodeBlockConfig;
   code: string;
 }
 
-const CodeBlock = ({ code }: CodeBlockProps) => {
+const Button = ({ text, click }: { text: string; click: () => void }) => {
   return (
-    <div className="rounded">
-      <Highlight className="js">{code}</Highlight>
-    </div>
+    <button
+      type="button"
+      className="rounded border border-purple-900 bg-purple-700 hover:bg-purple-500 ml-2 h-8 px-2 text-gray-200 cursor-pointer text-sm"
+      onClick={click}
+    >
+      {text}
+    </button>
   );
 };
 
 const InlineCode = ({ code }: CodeBlockProps) => {
   return <span className="rounded bg-[#1F2937] text-gray-300 p-2">{code}</span>;
+};
+
+const CodeBlock = ({ code, config }: CodeBlockProps) => {
+  const [solutionHidden, setSolutionHidden] = useState(config.hint !== null);
+  const [hintVisible, setHintVisible] = useState(false);
+
+  return (
+    <div className="w-full">
+      <div className="flex flex-row rounded-tl-md rounded-tr-md bg-purple-800 overflow-hidden h-12 pr-2">
+        <div className="flex flex-auto items-center text-gray-50">
+          <p className="m-0 ml-4">{config.title}</p>
+        </div>
+        <div className="flex max-w-96 items-center justify-end">
+          {solutionHidden && <Button text="Show Solution" click={() => setSolutionHidden(false)} />}
+          {config.clipboard && !solutionHidden && <Button text="Copy" click={() => {}} />}
+          {config.executable && !solutionHidden && <Button text="Execute" click={() => {}} />}
+        </div>
+      </div>
+      <div className="w-full relative">
+        <Highlight className={`js ${solutionHidden ? 'blur-sm' : ''}`}>{code}</Highlight>
+        <div className="absolute bottom-2 right-2 text-sm">
+          {solutionHidden && !hintVisible && <Button text="Hint" click={() => setHintVisible(!hintVisible)} />}
+        </div>
+        {hintVisible && solutionHidden && (
+          <div className="absolute rounded-b top-0 left-0 bottom-0 right-0 text-sm bg-purple-600 text-gray-100 p-2">
+            <button type="button" onClick={() => setHintVisible(false)}>
+              <img className="absolute top-2 right-2 m-0 w-8 h-8" src={checkIcon} alt="" />
+            </button>
+            {config.hint}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 const Markdown = ({ markdown }: MarkdownProps) => {
@@ -41,21 +86,21 @@ const Markdown = ({ markdown }: MarkdownProps) => {
             const contents = children[0] as string;
 
             // Check for directives
-            let directive: Directive;
-            const dm = directiveRegex.exec(contents);
+            let config: CodeBlockConfig = {};
+            const dm = configRegex.exec(contents);
             if (dm !== null) {
-              // Fix relaxed JSON
-              const json = `{ ${dm[1]} }`.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
-              directive = JSON.parse(json);
+              console.log(dm[1]);
+              config = yaml.load(dm[1]) as CodeBlockConfig;
+              console.log(config);
             }
 
-            // Remove directive from the final output
-            const finalContents = contents.replace(directiveRegex, '');
+            // Remove config from the final output
+            const finalContents = contents.replace(configRegex, '');
             const match = /language-(\w+)/.exec(className || '');
             if (inline) {
-              return <InlineCode code={finalContents} />;
+              return <InlineCode code={finalContents} config={config} />;
             }
-            return match ? <CodeBlock code={finalContents} /> : <div>[Unrecognized Code Block]</div>;
+            return match ? <CodeBlock code={finalContents} config={config} /> : <div>[Unrecognized Code Block]</div>;
           },
         }}
       >

@@ -4,11 +4,8 @@
 
 import webpack from 'webpack';
 import webpackPaths from './webpack.paths';
-import { dependencies as externals } from '../../release/app/package.json';
 
 const configuration: webpack.Configuration = {
-  externals: [...Object.keys(externals || {})],
-
   stats: 'errors-only',
 
   module: {

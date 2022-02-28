@@ -1,10 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 import 'renderer/App.css';
 
-import { MarkDownStep, XTermSection } from 'types/scenario';
+import { MarkDownStep } from 'types/scenario';
 
 import Markdown from '../../components/Scenario/Markdown';
-import XTerm from '../../components/Scenario/XTerm';
 // import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
@@ -27,7 +26,7 @@ function App() {
           case 'markdown':
             return <Markdown markdown={step as MarkDownStep} key={idx} />;
           default:
-            return <XTerm configuration={step as XTermSection} key={idx} />;
+            return <></>;
         }
       })}
     </div>
