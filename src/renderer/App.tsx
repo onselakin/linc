@@ -1,4 +1,5 @@
 import './App.css';
+import '../../assets/fontawesome/css/all.css';
 import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import LabList from './screens/Labs/LabList';
 import Root from './screens/Labs/Root';
@@ -18,7 +19,7 @@ const Layout = () => {
     <div className="absolute top-0 right-0 bottom-0 left-0">
       <TopBar />
       <SideBar />
-      <div className="absolute top-14 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap content-start overflow-scroll no-scrollbar gap-5 bg-gray-400">
+      <div className="absolute top-12 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap content-start overflow-scroll no-scrollbar gap-5 bg-component">
         <Outlet />
       </div>
       <Status />

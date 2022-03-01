@@ -21,6 +21,10 @@ body {
   .draggable {
     -webkit-app-region: drag;
   }
+
+  .title {
+    @apply text-white;
+  }
 }
 
 @layer utilities {

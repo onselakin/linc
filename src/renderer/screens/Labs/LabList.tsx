@@ -9,7 +9,6 @@ import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';
 import { Lab } from '../../../types/lab';
-import ScenarioRunner from './ScenarioRunner';
 
 const LabList = () => {
   const updateSettings = useSetRecoilState(settingsAtom);
@@ -42,6 +41,12 @@ const LabList = () => {
     loadSettings();
   }, [updateSettings, updateStatus, updateLabs]);
 
-  return <>{labs.length > 0 && <ScenarioRunner />}</>;
+  return (
+    <>
+      {labs.map(l => (
+        <LabCard lab={l} />
+      ))}
+    </>
+  );
 };
 export default LabList;
