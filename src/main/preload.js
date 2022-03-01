@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
-  ipcRenderer: {
+  ipc: {
     on(channel, handler) {
       ipcRenderer.on(channel, (_event, ...args) => {
         handler(args);

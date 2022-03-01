@@ -3,6 +3,7 @@ import 'renderer/App.css';
 import { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { CreateChannel } from '../../../ipc/ipc-emitter';
 
 const Term = ({ value }: { value: number }) => {
   const fit = useRef<FitAddon | null>(null);
@@ -16,7 +17,16 @@ const Term = ({ value }: { value: number }) => {
       term.loadAddon(fitAddon);
       term.open(xtermContainer.current);
       fitAddon.fit();
-      term.write(`Hello from \x1B[1;3;31mxterm.js\x1B[0m $ `);
+
+      const channel = CreateChannel('terminal-execute');
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      channel.onReply = ({ output }) => {
+        term.write(output);
+      };
+      channel.send({ terminalId: '1', command: '' });
+      term.onData(data => {
+        channel.send({ terminalId: '1', command: data });
+      });
     }
   }, []);
 

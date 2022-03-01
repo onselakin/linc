@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable max-classes-per-file */
 
 import { Channel } from './ipc-handler';
 import type actions from '../bridges';
@@ -11,6 +12,16 @@ const removePendingInvocation = (invocationId: string) => {
     .map(k => ({ [k]: pendingInvocations[k] }))
     .reduce((accumulator, current) => ({ ...accumulator, ...current }), {});
 };
+
+export class IpcChannel<RequestPayload, ResponsePayload> {
+  constructor(public invocationId: string, public channelName: string) {}
+
+  onReply: ((payload: ResponsePayload) => void) | undefined;
+
+  send(payload: RequestPayload) {
+    window.electron.ipc.send('asyncRequest', this.invocationId, this.channelName, payload);
+  }
+}
 
 export class Deferred<T> {
   resolve!: (value: T) => void;
@@ -36,27 +47,44 @@ const InvokeChannel = <
 
   const deferred = new Deferred<any>();
   pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
-  window.electron.ipcRenderer.send('asyncRequest', invocationId, channelName, payload);
+  window.electron.ipc.send('asyncRequest', invocationId, channelName, payload);
   return deferred.promise;
 };
 
+const CreateChannel = <
+  ChannelName extends keyof typeof actions,
+  RequestPayload extends Parameters<typeof actions[ChannelName]>[0],
+  ResponsePayload extends Parameters<typeof actions[ChannelName]>[1] extends Channel<infer T, any> ? T : null
+>(
+  channelName: ChannelName
+): IpcChannel<RequestPayload, ResponsePayload> => {
+  const invocationId = Math.random().toString(36).slice(-5);
+  const ipcChannel = new IpcChannel<RequestPayload, ResponsePayload>(invocationId, channelName);
+  pendingInvocations[invocationId] = { ipcChannel };
+  return ipcChannel;
+};
+
 const SetupRendererProcessListener = () => {
-  window.electron.ipcRenderer.on('asyncResponseNotify', ([invocationId, channel]) => {
+  window.electron.ipc.on('asyncResponseNotify', ([invocationId, payload]) => {
     const { notifier } = pendingInvocations[invocationId];
-    if (notifier) notifier(channel);
+    if (notifier) notifier(payload);
   });
 
-  window.electron.ipcRenderer.on('asyncResponse', ([invocationId, channel]) => {
-    const { deferred } = pendingInvocations[invocationId];
-    removePendingInvocation(invocationId);
-    deferred.resolve(channel);
+  window.electron.ipc.on('asyncResponse', ([invocationId, payload]) => {
+    const { ipcChannel, deferred } = pendingInvocations[invocationId];
+    if (ipcChannel) {
+      ipcChannel.onReply(payload);
+    } else {
+      removePendingInvocation(invocationId);
+      deferred.resolve(payload);
+    }
   });
 
-  window.electron.ipcRenderer.on('errorResponse', ([invocationId, err]) => {
+  window.electron.ipc.on('errorResponse', ([invocationId, err]) => {
     const { deferred } = pendingInvocations[invocationId];
     removePendingInvocation(invocationId);
     deferred.reject(err);
   });
 };
 
-export { InvokeChannel, SetupRendererProcessListener };
+export { InvokeChannel, CreateChannel, SetupRendererProcessListener };
