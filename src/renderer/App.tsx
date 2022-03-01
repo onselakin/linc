@@ -31,7 +31,7 @@ const App = () => {
     <RecoilRoot>
       <Router>
         <Routes>
-          <Route path="/" element={<LabList />}>
+          <Route path="/" element={<Layout />}>
             <Route path="labs" element={<LabList />} />
             <Route path="lab/:labId" element={<Root />}>
               <Route path="info" element={<LabInformation />} />
