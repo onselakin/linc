@@ -1,4 +1,3 @@
-import { MarkDownStep } from 'types/scenario';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Highlight from 'react-highlight';
@@ -9,7 +8,9 @@ import checkIcon from '../../../../assets/check.png';
 const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
 
 interface CodeBlockConfig {
+  defined: boolean;
   title?: string;
+  language?: string;
   executable?: boolean;
   editable?: boolean;
   clipboard?: boolean;
@@ -17,7 +18,7 @@ interface CodeBlockConfig {
 }
 
 interface MarkdownProps {
-  markdown: MarkDownStep;
+  markdown: string;
 }
 
 interface CodeBlockProps {
@@ -42,11 +43,14 @@ const InlineCode = ({ code }: CodeBlockProps) => {
 };
 
 const CodeBlock = ({ code, config }: CodeBlockProps) => {
-  const [solutionHidden, setSolutionHidden] = useState(config.hint !== null);
+  const [solutionHidden, setSolutionHidden] = useState(config.hint !== undefined);
   const [hintVisible, setHintVisible] = useState(false);
 
+  if (!config.defined) {
+    return <Highlight className={`${config.language} rounded`}>{code}</Highlight>;
+  }
   return (
-    <div className="w-full">
+    <div>
       <div className="flex flex-row rounded-tl-md rounded-tr-md bg-purple-800 overflow-hidden h-12 pr-2">
         <div className="flex flex-auto items-center text-gray-50">
           <p className="m-0 ml-4">{config.title}</p>
@@ -58,7 +62,7 @@ const CodeBlock = ({ code, config }: CodeBlockProps) => {
         </div>
       </div>
       <div className="w-full relative">
-        <Highlight className={`js ${solutionHidden ? 'blur-sm' : ''}`}>{code}</Highlight>
+        <Highlight className={`${config.language} ${solutionHidden ? 'blur-sm' : ''}`}>{code}</Highlight>
         <div className="absolute bottom-2 right-2 text-sm">
           {solutionHidden && !hintVisible && <Button text="Hint" click={() => setHintVisible(!hintVisible)} />}
         </div>
@@ -77,34 +81,41 @@ const CodeBlock = ({ code, config }: CodeBlockProps) => {
 
 const Markdown = ({ markdown }: MarkdownProps) => {
   return (
-    <div>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          pre: 'div',
-          code({ inline, className, children }) {
-            const contents = children[0] as string;
+    <ReactMarkdown
+      className="prose max-w-none"
+      remarkPlugins={[remarkGfm]}
+      components={{
+        pre: 'div',
+        code({ inline, className, children }) {
+          const contents = children[0] as string;
 
-            // Check for directives
-            let config: CodeBlockConfig = {};
-            const dm = configRegex.exec(contents);
-            if (dm !== null) {
-              config = yaml.load(dm[1]) as CodeBlockConfig;
-            }
+          // Check for config
+          let config: CodeBlockConfig = {
+            language: '',
+            defined: false,
+          };
+          const dm = configRegex.exec(contents);
+          if (dm !== null) {
+            config = yaml.load(dm[1]) as CodeBlockConfig;
+            config.defined = true;
+          }
 
-            // Remove config from the final output
-            const finalContents = contents.replace(configRegex, '');
-            const match = /language-(\w+)/.exec(className || '');
-            if (inline) {
-              return <InlineCode code={finalContents} config={config} />;
-            }
-            return match ? <CodeBlock code={finalContents} config={config} /> : <div>[Unrecognized Code Block]</div>;
-          },
-        }}
-      >
-        {markdown.content}
-      </ReactMarkdown>
-    </div>
+          // Remove config from the final output
+          const finalContents = contents.replace(configRegex, '');
+          const match = /language-(\w+)/.exec(className || '');
+          if (match) {
+            // eslint-disable-next-line prefer-destructuring
+            config.language = match[1];
+          }
+          if (inline) {
+            return <InlineCode code={finalContents} config={config} />;
+          }
+          return match ? <CodeBlock code={finalContents} config={config} /> : <div>[Unrecognized Code Block]</div>;
+        },
+      }}
+    >
+      {markdown}
+    </ReactMarkdown>
   );
 };
 export default Markdown;

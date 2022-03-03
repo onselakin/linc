@@ -1,23 +1,34 @@
 import 'renderer/App.css';
-import { NavLink } from 'react-router-dom';
+import { Link, LinkProps, useLocation } from 'react-router-dom';
 
-const Button = ({ iconName, link }: { iconName: string; link: string }) => (
-  <NavLink
-    to={link}
-    className={({ isActive }) =>
-      `w-14 h-14 block flex justify-center items-center ${isActive ? 'border-l-4 border-l-green text-green' : ''}`
-    }
-  >
-    <i className={`fa-solid fa-${iconName} fa-xl text-icon hover:text-green`} />
-  </NavLink>
-);
+interface SidebarLinkProps extends LinkProps {
+  iconName: string;
+}
+
+const Button = ({ iconName, to }: SidebarLinkProps) => {
+  const location = useLocation();
+
+  if (location.pathname.startsWith(to as string)) {
+    return (
+      <Link to={to} className="w-14 h-14 block flex justify-center items-center border-l-4 border-l-green text-green">
+        <i className={`fa-solid fa-${iconName} fa-xl`} />
+      </Link>
+    );
+  }
+
+  return (
+    <Link to={to} className="w-14 h-14 block flex justify-center items-center">
+      <i className={`fa-solid fa-${iconName} fa-xl text-icon hover:text-green`} />
+    </Link>
+  );
+};
 
 const SideBar = () => {
   return (
     <div className="absolute top-12 left-0 w-14 bottom-0 flex flex-col align-middle items-center bg-component pt-8 gap-8">
-      <Button iconName="chalkboard" link="/labs" />
-      <Button iconName="gears" link="/settings" />
-      <Button iconName="question" link="/info" />
+      <Button iconName="chalkboard" to="/lab" />
+      <Button iconName="gears" to="/settings" />
+      <Button iconName="question" to="/info" />
     </div>
   );
 };
