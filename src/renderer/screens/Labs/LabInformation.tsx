@@ -1,16 +1,16 @@
 import 'renderer/App.css';
-import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
+import Markdown from 'renderer/components/Scenario/Markdown';
 
 const LabInformation = () => {
-  const { labId } = useParams();
   const labs = useRecoilValue(labsAtom);
-  const lab = labs.find(l => l.id === labId);
+  const lab = labs.all.find(l => l.id === labs.currentLabId)!;
 
   return (
-    <div className="ml-4">
-      <h1>Lab: {lab?.title}</h1>
+    <div className="mt-4 prose max-w-none">
+      <h1>{lab.title}</h1>
+      <Markdown markdown={lab.cover} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import labsAtom from '../../atoms/labsAtom';
 const ScenarioInformation = () => {
   const { labId, scenarioId } = useParams();
   const labs = useRecoilValue(labsAtom);
-  const lab = labs.find(l => l.id === labId);
+  const lab = labs.all.find(l => l.id === labId);
   const scenario = lab?.scenarios.find(s => s.id === scenarioId);
 
   return (

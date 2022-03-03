@@ -9,11 +9,18 @@ import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';
 import { Lab } from '../../../types/lab';
+import { useNavigate } from 'react-router-dom';
 
 const LabList = () => {
+  const navigate = useNavigate();
   const updateSettings = useSetRecoilState(settingsAtom);
   const updateStatus = useSetRecoilState(statusAtom);
   const [labs, updateLabs] = useRecoilState(labsAtom);
+
+  const setCurrentLabAndNavigate = (lab: Lab) => {
+    updateLabs({ ...labs, currentLabId: lab.id });
+    navigate(`/lab/${lab.id}/info`);
+  };
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -33,7 +40,7 @@ const LabList = () => {
           })
           .filter(l => l !== undefined)
       );
-      updateLabs(results as Lab[]);
+      updateLabs({ ...labs, all: results as Lab[] });
 
       updateStatus({ message: '' });
     };
@@ -43,8 +50,8 @@ const LabList = () => {
 
   return (
     <>
-      {labs.map(l => (
-        <LabCard lab={l} />
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
       ))}
     </>
   );
