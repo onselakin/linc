@@ -9,8 +9,7 @@ import TopBar from './components/App/TopBar';
 import SideBar from './components/App/SideBar';
 import Status from './components/App/Status';
 import LabInformation from './screens/Labs/LabInformation';
-import ScenarioInformation from './screens/Labs/ScenarioInformation';
-import ScenarioRunner from './screens/Labs/ScenarioRunner';
+import StepRunner from './screens/Labs/StepRunner';
 
 SetupRendererProcessListener();
 
@@ -19,7 +18,7 @@ const Layout = () => {
     <div className="absolute top-0 right-0 bottom-0 left-0">
       <TopBar />
       <SideBar />
-      <div className="absolute top-12 left-14 bottom-14 right-0 flex flex-col-3 flex-wrap content-start overflow-scroll no-scrollbar gap-5 bg-component">
+      <div className="absolute top-12 left-14 bottom-10 right-0 flex flex-col-3 flex-wrap content-start overflow-hidden gap-5 bg-component">
         <Outlet />
       </div>
       <Status />
@@ -33,11 +32,10 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route path="labs" element={<LabList />} />
+            <Route path="lab" element={<LabList />} />
             <Route path="lab/:labId" element={<Root />}>
               <Route path="info" element={<LabInformation />} />
-              <Route path="scenario/:scenarioId" element={<ScenarioInformation />} />
-              <Route path="scenario/:scenarioId/run" element={<ScenarioRunner />} />
+              <Route path="scenario/:scenarioId" element={<StepRunner />} />
             </Route>
           </Route>
         </Routes>
