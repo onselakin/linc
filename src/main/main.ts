@@ -79,6 +79,7 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      devTools: false,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
