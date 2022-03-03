@@ -1,12 +1,4 @@
-export interface MarkDownStep {
-  type: string;
-  content: string;
-}
-
-export interface XTermSection {
-  type: string;
-  tool: string;
-}
+import Step from './step';
 
 export default interface Scenario {
   id: string;
@@ -18,10 +10,5 @@ export default interface Scenario {
     image: string;
   };
 
-  settings: {
-    vsCodeEnabled: boolean;
-    terminalEnabled: boolean;
-  };
-
-  steps: Array<MarkDownStep | XTermSection>;
+  steps: Step[];
 }
