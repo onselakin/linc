@@ -1,9 +1,31 @@
 import { Lab } from 'types/lab';
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 
-const labsAtom = atom<Lab[]>({
+interface Labs {
+  all: Lab[];
+  isStarted: boolean;
+  currentLabId: string;
+  currentScenarioId: string;
+  currentStepId: string;
+}
+
+const labsAtom = atom<Labs>({
   key: 'labsAtom',
-  default: [],
+  default: {
+    all: [],
+    isStarted: false,
+    currentLabId: '',
+    currentScenarioId: '',
+    currentStepId: '',
+  },
 });
 
+const currentLab = selector({
+  key: 'currentLab',
+  get: ({ get }) => {
+    const labs = get(labsAtom);
+    return labs.all.find(l => l.id === labs.currentLabId);
+  },
+});
+export { currentLab };
 export default labsAtom;
