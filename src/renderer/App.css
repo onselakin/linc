@@ -12,7 +12,7 @@ body {
 
 @layer base {
   html {
-    font-family: 'Ubuntu Mono', system-ui, sans-serif;
+    font-family: 'Ubuntu', system-ui, sans-serif;
     font-size: 18px;
   }
 }
