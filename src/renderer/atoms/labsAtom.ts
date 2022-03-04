@@ -3,7 +3,7 @@ import { atom, selector } from 'recoil';
 
 interface Labs {
   all: Lab[];
-  isStarted: boolean;
+  isInProgress: boolean;
   currentLabId: string;
   currentScenarioId: string;
   currentStepId: string;
@@ -13,7 +13,7 @@ const labsAtom = atom<Labs>({
   key: 'labsAtom',
   default: {
     all: [],
-    isStarted: false,
+    isInProgress: false,
     currentLabId: '',
     currentScenarioId: '',
     currentStepId: '',

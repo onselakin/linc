@@ -238,6 +238,7 @@
     "electron-log": "^4.4.4",
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
+    "gsap": "^3.9.1",
     "isomorphic-git": "^1.11.2",
     "js-yaml": "^4.1.0",
     "react": "^17.0.2",

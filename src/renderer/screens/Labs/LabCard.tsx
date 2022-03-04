@@ -8,7 +8,7 @@ type LabCardProps = {
 
 const LabCard = ({ lab, onNavigate }: LabCardProps) => {
   return (
-    <div className="h-96 w-96 m-4 rounded overflow-hidden drop-shadow-xl bg-container flex flex-col text-white">
+    <div className="h-96 w-96 rounded overflow-hidden drop-shadow-xl bg-container flex flex-col text-white">
       <div className="h-36 overflow-hidden grid place-content-center">
         <img src={lab.coverImage} alt="" />
       </div>
@@ -31,7 +31,7 @@ const LabCard = ({ lab, onNavigate }: LabCardProps) => {
             onNavigate(lab);
           }}
         >
-          START LAB
+          GO TO LAB <i className="fa-solid fa-angles-right" />
         </button>
       </div>
     </div>

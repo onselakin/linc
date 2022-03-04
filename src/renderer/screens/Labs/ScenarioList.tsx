@@ -2,16 +2,18 @@ import 'renderer/App.css';
 import { Link } from 'react-router-dom';
 import { Lab } from '../../../types/lab';
 
-type ScenaristProps = {
+type ScenarioListProps = {
   lab: Lab;
+  drawerMode: boolean;
+  onStartLab: () => void;
 };
 
-const ScenarioList = ({ lab }: ScenaristProps) => {
+const ScenarioList = ({ lab, drawerMode, onStartLab }: ScenarioListProps) => {
   return (
-    <div className="pt-4">
+    <div className={`${drawerMode ? 'bg-container' : ''} `}>
       <div className="text-white flex flex-col">
         <div className="h-36 overflow-hidden grid place-content-center rounded mb-2">
-          <img src={lab!.coverImage} alt="" />
+          <img src={lab.coverImage} alt="" />
         </div>
         <div>
           <i className="fa-solid fa-flask fa-sm text-[#FFB543] w-5" />
@@ -19,14 +21,17 @@ const ScenarioList = ({ lab }: ScenaristProps) => {
         </div>
         <div className="ml-5 text-xs">
           <span className="text-gray-400">by </span>
-          <span>{lab!.author}</span>
+          <span>{lab.author}</span>
         </div>
-        <Link
-          className="my-4 rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center"
-          to={`/lab/${lab!.id}/scenario/${lab!.scenarios[0].id}`}
-        >
-          START LAB
-        </Link>
+        {!drawerMode && (
+          <button
+            type="button"
+            className="my-4 rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center"
+            onClick={onStartLab}
+          >
+            START LAB
+          </button>
+        )}
         {lab.scenarios.map(scenario => (
           <div className="flex flex-col p-5 pt-3 mb-2 rounded bg-container" key={scenario.id}>
             <div className="flex flex-row items-center text-md">

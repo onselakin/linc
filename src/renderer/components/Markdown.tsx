@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 import Highlight from 'react-highlight';
 import yaml from 'js-yaml';
 import { useState } from 'react';
-import checkIcon from '../../../../assets/check.png';
+import checkIcon from '../../../assets/check.png';
 
 const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
 

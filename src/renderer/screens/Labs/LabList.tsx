@@ -49,11 +49,29 @@ const LabList = () => {
   }, [updateSettings, updateStatus, updateLabs]);
 
   return (
-    <>
+    <div className="h-full w-full flex flex-col-3 flex-wrap gap-5 overflow-scroll no-scrollbar p-4">
       {labs.all.map(l => (
         <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
       ))}
-    </>
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+      {labs.all.map(l => (
+        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
+      ))}
+    </div>
   );
 };
 export default LabList;

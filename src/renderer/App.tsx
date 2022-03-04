@@ -18,7 +18,7 @@ const Layout = () => {
     <div className="absolute top-0 right-0 bottom-0 left-0">
       <TopBar />
       <SideBar />
-      <div className="absolute top-12 left-14 bottom-10 right-0 flex flex-col-3 flex-wrap content-start overflow-hidden gap-5 bg-component">
+      <div className="absolute top-12 left-14 bottom-10 right-0 overflow-hidden bg-component">
         <Outlet />
       </div>
       <Status />
