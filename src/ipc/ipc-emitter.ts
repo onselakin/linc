@@ -71,6 +71,8 @@ const SetupRendererProcessListener = () => {
   });
 
   window.electron.ipc.on('asyncResponse', ([invocationId, payload]) => {
+    if (pendingInvocations[invocationId] === undefined) return;
+
     const { ipcChannel, deferred } = pendingInvocations[invocationId];
     if (ipcChannel) {
       ipcChannel.onReply(payload);
