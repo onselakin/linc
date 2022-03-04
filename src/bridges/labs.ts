@@ -97,12 +97,8 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
           });
         return scenario;
       });
-
-    console.log(lab);
-
     channel.reply(lab);
   } catch (e) {
-    console.log(e);
     channel.error(e);
   }
 };
