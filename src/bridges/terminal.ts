@@ -11,6 +11,13 @@ const executeTerminalCommand: Bridge<{ terminalId: string; command: string }, { 
 ) => {
   try {
     let pty = processes[terminalId];
+
+    if (command === 'exit') {
+      pty.kill();
+      delete processes[terminalId];
+      return;
+    }
+
     if (!pty) {
       pty = spawn(shell, [], {
         name: 'xterm-color',
