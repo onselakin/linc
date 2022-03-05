@@ -24,7 +24,7 @@ const currentLab = selector({
   key: 'currentLab',
   get: ({ get }) => {
     const labs = get(labsAtom);
-    return labs.all.find(l => l.id === labs.currentLabId);
+    return labs.all.find(l => l.id === labs.currentLabId)!;
   },
 });
 export { currentLab };
