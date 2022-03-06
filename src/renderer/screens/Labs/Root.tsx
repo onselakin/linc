@@ -58,7 +58,7 @@ const Root = () => {
         </button>
       </div>
 
-      <div ref={outletRef} className="absolute left-[288px] top-4 right-0 bottom-0 overflow-scroll no-scrollbar pl-2">
+      <div ref={outletRef} className="absolute left-[288px] top-4 right-4 bottom-0 overflow-scroll no-scrollbar pl-2">
         <Outlet />
       </div>
 

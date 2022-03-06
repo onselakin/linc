@@ -28,6 +28,13 @@ module.exports = {
             blockquote: {
               color: '#bbb',
             },
+            hr: {
+              'border-color': '#788AB6',
+              margin: '1.5em 0',
+            },
+            strong: {
+              color: '#bbb',
+            },
             pre: {
               margin: '0',
               'border-top-left-radius': 0,

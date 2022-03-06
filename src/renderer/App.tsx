@@ -3,17 +3,32 @@ import '../../assets/fontawesome/css/all.css';
 import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import LabList from './screens/Labs/LabList';
 import Root from './screens/Labs/Root';
-import { RecoilRoot } from 'recoil';
-import { SetupRendererProcessListener } from 'ipc';
+import { InvokeChannel, SetupRendererProcessListener } from 'ipc';
 import TopBar from './components/App/TopBar';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
 import SideBar from './components/App/SideBar';
 import Status from './components/App/Status';
 import LabInformation from './screens/Labs/LabInformation';
 import StepRunner from './screens/Labs/StepRunner';
+import dockerAtom from './atoms/docker';
+import { useEffect } from 'react';
 
 SetupRendererProcessListener();
 
 const Layout = () => {
+  const setDockerStatus = useSetRecoilState(dockerAtom);
+
+  useEffect(() => {
+    console.log('checking connection to docker');
+    const pingDocker = async () => {
+      await InvokeChannel('docker:connect', undefined, ({ success }) => {
+        setDockerStatus({ connected: success });
+      });
+    };
+
+    pingDocker();
+  }, []);
+
   return (
     <div className="absolute top-0 right-0 bottom-0 left-0">
       <TopBar />

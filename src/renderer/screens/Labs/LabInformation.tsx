@@ -11,6 +11,8 @@ const LabInformation = () => {
     <div className="prose max-w-none">
       <h1>{lab.title}</h1>
       <Markdown markdown={lab.cover} />
+      <hr />
+      <div className="rounded bg-container p-2">Image Information</div>
     </div>
   );
 };
