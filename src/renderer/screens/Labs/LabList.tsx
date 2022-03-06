@@ -32,9 +32,9 @@ const LabList = () => {
           .map(async l => {
             updateStatus({ message: `Cloning lab: ${l.url}` });
 
-            const result = await InvokeChannel('clone-lab', l);
+            const result = await InvokeChannel('lab:clone', l);
             if (result.success) {
-              return InvokeChannel('load-lab', { name: result.name });
+              return InvokeChannel('lab:load', { name: result.name });
             }
             return undefined;
           })

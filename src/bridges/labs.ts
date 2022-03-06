@@ -104,6 +104,6 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
 };
 
 export default {
-  'clone-lab': cloneLab,
-  'load-lab': loadLab,
+  'lab:clone': cloneLab,
+  'lab:load': loadLab,
 };
