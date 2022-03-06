@@ -5,10 +5,20 @@ import { Lab } from '../../../types/lab';
 type ScenarioListProps = {
   lab: Lab;
   drawerMode: boolean;
-  onStartLab: () => void;
+  needsImagePull: boolean;
+  dockerEngineUnavailable: boolean;
+  onStartLabClick: () => void;
+  onPullImageClick: () => void;
 };
 
-const ScenarioList = ({ lab, drawerMode, onStartLab }: ScenarioListProps) => {
+const ScenarioList = ({
+  lab,
+  drawerMode,
+  needsImagePull,
+  dockerEngineUnavailable,
+  onStartLabClick,
+  onPullImageClick,
+}: ScenarioListProps) => {
   return (
     <div className={`${drawerMode ? 'bg-container' : ''} `}>
       <div className="text-white flex flex-col">
@@ -23,14 +33,28 @@ const ScenarioList = ({ lab, drawerMode, onStartLab }: ScenarioListProps) => {
           <span className="text-gray-400">by </span>
           <span>{lab.author}</span>
         </div>
-        {!drawerMode && (
+        {!drawerMode && !needsImagePull && !dockerEngineUnavailable && (
           <button
             type="button"
             className="my-4 rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center"
-            onClick={onStartLab}
+            onClick={onStartLabClick}
           >
             START LAB
           </button>
+        )}
+        {!drawerMode && needsImagePull && !dockerEngineUnavailable && (
+          <button
+            type="button"
+            className="my-4 rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center"
+            onClick={onPullImageClick}
+          >
+            PULL LAB IMAGE
+          </button>
+        )}
+        {dockerEngineUnavailable && (
+          <div className="my-4 rounded border-2 border-red-400 text-red-400 text-sm py-1 px-2 no-underline text-center">
+            DOCKER ENGINE UNAVAILABLE
+          </div>
         )}
         {lab.scenarios.map(scenario => (
           <div className="flex flex-col p-5 pt-3 mb-2 rounded bg-container" key={scenario.id}>

@@ -1,20 +1,28 @@
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import 'renderer/App.css';
 import ScenarioList from './ScenarioList';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import useOuterClick from '../../hooks/useOuterClick';
+import useOuterClick from 'renderer/hooks/useOuterClick';
+import { InvokeChannel } from 'ipc';
+import dockerAtom from 'renderer/atoms/docker';
+import statusAtom from 'renderer/atoms/status';
+import { Status } from 'types/status';
 
 const Root = () => {
   const { labId } = useParams();
-  const [labs, updateLabs] = useRecoilState(labsAtom);
-  const lab = labs.all.find(l => l.id === labId)!;
   const navigate = useNavigate();
+  const [labs, updateLabs] = useRecoilState(labsAtom);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const outletRef = useRef<HTMLDivElement>(null);
   const [drawerMode, setDrawerMode] = useState(false);
+  const [needsImagePull, setNeedsImagePull] = useState(false);
+  const dockerStatus = useRecoilValue(dockerAtom);
+  const updateStatus = useSetRecoilState<Status>(statusAtom);
+
+  const lab = labs.all.find(l => l.id === labId)!;
 
   const drawerRef = useOuterClick<HTMLDivElement>(() => {
     if (drawerMode) {
@@ -46,6 +54,39 @@ const Root = () => {
     gsap.to(drawerRef.current, { duration: 0.5, left: -32 });
   };
 
+  const pullImage = () => {
+    const [image, tag] = lab.container.image.split(':');
+    InvokeChannel('docker:pull', { image, tag }, ({ status, currentProgress, totalProgress }) => {
+      updateStatus({
+        icon: 'download',
+        message: status,
+        currentProgress,
+        totalProgress,
+      });
+    })
+      .then(() => {
+        setNeedsImagePull(false);
+        updateStatus({ icon: 'check', message: '', currentProgress: 0, totalProgress: 0 });
+      })
+      .catch(error => {
+        console.warn(error);
+        setNeedsImagePull(true);
+        updateStatus({ icon: 'triangle-exclamation', message: '', currentProgress: 0, totalProgress: 0 });
+      });
+  };
+
+  useEffect(() => {
+    InvokeChannel('docker:inspect', { imageName: lab.container.image })
+      .then(info => {
+        console.log(info);
+        setNeedsImagePull(false);
+      })
+      .catch(error => {
+        console.log(error);
+        setNeedsImagePull(true);
+      });
+  }, [lab.container.image]);
+
   return (
     <div className="h-full w-full">
       <div
@@ -63,7 +104,14 @@ const Root = () => {
       </div>
 
       <div ref={sidebarRef} className="w-[256px] absolute left-0 top-4">
-        <ScenarioList lab={lab} drawerMode={drawerMode} onStartLab={startLab} />
+        <ScenarioList
+          lab={lab}
+          drawerMode={drawerMode}
+          needsImagePull={needsImagePull}
+          dockerEngineUnavailable={!dockerStatus.connected}
+          onStartLabClick={startLab}
+          onPullImageClick={pullImage}
+        />
       </div>
     </div>
   );
