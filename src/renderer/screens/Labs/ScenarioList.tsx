@@ -7,6 +7,7 @@ type ScenarioListProps = {
   drawerMode: boolean;
   needsImagePull: boolean;
   dockerEngineUnavailable: boolean;
+  disabled: boolean;
   onStartLabClick: () => void;
   onPullImageClick: () => void;
 };
@@ -16,6 +17,7 @@ const ScenarioList = ({
   drawerMode,
   needsImagePull,
   dockerEngineUnavailable,
+  disabled,
   onStartLabClick,
   onPullImageClick,
 }: ScenarioListProps) => {
@@ -45,7 +47,10 @@ const ScenarioList = ({
         {!drawerMode && needsImagePull && !dockerEngineUnavailable && (
           <button
             type="button"
-            className="my-4 rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center"
+            disabled={disabled}
+            className={`my-4 rounded border-2 ${
+              disabled ? 'border-gray-600 text-gray-600' : 'border-orange text-orange'
+            } text-sm py-1 px-4 no-underline text-center`}
             onClick={onPullImageClick}
           >
             PULL LAB IMAGE

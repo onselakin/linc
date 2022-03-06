@@ -21,6 +21,7 @@ const Root = () => {
   const [needsImagePull, setNeedsImagePull] = useState(false);
   const dockerStatus = useRecoilValue(dockerAtom);
   const updateStatus = useSetRecoilState<Status>(statusAtom);
+  const [imagePullInProgress, setImagePullInProgress] = useState(false);
 
   const lab = labs.all.find(l => l.id === labId)!;
 
@@ -55,6 +56,7 @@ const Root = () => {
   };
 
   const pullImage = () => {
+    setImagePullInProgress(true);
     const [image, tag] = lab.container.image.split(':');
     InvokeChannel('docker:pull', { image, tag }, ({ status, currentProgress, totalProgress }) => {
       updateStatus({
@@ -66,10 +68,12 @@ const Root = () => {
     })
       .then(() => {
         setNeedsImagePull(false);
+        setImagePullInProgress(false);
         updateStatus({ icon: 'check', message: '', currentProgress: 0, totalProgress: 0 });
       })
       .catch(error => {
         console.warn(error);
+        setImagePullInProgress(false);
         setNeedsImagePull(true);
         updateStatus({ icon: 'triangle-exclamation', message: '', currentProgress: 0, totalProgress: 0 });
       });
@@ -109,6 +113,7 @@ const Root = () => {
           drawerMode={drawerMode}
           needsImagePull={needsImagePull}
           dockerEngineUnavailable={!dockerStatus.connected}
+          disabled={imagePullInProgress}
           onStartLabClick={startLab}
           onPullImageClick={pullImage}
         />
