@@ -6,9 +6,5 @@ export default interface Scenario {
 
   description: string;
 
-  container: {
-    image: string;
-  };
-
   steps: Step[];
 }
