@@ -11,5 +11,8 @@ export interface Lab {
   difficulty: string;
   estimatedTime: string;
   coverImage: string;
+  container: {
+    image: string;
+  };
   scenarios: Scenario[];
 }
