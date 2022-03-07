@@ -53,24 +53,6 @@ const LabList = () => {
       {labs.all.map(l => (
         <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
       ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
-      {labs.all.map(l => (
-        <LabCard lab={l} key={l.id} onNavigate={() => setCurrentLabAndNavigate(l)} />
-      ))}
     </div>
   );
 };
