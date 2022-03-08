@@ -27,7 +27,7 @@ const Root = () => {
 
   const drawerRef = useOuterClick<HTMLDivElement>(() => {
     if (drawerMode) {
-      gsap.to(sidebarRef.current, { duration: 0.5, left: -256 });
+      gsap.to(sidebarRef.current, { duration: 0.5, left: -320 });
       // eslint-disable-next-line promise/catch-or-return
       gsap
         .to(drawerRef.current, { duration: 0.5, left: 0 })
@@ -42,12 +42,12 @@ const Root = () => {
     updateLabs({ ...labs, isInProgress: true });
     navigate(`/lab/${lab.id}/scenario/${lab.scenarios[0].id}`);
 
-    // gsap.to(sidebarRef.current, { duration: 0.5, left: -256 });
-    // // eslint-disable-next-line promise/catch-or-return
-    // gsap.to(outletRef.current, { duration: 0.5, left: 32 }).then(() => {
-    //   gsap.to(drawerRef.current, { duration: 0.5, left: 0 });
-    //   setDrawerMode(true);
-    // });
+    gsap.to(sidebarRef.current, { duration: 0.5, left: -320 });
+    // eslint-disable-next-line promise/catch-or-return
+    gsap.to(outletRef.current, { duration: 0.5, left: 32 }).then(() => {
+      gsap.to(drawerRef.current, { duration: 0.5, left: 0 });
+      setDrawerMode(true);
+    });
   };
 
   const openScenarioList = () => {
