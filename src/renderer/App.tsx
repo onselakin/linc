@@ -12,7 +12,6 @@ import LabInformation from './screens/Labs/LabInformation';
 import dockerAtom from './atoms/docker';
 import { useEffect } from 'react';
 import ScenarioInformation from './screens/Labs/ScenarioInformation';
-import RecoilNexus from 'recoil-nexus';
 import StepRunner from './screens/Labs/StepRunner';
 
 SetupRendererProcessListener();
