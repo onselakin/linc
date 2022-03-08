@@ -1,13 +1,16 @@
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import 'renderer/App.css';
 
 import { useRecoilValue } from 'recoil';
-import { currentLab } from 'renderer/atoms/labsAtom';
+import labsAtom from 'renderer/atoms/labsAtom';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import Term, { TerminalRef } from 'renderer/components/Terminal';
 import React, { useRef, useState } from 'react';
 import Markdown from 'renderer/components/Markdown';
+import StepNavigation from 'renderer/components/StepNavigation';
+import { useParams } from 'react-router-dom';
 
 interface Tab {
   title: string;
@@ -44,8 +47,17 @@ const TabButton = ({
 };
 
 const StepRunner = () => {
-  const lab = useRecoilValue(currentLab);
-  const scenario = lab.scenarios[0];
+  const { labId, scenarioId, stepId } = useParams();
+  console.log(labId, scenarioId, stepId);
+  const labs = useRecoilValue(labsAtom);
+  const currentLab = labs.all.find(l => l.id === labId)!;
+  const currentScenario = currentLab.scenarios.find(s => s.id === scenarioId)!;
+  const currentStep = currentScenario.steps.find(s => s.id === stepId)!;
+
+  const currentStepIdx = currentScenario.steps.indexOf(currentStep);
+  const previousStepEnabled = currentStepIdx > 0;
+  const nextStepEnabled = currentScenario.steps.length > currentStepIdx + 1;
+
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [tabs, setTabs] = useState<Tab[]>([{ title: 'bash' }]);
   const containerRef = React.createRef<Container>();
@@ -92,7 +104,29 @@ const StepRunner = () => {
     <Container className="h-full" afterResizing={afterResizing} ref={containerRef}>
       <Section minSize={500}>
         <div className="h-full overflow-scroll no-scrollbar pr-2">
-          <Markdown markdown={scenario.steps[0].content} />
+          <Markdown markdown={currentStep.content} />
+          <div className="my-4">
+            <StepNavigation
+              previousVisible={previousStepEnabled}
+              nextVisible={nextStepEnabled}
+              previousTitle={previousStepEnabled ? currentScenario.steps[currentStepIdx - 1].title : ''}
+              nextTitle={nextStepEnabled ? currentScenario.steps[currentStepIdx + 1].title : ''}
+              previous={
+                previousStepEnabled
+                  ? `/lab/${currentLab.id}/scenario/${currentScenario.id}/step/${
+                      currentScenario.steps[currentStepIdx - 1].id
+                    }`
+                  : ''
+              }
+              next={
+                nextStepEnabled
+                  ? `/lab/${currentLab.id}/scenario/${currentScenario.id}/step/${
+                      currentScenario.steps[currentStepIdx + 1].id
+                    }`
+                  : ''
+              }
+            />
+          </div>
         </div>
       </Section>
       <Bar className="bg-container" size={3} style={{ cursor: 'col-resize' }} />

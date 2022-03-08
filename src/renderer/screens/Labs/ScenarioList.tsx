@@ -71,9 +71,9 @@ const ScenarioList = ({
                 <i className="fa-solid fa-circle-check fa-sm self-end text-gray-400" />
               </div>
             </div>
-            <div className="text-xs text-gray-400">%15 complete</div>
-            <div className="w-full">
-              <div className="absolute bg-green h-0.5 w-20" />
+            <div className="text-xs text-gray-400 mt-1">%15 complete</div>
+            <div className="w-full mt-1">
+              <div className="absolute bg-green h-1 w-4" />
             </div>
             <div className="mt-3">
               {scenario.steps.map(step => (

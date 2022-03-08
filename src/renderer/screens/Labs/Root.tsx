@@ -39,7 +39,13 @@ const Root = () => {
   });
 
   const startLab = () => {
-    updateLabs({ ...labs, isInProgress: true });
+    // TODO: Add continuation support
+
+    updateLabs({
+      ...labs,
+      isInProgress: true,
+      currentScenarioId: lab.scenarios[0].id,
+    });
     navigate(`/lab/${lab.id}/scenario/${lab.scenarios[0].id}`);
 
     gsap.to(sidebarRef.current, { duration: 0.5, left: -320 });

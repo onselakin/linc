@@ -9,9 +9,11 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import SideBar from './components/App/SideBar';
 import Status from './components/App/Status';
 import LabInformation from './screens/Labs/LabInformation';
-import StepRunner from './screens/Labs/StepRunner';
 import dockerAtom from './atoms/docker';
 import { useEffect } from 'react';
+import ScenarioInformation from './screens/Labs/ScenarioInformation';
+import RecoilNexus from 'recoil-nexus';
+import StepRunner from './screens/Labs/StepRunner';
 
 SetupRendererProcessListener();
 
@@ -44,13 +46,15 @@ const Layout = () => {
 const App = () => {
   return (
     <RecoilRoot>
+      <RecoilNexus />
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route path="lab" element={<LabList />} />
             <Route path="lab/:labId" element={<Root />}>
               <Route path="info" element={<LabInformation />} />
-              <Route path="scenario/:scenarioId" element={<StepRunner />} />
+              <Route path="scenario/:scenarioId" element={<ScenarioInformation />} />
+              <Route path="scenario/:scenarioId/step/:stepId" element={<StepRunner />} />
             </Route>
           </Route>
         </Routes>

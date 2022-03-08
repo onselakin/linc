@@ -3,13 +3,10 @@ import { useRecoilValue } from 'recoil';
 import labsAtom from '../../atoms/labsAtom';
 import Markdown from 'renderer/components/Markdown';
 
-type LabInformationProps = {
-  showImageInformation: boolean;
-};
-
-const LabInformation = ({ showImageInformation }: LabInformationProps) => {
+const LabInformation = () => {
   const labs = useRecoilValue(labsAtom);
   const lab = labs.all.find(l => l.id === labs.currentLabId)!;
+  const showImageInformation = false;
 
   return (
     <div className="prose max-w-none">
