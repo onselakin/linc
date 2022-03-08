@@ -75,8 +75,19 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
       .readdirSync(scenariosPath, { withFileTypes: true })
       .filter(dir => dir.isDirectory())
       .map(dir => {
-        const scenarioFile = path.join(scenariosPath, dir.name, 'scenario.yaml');
+        const scenarioPath = path.join(scenariosPath, dir.name);
+        const scenarioFile = path.join(scenarioPath, 'scenario.yaml');
         const scenario = yaml.load(fs.readFileSync(scenarioFile, 'utf-8')) as Scenario;
+
+        const startContentFilePath = path.join(scenarioPath, 'start.md');
+        if (fs.existsSync(startContentFilePath)) {
+          scenario.startContent = fs.readFileSync(startContentFilePath, 'utf-8');
+        }
+        const finishContentFilePath = path.join(scenarioPath, 'finish.md');
+        if (fs.existsSync(finishContentFilePath)) {
+          scenario.finishContent = fs.readFileSync(finishContentFilePath, 'utf-8');
+        }
+
         const stepsPath = path.join(scenariosPath, dir.name, 'steps');
         if (!fs.existsSync(stepsPath)) {
           scenario.steps = [];
@@ -89,6 +100,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
           .map(stepDir => {
             const stepPath = path.join(scenariosPath, dir.name, 'steps', stepDir.name);
             const step = yaml.load(fs.readFileSync(path.join(stepPath, 'step.yaml'), 'utf-8')) as Step;
+
             const contentFilePath = path.join(stepPath, 'content.md');
             if (fs.existsSync(contentFilePath)) {
               step.content = fs.readFileSync(contentFilePath, 'utf-8');
