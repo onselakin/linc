@@ -6,7 +6,7 @@ interface Labs {
   isInProgress: boolean;
   currentLabId: string;
   currentScenarioId: string;
-  currentStepId: string;
+  currentStepIdx: number;
 }
 
 const labsAtom = atom<Labs>({
@@ -16,7 +16,7 @@ const labsAtom = atom<Labs>({
     isInProgress: false,
     currentLabId: '',
     currentScenarioId: '',
-    currentStepId: '',
+    currentStepIdx: 0,
   },
 });
 
@@ -27,5 +27,15 @@ const currentLab = selector({
     return labs.all.find(l => l.id === labs.currentLabId)!;
   },
 });
-export { currentLab };
+
+const currentScenario = selector({
+  key: 'currentScenario',
+  get: ({ get }) => {
+    const labs = get(labsAtom);
+    const lab = get(currentLab);
+    return lab.scenarios.find(s => s.id === labs.currentScenarioId)!;
+  },
+});
+
+export { currentLab, currentScenario };
 export default labsAtom;
