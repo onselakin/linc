@@ -39,14 +39,15 @@ const Root = () => {
   });
 
   const startLab = () => {
-    gsap.to(sidebarRef.current, { duration: 0.5, left: -256 });
-    // eslint-disable-next-line promise/catch-or-return
-    gsap.to(outletRef.current, { duration: 0.5, left: 32 }).then(() => {
-      updateLabs({ ...labs, isInProgress: true });
-      gsap.to(drawerRef.current, { duration: 0.5, left: 0 });
-      navigate(`/lab/${lab.id}/scenario/${lab.scenarios[0].id}`);
-      setDrawerMode(true);
-    });
+    updateLabs({ ...labs, isInProgress: true });
+    navigate(`/lab/${lab.id}/scenario/${lab.scenarios[0].id}`);
+
+    // gsap.to(sidebarRef.current, { duration: 0.5, left: -256 });
+    // // eslint-disable-next-line promise/catch-or-return
+    // gsap.to(outletRef.current, { duration: 0.5, left: 32 }).then(() => {
+    //   gsap.to(drawerRef.current, { duration: 0.5, left: 0 });
+    //   setDrawerMode(true);
+    // });
   };
 
   const openScenarioList = () => {
@@ -103,11 +104,11 @@ const Root = () => {
         </button>
       </div>
 
-      <div ref={outletRef} className="absolute left-[288px] top-4 right-4 bottom-0 overflow-scroll no-scrollbar pl-2">
+      <div ref={outletRef} className="absolute left-[352px] top-4 right-4 bottom-0 overflow-scroll no-scrollbar pl-2">
         <Outlet />
       </div>
 
-      <div ref={sidebarRef} className="w-[256px] absolute left-0 top-4">
+      <div ref={sidebarRef} className="w-[320px] absolute left-0 top-4">
         <ScenarioList
           lab={lab}
           drawerMode={drawerMode}
