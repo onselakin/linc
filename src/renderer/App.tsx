@@ -20,7 +20,6 @@ const Layout = () => {
   const setDockerStatus = useSetRecoilState(dockerAtom);
 
   useEffect(() => {
-    console.log('checking connection to docker');
     const pingDocker = async () => {
       await InvokeChannel('docker:connect', undefined, ({ success }) => {
         setDockerStatus({ connected: success });
@@ -45,7 +44,6 @@ const Layout = () => {
 const App = () => {
   return (
     <RecoilRoot>
-      <RecoilNexus />
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
