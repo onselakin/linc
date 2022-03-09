@@ -3,14 +3,12 @@
 
 import 'renderer/App.css';
 
-import { useRecoilValue } from 'recoil';
-import labsAtom from 'renderer/atoms/labsAtom';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import Term, { TerminalRef } from 'renderer/components/Terminal';
 import React, { useRef, useState } from 'react';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import { useParams } from 'react-router-dom';
+import { useLabFromParams, useScenarioFromParams, useStepFromParams } from 'renderer/hooks/useLabFromParams';
 
 interface Tab {
   title: string;
@@ -47,12 +45,9 @@ const TabButton = ({
 };
 
 const StepRunner = () => {
-  const { labId, scenarioId, stepId } = useParams();
-  console.log(labId, scenarioId, stepId);
-  const labs = useRecoilValue(labsAtom);
-  const currentLab = labs.all.find(l => l.id === labId)!;
-  const currentScenario = currentLab.scenarios.find(s => s.id === scenarioId)!;
-  const currentStep = currentScenario.steps.find(s => s.id === stepId)!;
+  const currentLab = useLabFromParams();
+  const currentScenario = useScenarioFromParams();
+  const currentStep = useStepFromParams();
 
   const currentStepIdx = currentScenario.steps.indexOf(currentStep);
   const previousStepEnabled = currentStepIdx > 0;
@@ -161,7 +156,5 @@ const StepRunner = () => {
     </Container>
   );
 };
-
-// <Term size={500} ref={term => addRef(term!)} />
 
 export default StepRunner;

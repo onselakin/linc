@@ -1,11 +1,9 @@
 import 'renderer/App.css';
-import { useRecoilValue } from 'recoil';
-import labsAtom from '../../atoms/labsAtom';
 import Markdown from 'renderer/components/Markdown';
+import { useLabFromParams } from 'renderer/hooks/useLabFromParams';
 
 const LabInformation = () => {
-  const labs = useRecoilValue(labsAtom);
-  const lab = labs.all.find(l => l.id === labs.currentLabId)!;
+  const lab = useLabFromParams();
   const showImageInformation = false;
 
   return (

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import 'renderer/App.css';
 import ScenarioList from './ScenarioList';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -10,9 +10,9 @@ import { InvokeChannel } from 'ipc';
 import dockerAtom from 'renderer/atoms/docker';
 import statusAtom from 'renderer/atoms/status';
 import { Status } from 'types/status';
+import { useLabFromParams } from 'renderer/hooks/useLabFromParams';
 
 const Root = () => {
-  const { labId } = useParams();
   const navigate = useNavigate();
   const [labs, updateLabs] = useRecoilState(labsAtom);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -23,7 +23,7 @@ const Root = () => {
   const updateStatus = useSetRecoilState<Status>(statusAtom);
   const [imagePullInProgress, setImagePullInProgress] = useState(false);
 
-  const lab = labs.all.find(l => l.id === labId)!;
+  const lab = useLabFromParams();
 
   const drawerRef = useOuterClick<HTMLDivElement>(() => {
     if (drawerMode) {
