@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import labsAtom from 'renderer/atoms/labsAtom';
+import labsAtom from 'renderer/atoms/labs';
 import { Lab } from 'types/lab';
 import Scenario from 'types/scenario';
 import Step from '../../types/step';

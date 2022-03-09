@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import 'renderer/App.css';
 import ScenarioList from './ScenarioList';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import labsAtom from '../../atoms/labsAtom';
+import labsAtom from '../../atoms/labs';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import useOuterClick from 'renderer/hooks/useOuterClick';

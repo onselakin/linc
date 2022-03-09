@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { InvokeChannel } from 'ipc';
 import LabCard from './LabCard';
-import labsAtom from '../../atoms/labsAtom';
+import labsAtom from '../../atoms/labs';
 import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';

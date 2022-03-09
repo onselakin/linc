@@ -9,8 +9,8 @@ interface Labs {
   currentStepIdx: number;
 }
 
-const labsAtom = atom<Labs>({
-  key: 'labsAtom',
+const labs = atom<Labs>({
+  key: 'labs',
   default: {
     all: [],
     isInProgress: false,
@@ -23,19 +23,19 @@ const labsAtom = atom<Labs>({
 const currentLab = selector({
   key: 'currentLab',
   get: ({ get }) => {
-    const labs = get(labsAtom);
-    return labs.all.find(l => l.id === labs.currentLabId)!;
+    const labsAtom = get(labs);
+    return labsAtom.all.find(l => l.id === labsAtom.currentLabId)!;
   },
 });
 
 const currentScenario = selector({
   key: 'currentScenario',
   get: ({ get }) => {
-    const labs = get(labsAtom);
+    const labsAtom = get(labs);
     const lab = get(currentLab);
-    return lab.scenarios.find(s => s.id === labs.currentScenarioId)!;
+    return lab.scenarios.find(s => s.id === labsAtom.currentScenarioId)!;
   },
 });
 
 export { currentLab, currentScenario };
-export default labsAtom;
+export default labs;
