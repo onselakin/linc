@@ -147,7 +147,7 @@ const StepRunner = () => {
           <div className="flex-1 bg-black">
             <div className="h-full w-full bg-black relative">
               {tabs.map((_, idx) => (
-                <Term size={500} ref={term => addRef(term)} visible={activeTabIndex === idx} />
+                <Term key={idx} size={500} ref={term => addRef(term)} visible={activeTabIndex === idx} />
               ))}
             </div>
           </div>
