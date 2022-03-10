@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Bridge } from 'ipc/ipc-handler';
-
-const { Docker } = require('node-docker-api');
+import Docker from 'dockerode';
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 const connect: Bridge<void, void, { success: boolean }> = async (_, channel) => {
   setInterval(async () => {
     try {
-      const reply = await docker.ping();
+      const reply = Buffer.from(await docker.ping()).toString();
       channel.notify({ success: reply === 'OK' });
     } catch (error) {
       channel.notify({ success: false });
@@ -18,14 +17,13 @@ const connect: Bridge<void, void, { success: boolean }> = async (_, channel) => 
 };
 
 const inspect: Bridge<{ imageName: string }, unknown> = async ({ imageName }, channel) => {
-  const images = await docker.image.list();
-  const image = images.find((i: any) => i.data.RepoTags.includes(imageName));
-  if (image === undefined) {
+  try {
+    const image = docker.getImage(imageName);
+    const inspectInfo = await image.inspect();
+    channel.reply(inspectInfo);
+  } catch (error) {
     channel.error(new Error('IMAGE_NOT_FOUND'));
-    return;
   }
-  const imageStatus = await image.status();
-  channel.reply(imageStatus.data);
 };
 
 const pull: Bridge<
@@ -33,30 +31,29 @@ const pull: Bridge<
   void,
   { status: string; currentProgress: number; totalProgress: number }
 > = async ({ image, tag }, channel) => {
-  const promiseStream = (stream: any) =>
-    new Promise((resolve, reject) => {
-      stream.on('data', (data: any) => {
-        try {
-          const statusData = data.toString();
-          const status = JSON.parse(statusData);
-          channel.notify({
-            status: status.status,
-            currentProgress: status.progressDetail ? status.progressDetail.current : 0,
-            totalProgress: status.progressDetail ? status.progressDetail.total : 0,
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      });
-      stream.on('end', resolve);
-      stream.on('error', reject);
-    });
+  docker.pull(`${image}:${tag}`, {}, (err: Error, stream: any) => {
+    if (err) {
+      console.log(err);
+      channel.error(err);
+    }
 
-  docker.image
-    .create({}, { fromImage: image, tag })
-    .then((stream: any) => promiseStream(stream))
-    .then(() => channel.reply())
-    .catch((e: Error) => channel.error(e));
+    docker.modem.followProgress(
+      stream,
+      error => {
+        if (error) {
+          channel.error(err);
+        }
+        channel.reply();
+      },
+      event => {
+        channel.notify({
+          status: event.status,
+          currentProgress: event.progressDetail ? event.progressDetail.current : 0,
+          totalProgress: event.progressDetail ? event.progressDetail.total : 0,
+        });
+      }
+    );
+  });
 };
 
 export default {
