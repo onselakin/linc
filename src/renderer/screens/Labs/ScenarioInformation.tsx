@@ -1,11 +1,11 @@
 import 'renderer/App.css';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import { useLabFromParams, useScenarioFromParams } from 'renderer/hooks/useLabFromParams';
+import { useCurrentLab, useCurrentScenario } from 'renderer/hooks/useCurrent';
 
 const ScenarioInformation = () => {
-  const lab = useLabFromParams();
-  const scenario = useScenarioFromParams();
+  const lab = useCurrentLab();
+  const scenario = useCurrentScenario();
 
   return (
     <>

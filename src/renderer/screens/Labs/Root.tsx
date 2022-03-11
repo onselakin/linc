@@ -10,7 +10,7 @@ import { InvokeChannel } from 'ipc';
 import dockerAtom from 'renderer/atoms/docker';
 import statusAtom from 'renderer/atoms/status';
 import { Status } from 'types/status';
-import { useLabFromParams } from 'renderer/hooks/useLabFromParams';
+import { useCurrentLab } from 'renderer/hooks/useCurrent';
 
 const Root = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const Root = () => {
   const updateStatus = useSetRecoilState<Status>(statusAtom);
   const [imagePullInProgress, setImagePullInProgress] = useState(false);
 
-  const lab = useLabFromParams();
+  const lab = useCurrentLab();
 
   const drawerRef = useOuterClick<HTMLDivElement>(() => {
     if (drawerMode) {
@@ -38,13 +38,12 @@ const Root = () => {
     }
   });
 
-  const startLab = () => {
+  const startLab = async () => {
     // TODO: Add continuation support
 
     updateLabs({
       ...labs,
       isInProgress: true,
-      currentScenarioId: lab.scenarios[0].id,
     });
     navigate(`/lab/${lab.id}/scenario/${lab.scenarios[0].id}`);
 
@@ -65,7 +64,7 @@ const Root = () => {
   const pullImage = () => {
     setImagePullInProgress(true);
     const [image, tag] = lab.container.image.split(':');
-    InvokeChannel('docker:pull', { image, tag }, ({ status, currentProgress, totalProgress }) => {
+    InvokeChannel('docker:pull', { imageName: image, tag }, ({ status, currentProgress, totalProgress }) => {
       updateStatus({
         icon: 'download',
         message: status,

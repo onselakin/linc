@@ -1,9 +1,9 @@
 import 'renderer/App.css';
 import Markdown from 'renderer/components/Markdown';
-import { useLabFromParams } from 'renderer/hooks/useLabFromParams';
+import { useCurrentLab } from 'renderer/hooks/useCurrent';
 
 const LabInformation = () => {
-  const lab = useLabFromParams();
+  const lab = useCurrentLab();
   const showImageInformation = false;
 
   return (

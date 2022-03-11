@@ -5,13 +5,16 @@ import 'renderer/App.css';
 
 import { Container, Section, Bar } from 'react-simple-resizer';
 import Term, { TerminalRef } from 'renderer/components/Terminal';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import { useLabFromParams, useScenarioFromParams, useStepFromParams } from 'renderer/hooks/useLabFromParams';
+import { useCurrentLab, useCurrentScenario, useCurrentStep } from 'renderer/hooks/useCurrent';
+import { InvokeChannel } from '../../../ipc';
+import randomId from '../../../utils/randomId';
 
 interface Tab {
   title: string;
+  terminalId: string;
 }
 
 const TabButton = ({
@@ -45,18 +48,20 @@ const TabButton = ({
 };
 
 const StepRunner = () => {
-  const currentLab = useLabFromParams();
-  const currentScenario = useScenarioFromParams();
-  const currentStep = useStepFromParams();
+  const currentLab = useCurrentLab();
+  const currentScenario = useCurrentScenario();
+  const currentStep = useCurrentStep();
 
   const currentStepIdx = currentScenario.steps.indexOf(currentStep);
   const previousStepEnabled = currentStepIdx > 0;
   const nextStepEnabled = currentScenario.steps.length > currentStepIdx + 1;
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [tabs, setTabs] = useState<Tab[]>([{ title: 'bash' }]);
+  const [tabs, setTabs] = useState<Tab[]>([]);
   const containerRef = React.createRef<Container>();
   const terminalRefs = useRef<TerminalRef[]>([]);
+
+  const [containerId, setContainerId] = useState('');
 
   const afterResizing = () => {
     terminalRefs.current.forEach(t => t.fit());
@@ -64,8 +69,8 @@ const StepRunner = () => {
 
   const addTab = () => {
     terminalRefs.current = [];
-    const title = Math.random().toString(36).slice(-5);
-    const termTabs = [...tabs, { title }];
+    const title = randomId();
+    const termTabs = [...tabs, { title, terminalId: title }];
     setTabs(termTabs);
     setActiveTabIndex(termTabs.length - 1);
   };
@@ -94,6 +99,17 @@ const StepRunner = () => {
     if (ref !== null) terminalRefs.current.push(ref);
     return ref;
   };
+
+  useEffect(() => {
+    InvokeChannel('docker:create', { imageName: currentLab.container.image })
+      .then(result => {
+        setContainerId(result.containerId);
+        console.log(result.containerId);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, [currentLab.container.image]);
 
   return (
     <Container className="h-full" afterResizing={afterResizing} ref={containerRef}>
@@ -146,8 +162,15 @@ const StepRunner = () => {
           </div>
           <div className="flex-1 bg-black">
             <div className="h-full w-full bg-black relative">
-              {tabs.map((_, idx) => (
-                <Term key={idx} size={500} ref={term => addRef(term)} visible={activeTabIndex === idx} />
+              {tabs.map((tab, idx) => (
+                <Term
+                  key={idx}
+                  containerId={containerId}
+                  terminalId={tab.terminalId}
+                  size={500}
+                  ref={term => addRef(term)}
+                  visible={activeTabIndex === idx}
+                />
               ))}
             </div>
           </div>

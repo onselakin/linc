@@ -18,7 +18,6 @@ const LabList = () => {
   const [labs, updateLabs] = useRecoilState(labsAtom);
 
   const setCurrentLabAndNavigate = (lab: Lab) => {
-    updateLabs({ ...labs, currentLabId: lab.id });
     navigate(`/lab/${lab.id}/info`);
   };
 
