@@ -6,6 +6,8 @@ import { CreateChannel } from '../../ipc/ipc-emitter';
 interface TerminalProps {
   size: number;
   visible: boolean;
+  containerId: string;
+  terminalId: string;
 }
 
 export interface TerminalRef {
@@ -14,11 +16,10 @@ export interface TerminalRef {
 }
 
 const createTerminal = () => {
-  console.log('Creating a terminal');
   return new Terminal({ cols: 80, rows: 25, fontFamily: 'Ubuntu Mono', fontSize: 16 });
 };
 
-const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible }, ref) => {
+const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerId, terminalId }, ref) => {
   const exitCallRef = useRef<() => void>();
   const fit = useRef<FitAddon>(new FitAddon());
   const xtermContainer = useRef<HTMLDivElement>(null);
@@ -34,26 +35,24 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible }, ref) => 
 
   useEffect(() => {
     if (xtermContainer.current !== null) {
-      const terminalId = Math.random().toString(36).slice(-5);
       const term = createTerminal();
       term.loadAddon(fit.current);
       term.open(xtermContainer.current);
       fit.current.fit();
 
       const channel = CreateChannel('terminal-execute');
-      // eslint-disable-next-line @typescript-eslint/no-shadow
       channel.onReply = ({ output }) => {
         term.write(output);
       };
-      channel.send({ terminalId, command: '' });
+      channel.send({ containerId, terminalId, command: '' });
       term.onData(data => {
-        channel.send({ terminalId, command: data });
+        channel.send({ containerId, terminalId, command: data });
       });
       exitCallRef.current = () => {
-        channel.send({ terminalId, command: 'exit' });
+        channel.send({ containerId, terminalId, command: 'exit' });
       };
     }
-  }, []);
+  }, [containerId, terminalId]);
 
   useEffect(() => {
     fit.current.fit();
