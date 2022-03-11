@@ -1,12 +1,10 @@
-import { Lab } from 'types/lab';
+import Lab from 'types/lab';
 import { atom } from 'recoil';
 
 interface Labs {
   all: Lab[];
   isInProgress: boolean;
-  currentLabId: string;
-  currentScenarioId: string;
-  currentStepIdx: number;
+  containerId: string;
 }
 
 const labs = atom<Labs>({
@@ -14,9 +12,7 @@ const labs = atom<Labs>({
   default: {
     all: [],
     isInProgress: false,
-    currentLabId: '',
-    currentScenarioId: '',
-    currentStepIdx: 0,
+    containerId: '',
   },
 });
 
