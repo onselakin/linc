@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-shadow */
 
 import { Bridge } from 'ipc/ipc-handler';
 import Docker from 'dockerode';
@@ -27,18 +28,17 @@ const inspect: Bridge<{ imageName: string }, unknown> = async ({ imageName }, ch
 };
 
 const pull: Bridge<
-  { image: string; tag: string },
+  { imageName: string },
   void,
   { status: string; currentProgress: number; totalProgress: number }
-> = async ({ image, tag }, channel) => {
-  docker.pull(`${image}:${tag}`, {}, (err: Error, stream: any) => {
+> = async ({ imageName }, channel) => {
+  docker.pull(imageName, {}, (err: Error, containerStream: any) => {
     if (err) {
-      console.log(err);
       channel.error(err);
     }
 
     docker.modem.followProgress(
-      stream,
+      containerStream,
       error => {
         if (error) {
           channel.error(err);
@@ -56,8 +56,46 @@ const pull: Bridge<
   });
 };
 
+const create: Bridge<{ imageName: string }, { containerId: string }> = async ({ imageName }, channel) => {
+  const options = {
+    Hostname: '',
+    User: '',
+    AttachStdin: true,
+    AttachStdout: true,
+    AttachStderr: true,
+    Tty: true,
+    OpenStdin: true,
+    StdinOnce: false,
+    Env: [],
+    Cmd: ['bash'],
+    Dns: ['8.8.8.8', '8.8.4.4'],
+    Image: imageName,
+    Volumes: {},
+    VolumesFrom: [],
+  };
+  const container = await docker.createContainer(options);
+
+  container.start(err => {
+    if (err) {
+      channel.error(err);
+      return;
+    }
+    container.wait(err => {
+      if (err) {
+        channel.error(err);
+        return;
+      }
+      // TODO: Exit container
+      console.log('exit container');
+    });
+  });
+
+  channel.reply({ containerId: container.id });
+};
+
 export default {
   'docker:connect': connect,
   'docker:inspect': inspect,
   'docker:pull': pull,
+  'docker:create': create,
 };
