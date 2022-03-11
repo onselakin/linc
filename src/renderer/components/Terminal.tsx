@@ -13,6 +13,7 @@ interface TerminalProps {
 export interface TerminalRef {
   exit: () => void;
   fit: () => void;
+  execute: (code: string) => void;
 }
 
 const createTerminal = () => {
@@ -22,6 +23,7 @@ const createTerminal = () => {
 const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerId, terminalId }, ref) => {
   const exitCallRef = useRef<() => void>();
   const fit = useRef<FitAddon>(new FitAddon());
+  const terminal = useRef<Terminal>();
   const xtermContainer = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -30,12 +32,17 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
     },
     fit() {
       fit.current.fit();
+      console.log(terminal.current?.cols, terminal.current?.rows);
+    },
+    execute(code: string) {
+      terminal.current?.write(code);
     },
   }));
 
   useEffect(() => {
     if (xtermContainer.current !== null) {
       const term = createTerminal();
+      terminal.current = term;
       term.loadAddon(fit.current);
       term.open(xtermContainer.current);
       fit.current.fit();

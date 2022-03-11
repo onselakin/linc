@@ -19,11 +19,13 @@ interface CodeBlockConfig {
 
 interface MarkdownProps {
   markdown: string;
+  onExecute?: (command: string) => void;
 }
 
 interface CodeBlockProps {
   config: CodeBlockConfig;
   code: string;
+  onExecute?: (command: string) => void;
 }
 
 const Button = ({ text, click }: { text: string; click: () => void }) => {
@@ -42,7 +44,7 @@ const InlineCode = ({ code }: CodeBlockProps) => {
   return <span className="rounded bg-[#1F2937] text-gray-300 p-2">{code}</span>;
 };
 
-const CodeBlock = ({ code, config }: CodeBlockProps) => {
+const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
   const [solutionHidden, setSolutionHidden] = useState(config.hint !== undefined);
   const [hintVisible, setHintVisible] = useState(false);
 
@@ -58,7 +60,14 @@ const CodeBlock = ({ code, config }: CodeBlockProps) => {
         <div className="flex max-w-96 items-center justify-end">
           {solutionHidden && <Button text="Show Solution" click={() => setSolutionHidden(false)} />}
           {config.clipboard && !solutionHidden && <Button text="Copy" click={() => {}} />}
-          {config.executable && !solutionHidden && <Button text="Execute" click={() => {}} />}
+          {config.executable && !solutionHidden && (
+            <Button
+              text="Execute"
+              click={() => {
+                if (onExecute) onExecute(code);
+              }}
+            />
+          )}
         </div>
       </div>
       <div className="w-full relative">
@@ -79,7 +88,7 @@ const CodeBlock = ({ code, config }: CodeBlockProps) => {
   );
 };
 
-const Markdown = ({ markdown }: MarkdownProps) => {
+const Markdown = ({ markdown, onExecute }: MarkdownProps) => {
   return (
     <ReactMarkdown
       className="prose max-w-none"
@@ -110,7 +119,11 @@ const Markdown = ({ markdown }: MarkdownProps) => {
           if (inline) {
             return <InlineCode code={finalContents} config={config} />;
           }
-          return match ? <CodeBlock code={finalContents} config={config} /> : <div>[Unrecognized Code Block]</div>;
+          return match ? (
+            <CodeBlock code={finalContents} config={config} onExecute={onExecute} />
+          ) : (
+            <div>[Unrecognized Code Block]</div>
+          );
         },
       }}
     >

@@ -1,5 +1,5 @@
 import 'renderer/App.css';
-import { Lab } from 'types/lab';
+import Lab from 'types/lab';
 
 type LabCardProps = {
   lab: Lab;
@@ -12,15 +12,15 @@ const LabCard = ({ lab, onNavigate }: LabCardProps) => {
       <div className="h-36 overflow-hidden grid place-content-center">
         <img src={lab.coverImage} alt="" />
       </div>
-      <div className="flex flex-row mt-4 ml-2 gap-2">
-        {lab.tags.split(',').map(tag => (
-          <div className="rounded rounded-md bg-[#09E294] px-2 text-sm" key={tag}>
-            {tag}
-          </div>
-        ))}
-      </div>
-      <div className="mt-3 mx-2">
-        <h3 className="text-white my-4 text-xl">{lab.title}</h3>
+      <div className="mt-1 mx-4">
+        <h3 className="text-white my-2 text-xl">{lab.title}</h3>
+        <div className="flex flex-row my-4 gap-2">
+          {lab.tags.split(',').map(tag => (
+            <div className="rounded rounded-md bg-[#09E294] px-2 text-sm" key={tag}>
+              {tag}
+            </div>
+          ))}
+        </div>
         <p className="text-sm">{lab.description}</p>
       </div>
       <div className="self-end mx-2 mb-4 flex flex-col flex-1">

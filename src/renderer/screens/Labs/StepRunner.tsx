@@ -13,7 +13,6 @@ import { InvokeChannel } from '../../../ipc';
 import randomId from '../../../utils/randomId';
 
 interface Tab {
-  title: string;
   terminalId: string;
 }
 
@@ -69,8 +68,7 @@ const StepRunner = () => {
 
   const addTab = () => {
     terminalRefs.current = [];
-    const title = randomId();
-    const termTabs = [...tabs, { title, terminalId: title }];
+    const termTabs = [...tabs, { terminalId: randomId() }];
     setTabs(termTabs);
     setActiveTabIndex(termTabs.length - 1);
   };
@@ -104,18 +102,22 @@ const StepRunner = () => {
     InvokeChannel('docker:create', { imageName: currentLab.container.image })
       .then(result => {
         setContainerId(result.containerId);
-        console.log(result.containerId);
+        addTab();
       })
       .catch(error => {
         console.log(error);
       });
   }, [currentLab.container.image]);
 
+  const executeCode = (code: string) => {
+    terminalRefs.current[activeTabIndex].execute(code);
+  };
+
   return (
     <Container className="h-full" afterResizing={afterResizing} ref={containerRef}>
       <Section minSize={500}>
         <div className="h-full overflow-scroll no-scrollbar pr-2">
-          <Markdown markdown={currentStep.content} />
+          <Markdown markdown={currentStep.content} onExecute={executeCode} />
           <div className="my-4">
             <StepNavigation
               previousVisible={previousStepEnabled}
@@ -148,7 +150,7 @@ const StepRunner = () => {
               {tabs.map((tab, idx) => (
                 <TabButton
                   idx={idx}
-                  title={tab.title}
+                  title={tab.terminalId}
                   key={idx}
                   active={activeTabIndex === idx}
                   onActivateClick={() => setActiveTabIndex(idx)}

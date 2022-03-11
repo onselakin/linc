@@ -1,6 +1,6 @@
 import 'renderer/App.css';
 import { Link } from 'react-router-dom';
-import { Lab } from '../../../types/lab';
+import Lab from '../../../types/lab';
 
 type ScenarioListProps = {
   lab: Lab;
