@@ -3,6 +3,7 @@
 
 import { Channel } from './ipc-handler';
 import type actions from '../bridges';
+import randomId from '../utils/randomId';
 
 let pendingInvocations: { [key: string]: any } = {};
 
@@ -42,9 +43,7 @@ const InvokeChannel = <
   payload?: Payload,
   notifier?: (payload: Parameters<typeof actions[ChannelName]>[1] extends Channel<any, infer T> ? T : null) => void
 ): Promise<Parameters<typeof actions[ChannelName]>[1] extends Channel<infer T, any> ? T : null> => {
-  const invocationId = Math.random().toString(36).slice(-5);
-  console.log(`${channelName} invoked with id: ${invocationId}`);
-
+  const invocationId = randomId();
   const deferred = new Deferred<any>();
   pendingInvocations[invocationId] = { deferred, channelName, payload, notifier };
   window.electron.ipc.send('asyncRequest', invocationId, channelName, payload);
@@ -58,7 +57,7 @@ const CreateChannel = <
 >(
   channelName: ChannelName
 ): IpcChannel<RequestPayload, ResponsePayload> => {
-  const invocationId = Math.random().toString(36).slice(-5);
+  const invocationId = randomId();
   const ipcChannel = new IpcChannel<RequestPayload, ResponsePayload>(invocationId, channelName);
   pendingInvocations[invocationId] = { ipcChannel };
   return ipcChannel;
