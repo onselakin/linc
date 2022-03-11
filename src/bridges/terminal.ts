@@ -1,14 +1,12 @@
 import { Bridge } from 'ipc/ipc-handler';
 import { spawn, IPty } from 'node-pty';
-import { platform } from 'os';
 
-const shell = platform() === 'win32' ? 'powershell.exe' : 'bash';
 const processes: { [key: string]: IPty } = {};
 
-const executeTerminalCommand: Bridge<{ terminalId: string; command: string }, { output: string }> = async (
-  { terminalId, command },
-  channel
-) => {
+const executeTerminalCommand: Bridge<
+  { containerId: string; terminalId: string; command: string },
+  { output: string }
+> = async ({ containerId, terminalId, command }, channel) => {
   try {
     let pty = processes[terminalId];
 
@@ -19,17 +17,19 @@ const executeTerminalCommand: Bridge<{ terminalId: string; command: string }, { 
     }
 
     if (!pty) {
-      pty = spawn(shell, [], {
+      const shellCmd = `bash`;
+      pty = spawn(shellCmd, ['-c', `docker exec -it ${containerId} /bin/bash`], {
         name: 'xterm-color',
         cols: 80,
         rows: 30,
         cwd: process.env.HOME,
       });
+      processes[terminalId] = pty;
+      // pty.write(`docker exec -it ${containerId} /bin/bash\r`);
       pty.onData(output => {
         channel.reply({ output });
       });
     }
-    processes[terminalId] = pty;
     pty.write(command);
   } catch (error) {
     channel.error(error);
