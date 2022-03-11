@@ -1,29 +1,29 @@
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import labsAtom from 'renderer/atoms/labs';
-import { Lab } from 'types/lab';
+import Lab from 'types/lab';
 import Scenario from 'types/scenario';
-import Step from '../../types/step';
+import Step from 'types/step';
 
-const useLabFromParams = (): Lab => {
+const useCurrentLab = (): Lab => {
   const { labId } = useParams();
   const labs = useRecoilValue(labsAtom);
   const lab = labs.all.find(l => l.id === labId)!;
   return lab;
 };
 
-const useScenarioFromParams = (): Scenario => {
+const useCurrentScenario = (): Scenario => {
   const { scenarioId } = useParams();
-  const lab = useLabFromParams();
+  const lab = useCurrentLab();
   const scenario = lab.scenarios.find(s => s.id === scenarioId)!;
   return scenario;
 };
 
-const useStepFromParams = (): Step => {
+const useCurrentStep = (): Step => {
   const { stepId } = useParams();
-  const scenario = useScenarioFromParams();
+  const scenario = useCurrentScenario();
   const step = scenario.steps.find(s => s.id === stepId)!;
   return step;
 };
 
-export { useLabFromParams, useScenarioFromParams, useStepFromParams };
+export { useCurrentLab, useCurrentScenario, useCurrentStep };
