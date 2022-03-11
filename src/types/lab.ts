@@ -1,6 +1,6 @@
 import Scenario from './scenario';
 
-export interface Lab {
+export default interface Lab {
   id: string;
   version: string;
   tags: string;
