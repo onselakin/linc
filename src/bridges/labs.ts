@@ -1,7 +1,7 @@
 import git, { GitProgressEvent } from 'isomorphic-git';
 
 import { Bridge } from 'ipc/ipc-handler';
-import { Lab } from 'types/lab';
+import Lab from 'types/lab';
 import { app } from 'electron';
 import fs from 'fs';
 import http from 'isomorphic-git/http/node';
@@ -17,7 +17,6 @@ const cloneLab: Bridge<
   { name: string; success: boolean },
   { repo: string; phase: string; loaded: number; total: number }
 > = async (payload, channel) => {
-  console.log(`Cloning repo: ${payload}`);
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
   const match = regex.exec(payload.url);
   if (match != null) {
@@ -38,7 +37,6 @@ const cloneLab: Bridge<
           password: payload.password,
         }),
         onProgress: (progress: GitProgressEvent) => {
-          console.log(`${repoName}: ${progress.loaded}/${progress.total} `);
           channel.notify({ ...progress, repo: repoName });
         },
       };
@@ -49,7 +47,6 @@ const cloneLab: Bridge<
       }
       channel.reply({ name: repoName, success: true });
     } catch (error) {
-      console.log(`Error cloning repo: ${repoName}`);
       channel.reply({ name: repoName, success: false });
     }
   }
