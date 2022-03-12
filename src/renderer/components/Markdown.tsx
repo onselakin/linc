@@ -1,3 +1,5 @@
+/* eslint-disable react/require-default-props */
+
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Highlight from 'react-highlight';
@@ -8,10 +10,11 @@ import checkIcon from '../../../assets/check.png';
 const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
 
 interface CodeBlockConfig {
-  defined: boolean;
+  specified: boolean;
   title?: string;
   language?: string;
   executable?: boolean;
+  targetTerminal?: string;
   editable?: boolean;
   clipboard?: boolean;
   hint?: string;
@@ -19,13 +22,13 @@ interface CodeBlockConfig {
 
 interface MarkdownProps {
   markdown: string;
-  onExecute?: (command: string) => void;
+  onExecute?: (terminalId: string, command: string) => void;
 }
 
 interface CodeBlockProps {
   config: CodeBlockConfig;
   code: string;
-  onExecute?: (command: string) => void;
+  onExecute?: (terminalId: string, command: string) => void;
 }
 
 const Button = ({ text, click }: { text: string; click: () => void }) => {
@@ -40,15 +43,16 @@ const Button = ({ text, click }: { text: string; click: () => void }) => {
   );
 };
 
-const InlineCode = ({ code }: CodeBlockProps) => {
+const InlineCode = ({ code }: { code: string }) => {
   return <span className="rounded bg-[#1F2937] text-gray-300 p-2">{code}</span>;
 };
 
 const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
+  console.table(config);
   const [solutionHidden, setSolutionHidden] = useState(config.hint !== undefined);
   const [hintVisible, setHintVisible] = useState(false);
 
-  if (!config.defined) {
+  if (!config.specified) {
     return <Highlight className={`${config.language} rounded`}>{code}</Highlight>;
   }
   return (
@@ -64,7 +68,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
             <Button
               text="Execute"
               click={() => {
-                if (onExecute) onExecute(code);
+                if (onExecute) onExecute(code, config.targetTerminal ?? '');
               }}
             />
           )}
@@ -101,12 +105,12 @@ const Markdown = ({ markdown, onExecute }: MarkdownProps) => {
           // Check for config
           let config: CodeBlockConfig = {
             language: '',
-            defined: false,
+            specified: false,
           };
           const dm = configRegex.exec(contents);
           if (dm !== null) {
             config = yaml.load(dm[1]) as CodeBlockConfig;
-            config.defined = true;
+            config.specified = true;
           }
 
           // Remove config from the final output
@@ -117,7 +121,7 @@ const Markdown = ({ markdown, onExecute }: MarkdownProps) => {
             config.language = match[1];
           }
           if (inline) {
-            return <InlineCode code={finalContents} config={config} />;
+            return <InlineCode code={finalContents} />;
           }
           return match ? (
             <CodeBlock code={finalContents} config={config} onExecute={onExecute} />

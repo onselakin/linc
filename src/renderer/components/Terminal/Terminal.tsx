@@ -1,7 +1,7 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { CreateChannel } from '../../../ipc/ipc-emitter';
+import { CreateChannel } from 'ipc/ipc-emitter';
 
 interface TerminalProps {
   size: number;
@@ -22,6 +22,7 @@ const createTerminal = () => {
 
 const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerId, terminalId }, ref) => {
   const exitCallRef = useRef<() => void>();
+  const executeCallRef = useRef<(command: string) => void>();
   const fit = useRef<FitAddon>(new FitAddon());
   const terminal = useRef<Terminal>();
   const xtermContainer = useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
       fit.current.fit();
     },
     execute(command: string) {
-      terminal.current?.write(`${command}\r`);
+      executeCallRef.current?.(command);
     },
   }));
 
@@ -56,6 +57,9 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
       });
       exitCallRef.current = () => {
         channel.send({ containerId, terminalId, command: 'exit' });
+      };
+      executeCallRef.current = (command: string) => {
+        channel.send({ containerId, terminalId, command });
       };
     }
   }, [containerId, terminalId]);

@@ -4,12 +4,12 @@
 import 'renderer/App.css';
 
 import { Container, Section, Bar } from 'react-simple-resizer';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
 import { useCurrentLab, useCurrentScenario, useCurrentStep } from 'renderer/hooks/useCurrent';
 import { InvokeChannel } from 'ipc';
-import TerminalTabs from 'renderer/components/Terminal/TerminalTabs';
+import TerminalTabs, { TerminalTabsRef } from 'renderer/components/Terminal/TerminalTabs';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import statusAtom from '../../atoms/status';
 
@@ -22,7 +22,7 @@ const StepRunner = () => {
   const previousStepEnabled = currentStepIdx > 0;
   const nextStepEnabled = currentScenario.steps.length > currentStepIdx + 1;
 
-  const resizableContainerRef = React.createRef<Container>();
+  const terminalTabsRef = useRef<TerminalTabsRef>(null);
 
   const [containerId, setContainerId] = useState('');
 
@@ -32,7 +32,6 @@ const StepRunner = () => {
   const afterResizing = () => {};
 
   useEffect(() => {
-    console.log('running');
     updateStatus(() => ({ icon: 'rocket', message: 'Launching container' }));
     InvokeChannel('docker:create', { imageName: currentLab.container.image })
       .then(result => {
@@ -44,12 +43,12 @@ const StepRunner = () => {
       });
   }, [currentLab.container.image, resetStatus, updateStatus]);
 
-  const executeCode = (code: string) => {
-    console.log(code);
+  const executeCode = (code: string, targetTerminal?: string) => {
+    if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);
   };
 
   return (
-    <Container className="h-full" afterResizing={afterResizing} ref={resizableContainerRef}>
+    <Container className="h-full" afterResizing={afterResizing}>
       <Section minSize={500}>
         <div className="h-full overflow-scroll no-scrollbar pr-2">
           <Markdown markdown={currentStep.content} onExecute={executeCode} />
@@ -81,6 +80,7 @@ const StepRunner = () => {
       <Section minSize={250}>
         {containerId !== '' && (
           <TerminalTabs
+            ref={terminalTabsRef}
             containerId={containerId}
             initialTabs={currentStep.layout.defaultTerminals}
             allowNewTerminals={false}
