@@ -7,21 +7,27 @@ import TabButton from './TabButton';
 import randomId from 'utils/randomId';
 
 interface Tab {
-  terminalId: string;
+  id: string;
+  title: string;
+  allowClose: boolean;
+  cwd: string;
 }
 
 interface TerminalTabsProps {
   containerId: string;
+  allowNewTerminals: boolean;
+  initialTabs: Tab[];
 }
 
-const TerminalTabs = ({ containerId }: TerminalTabsProps) => {
+const TerminalTabs = ({ containerId, initialTabs, allowNewTerminals }: TerminalTabsProps) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [tabs, setTabs] = useState<Tab[]>([]);
+  const [tabs, setTabs] = useState<Tab[]>(initialTabs);
   const terminalRefs = useRef<TerminalRef[]>([]);
 
   const addTab = () => {
     terminalRefs.current = [];
-    const termTabs = [...tabs, { terminalId: randomId() }];
+    const tabId = randomId();
+    const termTabs = [...tabs, { id: tabId, title: tabId, allowClose: true, cwd: '/root' }];
     setTabs(termTabs);
     setActiveTabIndex(termTabs.length - 1);
   };
@@ -58,17 +64,20 @@ const TerminalTabs = ({ containerId }: TerminalTabsProps) => {
           {tabs.map((tab, idx) => (
             <TabButton
               idx={idx}
-              title={tab.terminalId}
+              title={tab.title ?? tab.id}
               key={idx}
               active={activeTabIndex === idx}
+              allowClose={tab.allowClose}
               onActivateClick={() => setActiveTabIndex(idx)}
               onCloseClick={() => closeTab(idx)}
             />
           ))}
         </div>
-        <button type="button" className="text-green" onClick={addTab}>
-          <i className="fa-solid fa-square-plus fa-xl" />
-        </button>
+        {allowNewTerminals && (
+          <button type="button" className="text-green" onClick={addTab}>
+            <i className="fa-solid fa-square-plus fa-xl" />
+          </button>
+        )}
       </div>
       <div className="flex-1 bg-black">
         <div className="h-full w-full bg-black relative">
@@ -76,7 +85,7 @@ const TerminalTabs = ({ containerId }: TerminalTabsProps) => {
             <Term
               key={idx}
               containerId={containerId}
-              terminalId={tab.terminalId}
+              terminalId={tab.id}
               size={500}
               ref={term => addRef(term)}
               visible={activeTabIndex === idx}

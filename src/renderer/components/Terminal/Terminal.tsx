@@ -13,7 +13,7 @@ interface TerminalProps {
 export interface TerminalRef {
   exit: () => void;
   fit: () => void;
-  execute: (code: string) => void;
+  execute: (command: string) => void;
 }
 
 const createTerminal = () => {
@@ -33,8 +33,8 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
     fit() {
       fit.current.fit();
     },
-    execute(code: string) {
-      terminal.current?.write(code);
+    execute(command: string) {
+      terminal.current?.write(`${command}\r`);
     },
   }));
 

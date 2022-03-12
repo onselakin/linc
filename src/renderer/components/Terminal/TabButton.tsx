@@ -2,12 +2,14 @@ const TabButton = ({
   idx,
   title,
   active,
+  allowClose,
   onActivateClick,
   onCloseClick,
 }: {
   idx: number;
   title: string;
   active: boolean;
+  allowClose: boolean;
   onActivateClick: () => void;
   onCloseClick: (idx: number) => void;
 }) => {
@@ -21,9 +23,11 @@ const TabButton = ({
         <i className="fa-solid fa-terminal fa-sm" />
         <p>{title}</p>
       </button>
-      <button type="button" className="ml-3 flex flex-row items-center" onClick={() => onCloseClick(idx)}>
-        <i className="fa-solid fa-xmark hover:fa-lock fa-sm" />
-      </button>
+      {allowClose && (
+        <button type="button" className="ml-3 flex flex-row items-center" onClick={() => onCloseClick(idx)}>
+          <i className="fa-solid fa-xmark hover:fa-lock fa-sm" />
+        </button>
+      )}
     </div>
   );
 };

@@ -10,6 +10,8 @@ import StepNavigation from 'renderer/components/StepNavigation';
 import { useCurrentLab, useCurrentScenario, useCurrentStep } from 'renderer/hooks/useCurrent';
 import { InvokeChannel } from 'ipc';
 import TerminalTabs from 'renderer/components/Terminal/TerminalTabs';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import statusAtom from '../../atoms/status';
 
 const StepRunner = () => {
   const currentLab = useCurrentLab();
@@ -24,19 +26,27 @@ const StepRunner = () => {
 
   const [containerId, setContainerId] = useState('');
 
+  const updateStatus = useSetRecoilState(statusAtom);
+  const resetStatus = useResetRecoilState(statusAtom);
+
   const afterResizing = () => {};
 
   useEffect(() => {
+    console.log('running');
+    updateStatus(() => ({ icon: 'rocket', message: 'Launching container' }));
     InvokeChannel('docker:create', { imageName: currentLab.container.image })
       .then(result => {
         setContainerId(result.containerId);
+        resetStatus();
       })
       .catch(error => {
-        console.log(error);
+        updateStatus(() => ({ icon: 'exclamation', message: `Error launching container: ${error}` }));
       });
-  }, [currentLab.container.image]);
+  }, [currentLab.container.image, resetStatus, updateStatus]);
 
-  const executeCode = (code: string) => {};
+  const executeCode = (code: string) => {
+    console.log(code);
+  };
 
   return (
     <Container className="h-full" afterResizing={afterResizing} ref={resizableContainerRef}>
@@ -69,7 +79,13 @@ const StepRunner = () => {
       </Section>
       <Bar className="bg-container" size={3} style={{ cursor: 'col-resize' }} />
       <Section minSize={250}>
-        <TerminalTabs containerId={containerId} />
+        {containerId !== '' && (
+          <TerminalTabs
+            containerId={containerId}
+            initialTabs={currentStep.layout.defaultTerminals}
+            allowNewTerminals={false}
+          />
+        )}
       </Section>
     </Container>
   );
