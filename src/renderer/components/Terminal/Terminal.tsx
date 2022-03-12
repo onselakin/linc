@@ -1,7 +1,7 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { CreateChannel } from '../../ipc/ipc-emitter';
+import { CreateChannel } from '../../../ipc/ipc-emitter';
 
 interface TerminalProps {
   size: number;
@@ -32,7 +32,6 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
     },
     fit() {
       fit.current.fit();
-      console.log(terminal.current?.cols, terminal.current?.rows);
     },
     execute(code: string) {
       terminal.current?.write(code);
