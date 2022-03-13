@@ -33,7 +33,15 @@ const StepRunner = () => {
 
   useEffect(() => {
     updateStatus(() => ({ icon: 'rocket', message: 'Launching container' }));
-    InvokeChannel('docker:create', { imageName: currentLab.container.image })
+
+    const containerSpec: any = { imageName: currentLab.container.image };
+    if (currentStep.volumeTarget) {
+      containerSpec.volumeBinding = {
+        source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/files/`,
+        target: currentStep.volumeTarget,
+      };
+    }
+    InvokeChannel('docker:create', containerSpec)
       .then(result => {
         setContainerId(result.containerId);
         resetStatus();
@@ -41,7 +49,15 @@ const StepRunner = () => {
       .catch(error => {
         updateStatus(() => ({ icon: 'exclamation', message: `Error launching container: ${error}` }));
       });
-  }, [currentLab.container.image, resetStatus, updateStatus]);
+  }, [
+    currentLab.container.image,
+    currentLab.id,
+    currentScenario.id,
+    currentStep.id,
+    currentStep.volumeTarget,
+    resetStatus,
+    updateStatus,
+  ]);
 
   const executeCode = (code: string, targetTerminal?: string) => {
     if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);

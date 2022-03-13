@@ -8,7 +8,7 @@ import labsAtom from '../../atoms/labs';
 import settingsAtom from '../../atoms/settings';
 import statusAtom from '../../atoms/status';
 import { useEffect } from 'react';
-import { Lab } from '../../../types/lab';
+import Lab from '../../../types/lab';
 import { useNavigate } from 'react-router-dom';
 
 const LabList = () => {
@@ -33,7 +33,7 @@ const LabList = () => {
 
             const result = await InvokeChannel('lab:clone', l);
             if (result.success) {
-              return InvokeChannel('lab:load', { name: result.name });
+              return InvokeChannel('lab:load', { id: result.id });
             }
             return undefined;
           })

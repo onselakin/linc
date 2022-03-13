@@ -11,4 +11,5 @@ export default interface Step {
       cwd: string;
     }[];
   };
+  volumeTarget: string;
 }

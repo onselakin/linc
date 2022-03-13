@@ -14,7 +14,7 @@ const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
 const cloneLab: Bridge<
   { url: string; username: string; password: string },
-  { name: string; success: boolean },
+  { id: string; success: boolean },
   { repo: string; phase: string; loaded: number; total: number }
 > = async (payload, channel) => {
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
@@ -45,16 +45,16 @@ const cloneLab: Bridge<
       } else {
         await git.clone(gitConfig);
       }
-      channel.reply({ name: repoName, success: true });
+      channel.reply({ id: repoName, success: true });
     } catch (error) {
-      channel.reply({ name: repoName, success: false });
+      channel.reply({ id: repoName, success: false });
     }
   }
 };
 
-const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel) => {
-  const labPath = path.join(labsPath, payload.name);
-  const labFile = path.join(labsPath, payload.name, 'lab.yaml');
+const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) => {
+  const labPath = path.join(labsPath, payload.id);
+  const labFile = path.join(labsPath, payload.id, 'lab.yaml');
   if (!fs.existsSync(labFile)) {
     channel.error(new Error('Lab file not found.'));
     return;
@@ -62,6 +62,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
   // TODO: Add schema validation
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
+    lab.id = payload.id;
     const coverFile = path.join(labPath, 'cover.md');
     if (fs.existsSync(coverFile)) {
       lab.cover = fs.readFileSync(coverFile, 'utf-8');
@@ -75,6 +76,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
         const scenarioPath = path.join(scenariosPath, dir.name);
         const scenarioFile = path.join(scenarioPath, 'scenario.yaml');
         const scenario = yaml.load(fs.readFileSync(scenarioFile, 'utf-8')) as Scenario;
+        scenario.id = dir.name;
 
         const startContentFilePath = path.join(scenarioPath, 'start.md');
         if (fs.existsSync(startContentFilePath)) {
@@ -97,6 +99,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
           .map(stepDir => {
             const stepPath = path.join(scenariosPath, dir.name, 'steps', stepDir.name);
             const step = yaml.load(fs.readFileSync(path.join(stepPath, 'step.yaml'), 'utf-8')) as Step;
+            step.id = stepDir.name;
 
             const contentFilePath = path.join(stepPath, 'content.md');
             if (fs.existsSync(contentFilePath)) {
@@ -106,6 +109,7 @@ const loadLab: Bridge<{ name: string }, Lab, unknown> = async (payload, channel)
           });
         return scenario;
       });
+    console.log(lab);
     channel.reply(lab);
   } catch (e) {
     channel.error(e);

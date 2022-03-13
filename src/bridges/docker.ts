@@ -3,6 +3,10 @@
 
 import { Bridge } from 'ipc/ipc-handler';
 import Docker from 'dockerode';
+import path from 'path';
+import { app } from 'electron';
+
+const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
@@ -56,7 +60,18 @@ const pull: Bridge<
   });
 };
 
-const create: Bridge<{ imageName: string }, { containerId: string }> = async ({ imageName }, channel) => {
+const create: Bridge<
+  { imageName: string; volumeBinding?: { source: string; target: string } },
+  { containerId: string }
+> = async ({ imageName, volumeBinding }, channel) => {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const volumes: { [volume: string]: {} } = {};
+  const hostConfig: { [key: string]: string[] } = {};
+  if (volumeBinding) {
+    volumes[volumeBinding.target] = {};
+    const hostPath = `${labsPath}/${volumeBinding.source}`;
+    hostConfig.Binds = [`${hostPath}:${volumeBinding.target}`];
+  }
   const options = {
     Hostname: '',
     User: '',
@@ -68,10 +83,9 @@ const create: Bridge<{ imageName: string }, { containerId: string }> = async ({ 
     StdinOnce: false,
     Env: [],
     Cmd: ['bash'],
-    Dns: ['8.8.8.8', '8.8.4.4'],
     Image: imageName,
-    Volumes: {},
-    VolumesFrom: [],
+    Volumes: volumes,
+    HostConfig: hostConfig,
   };
   const container = await docker.createContainer(options);
 
