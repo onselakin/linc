@@ -65,7 +65,7 @@ const create: Bridge<
   { containerId: string }
 > = async ({ imageName, volumeBinding }, channel) => {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  const volumes: { [volume: string]: {} } = {};
+  const volumes: { [key: string]: {} } = {};
   const hostConfig: { [key: string]: string[] } = {};
   if (volumeBinding) {
     volumes[volumeBinding.target] = {};
