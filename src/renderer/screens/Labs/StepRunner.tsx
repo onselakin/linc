@@ -31,45 +31,50 @@ const StepRunner = () => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    updateStatus({ icon: 'rocket', message: 'Launching container' });
+    console.log('use effect');
+    const createAndInitContainer = async () => {
+      updateStatus({ icon: 'rocket', message: 'Launching container' });
 
-    const containerSpec: any = { imageName: currentLab.container.image, volumeBindings: [] };
-    containerSpec.volumeBindings.push({
-      source: `${currentLab.id}/`,
-      target: '/lab',
-    });
-    if (currentStep.volumeTarget) {
+      const containerSpec: any = { imageName: currentLab.container.image, volumeBindings: [] };
       containerSpec.volumeBindings.push({
-        source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/files/`,
-        target: currentStep.volumeTarget,
+        source: `${currentLab.id}/`,
+        target: '/lab',
       });
-    }
+      if (currentStep.volumeTarget) {
+        containerSpec.volumeBindings.push({
+          source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/files/`,
+          target: currentStep.volumeTarget,
+        });
+      }
 
-    InvokeChannel('docker:create', containerSpec)
-      .then(result => {
-        setContainerId(result.containerId);
+      try {
+        const createResult = await InvokeChannel('docker:create', containerSpec);
+        setContainerId(createResult.containerId);
         resetStatus();
 
         if (currentStep.scripts.init) {
           updateStatus({ icon: 'spinner', message: 'Initializing step' });
 
-          InvokeChannel('docker:exec', {
-            containerId: result.containerId,
+          const { success } = await InvokeChannel('docker:exec', {
+            containerId: createResult.containerId,
             script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/init.sh`,
             shell: currentStep.scripts.shell,
-          })
-            .then(({ success, output }) => {
-              setInitialized(success);
-              console.log(output);
-              resetStatus();
-            })
-            .catch(error => updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` }));
+          });
+          setInitialized(success);
+          resetStatus();
         }
-      })
-      .catch(error => {
+      } catch (error) {
         updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` });
-      });
-  }, [currentLab, currentScenario, currentStep, resetStatus, updateStatus]);
+      }
+    };
+
+    createAndInitContainer().catch(error =>
+      updateStatus({
+        icon: 'exclamation',
+        message: `Error launching container: ${error}`,
+      })
+    );
+  }, []);
 
   const afterResizing = () => {};
 
