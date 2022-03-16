@@ -3,6 +3,7 @@ import 'renderer/App.css';
 import statusAtom from 'renderer/atoms/status';
 import dockerAtom from 'renderer/atoms/docker';
 import { useRecoilValue } from 'recoil';
+import { SpinnerDotted } from 'spinners-react';
 
 const Status = () => {
   const status = useRecoilValue(statusAtom);
@@ -17,7 +18,11 @@ const Status = () => {
       <div className="flex-1 flex items-center pl-4 text-gray-400 gap-2">
         {status.message !== '' && (
           <>
-            {status.icon && <i className={`fa-solid fa-${status.icon} fa-md`} />}
+            {status.icon === 'spinner' ? (
+              <SpinnerDotted size={24} thickness={180} speed={139} color="#36ad47" />
+            ) : (
+              <i className={`fa-solid fa-${status.icon} fa-md`} />
+            )}
             <span>{status.message}</span>
           </>
         )}

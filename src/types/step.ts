@@ -12,4 +12,9 @@ export default interface Step {
     }[];
   };
   volumeTarget: string;
+  scripts: {
+    shell: string;
+    init: boolean;
+    verify: boolean;
+  };
 }

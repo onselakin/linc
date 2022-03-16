@@ -59,7 +59,6 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
     channel.error(new Error('Lab file not found.'));
     return;
   }
-  // TODO: Add schema validation
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     lab.id = payload.id;
@@ -105,6 +104,17 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
             if (fs.existsSync(contentFilePath)) {
               step.content = fs.readFileSync(contentFilePath, 'utf-8');
             }
+
+            const initScriptFilePath = path.join(stepPath, 'init.sh');
+            if (fs.existsSync(initScriptFilePath)) {
+              step.scripts.init = true;
+            }
+
+            const verifyScriptFilePath = path.join(stepPath, 'verify.sh');
+            if (fs.existsSync(verifyScriptFilePath)) {
+              step.scripts.verify = true;
+            }
+
             return step;
           });
         return scenario;

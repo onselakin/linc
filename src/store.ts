@@ -1,14 +1,10 @@
-import { Settings } from 'types/settings';
+import AppStore from './types/store';
 import Store from 'electron-store';
-
-interface AppStore {
-  settings: Settings;
-}
 
 const store: Store<AppStore> = new Store<AppStore>({
   defaults: {
     settings: {
-      labs: [
+      labRepos: [
         {
           username: 'onselakin',
           password: '***REMOVED***',
@@ -16,6 +12,7 @@ const store: Store<AppStore> = new Store<AppStore>({
         },
       ],
     },
+    progress: [],
   },
 });
 

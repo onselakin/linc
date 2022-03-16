@@ -252,6 +252,7 @@
     "recoil": "^0.6.1",
     "regenerator-runtime": "^0.13.9",
     "remark-gfm": "^3.0.1",
+    "spinners-react": "^1.0.6",
     "xterm": "^4.17.0",
     "xterm-addon-fit": "^0.5.0"
   },

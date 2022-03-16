@@ -5,6 +5,7 @@ import { Bridge } from 'ipc/ipc-handler';
 import Docker from 'dockerode';
 import path from 'path';
 import { app } from 'electron';
+import * as stream from 'stream';
 
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
@@ -61,17 +62,20 @@ const pull: Bridge<
 };
 
 const create: Bridge<
-  { imageName: string; volumeBinding?: { source: string; target: string } },
+  { imageName: string; volumeBindings: { source: string; target: string }[] },
   { containerId: string }
-> = async ({ imageName, volumeBinding }, channel) => {
+> = async ({ imageName, volumeBindings }, channel) => {
   // eslint-disable-next-line @typescript-eslint/ban-types
   const volumes: { [key: string]: {} } = {};
   const hostConfig: { [key: string]: string[] } = {};
-  if (volumeBinding) {
-    volumes[volumeBinding.target] = {};
-    const hostPath = `${labsPath}/${volumeBinding.source}`;
-    hostConfig.Binds = [`${hostPath}:${volumeBinding.target}`];
-  }
+  hostConfig.Binds = [];
+
+  volumeBindings.forEach(b => {
+    volumes[b.target] = {};
+    const hostPath = `${labsPath}/${b.source}`;
+    hostConfig.Binds.push(`${hostPath}:${b.target}`);
+  });
+
   const options = {
     Hostname: '',
     User: '',
@@ -102,9 +106,42 @@ const create: Bridge<
       // TODO: Exit container
       console.log('exit container');
     });
+    channel.reply({ containerId: container.id });
+  });
+};
+
+const exec: Bridge<
+  { containerId: string; shell: string; script: string },
+  { success: boolean; output: string }
+> = async ({ containerId, shell, script }, channel) => {
+  const container = docker.getContainer(containerId);
+  const execOptions = {
+    Cmd: [shell, script],
+    AttachStdout: true,
+    AttachStderr: true,
+  };
+
+  const responsePayload = { output: '', success: true };
+
+  const out = new stream.Writable({
+    write(chunk, _encoding, next) {
+      responsePayload.output += chunk.toString();
+      next();
+    },
   });
 
-  channel.reply({ containerId: container.id });
+  const exec = await container.exec(execOptions);
+  const execStream = await exec.start({ Detach: false });
+  container.modem.demuxStream(execStream, out, out);
+
+  const interval = setInterval(async () => {
+    const inspectInfo = await exec.inspect();
+    if (inspectInfo.ExitCode !== null) {
+      responsePayload.success = inspectInfo.ExitCode === 0;
+      channel.reply(responsePayload);
+      clearInterval(interval);
+    }
+  }, 1000);
 };
 
 export default {
@@ -112,4 +149,5 @@ export default {
   'docker:inspect': inspect,
   'docker:pull': pull,
   'docker:create': create,
+  'docker:exec': exec,
 };

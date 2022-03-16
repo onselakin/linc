@@ -1,5 +1,5 @@
 export interface Settings {
-  labs: {
+  labRepos: {
     url: string;
     username: string;
     password: string;

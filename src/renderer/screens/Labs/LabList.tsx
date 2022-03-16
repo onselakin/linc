@@ -27,7 +27,7 @@ const LabList = () => {
       updateSettings(s);
 
       const results = await Promise.all(
-        s.labs
+        s.labRepos
           .map(async l => {
             updateStatus({ message: `Cloning lab: ${l.url}` });
 

@@ -17,6 +17,7 @@ const StepRunner = () => {
   const currentLab = useCurrentLab();
   const currentScenario = useCurrentScenario();
   const currentStep = useCurrentStep();
+  const [containerId, setContainerId] = useState('');
 
   const currentStepIdx = currentScenario.steps.indexOf(currentStep);
   const previousStepEnabled = currentStepIdx > 0;
@@ -24,43 +25,84 @@ const StepRunner = () => {
 
   const terminalTabsRef = useRef<TerminalTabsRef>(null);
 
-  const [containerId, setContainerId] = useState('');
-
   const updateStatus = useSetRecoilState(statusAtom);
   const resetStatus = useResetRecoilState(statusAtom);
 
-  const afterResizing = () => {};
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    updateStatus(() => ({ icon: 'rocket', message: 'Launching container' }));
+    updateStatus({ icon: 'rocket', message: 'Launching container' });
 
-    const containerSpec: any = { imageName: currentLab.container.image };
+    const containerSpec: any = { imageName: currentLab.container.image, volumeBindings: [] };
+    containerSpec.volumeBindings.push({
+      source: `${currentLab.id}/`,
+      target: '/lab',
+    });
     if (currentStep.volumeTarget) {
-      containerSpec.volumeBinding = {
+      containerSpec.volumeBindings.push({
         source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/files/`,
         target: currentStep.volumeTarget,
-      };
+      });
     }
+
     InvokeChannel('docker:create', containerSpec)
       .then(result => {
         setContainerId(result.containerId);
         resetStatus();
+
+        if (currentStep.scripts.init) {
+          updateStatus({ icon: 'spinner', message: 'Initializing step' });
+
+          InvokeChannel('docker:exec', {
+            containerId: result.containerId,
+            script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/init.sh`,
+            shell: currentStep.scripts.shell,
+          })
+            .then(({ success, output }) => {
+              setInitialized(success);
+              console.log(output);
+              resetStatus();
+            })
+            .catch(error => updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` }));
+        }
       })
       .catch(error => {
-        updateStatus(() => ({ icon: 'exclamation', message: `Error launching container: ${error}` }));
+        updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` });
       });
-  }, [
-    currentLab.container.image,
-    currentLab.id,
-    currentScenario.id,
-    currentStep.id,
-    currentStep.volumeTarget,
-    resetStatus,
-    updateStatus,
-  ]);
+  }, [currentLab, currentScenario, currentStep, resetStatus, updateStatus]);
+
+  const afterResizing = () => {};
 
   const executeCode = (code: string, targetTerminal?: string) => {
     if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);
+  };
+
+  const verifyStep = () => {
+    return new Promise<void>((resolve, reject) => {
+      if (currentStep.scripts.verify) {
+        updateStatus({ icon: 'spinner', message: 'Verifying step' });
+
+        InvokeChannel('docker:exec', {
+          containerId,
+          script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
+          shell: currentStep.scripts.shell,
+        })
+          .then(({ success }) => {
+            resetStatus();
+            if (!success) {
+              reject();
+              return;
+            }
+            resolve();
+          })
+          .catch(error => {
+            updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` });
+            reject();
+          });
+      } else {
+        resolve();
+      }
+    });
   };
 
   return (
@@ -68,6 +110,7 @@ const StepRunner = () => {
       <Section minSize={500}>
         <div className="h-full overflow-scroll no-scrollbar pr-2">
           <Markdown markdown={currentStep.content} onExecute={executeCode} />
+
           <div className="my-4">
             <StepNavigation
               previousVisible={previousStepEnabled}
@@ -88,13 +131,15 @@ const StepRunner = () => {
                     }`
                   : ''
               }
+              verifyProgress={verifyStep}
             />
           </div>
         </div>
       </Section>
       <Bar className="bg-container" size={3} style={{ cursor: 'col-resize' }} />
+
       <Section minSize={250}>
-        {containerId !== '' && (
+        {containerId !== '' && initialized && (
           <TerminalTabs
             ref={terminalTabsRef}
             containerId={containerId}
