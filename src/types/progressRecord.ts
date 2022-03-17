@@ -1,4 +1,4 @@
-export default interface Progress {
+export default interface ProgressRecord {
   labId: string;
   scenarioId: string;
   stepId: string;

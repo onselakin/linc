@@ -12,10 +12,10 @@ const store: Store<AppStore> = new Store<AppStore>({
         },
       ],
     },
-    progress: [],
+    progressRecords: [],
   },
 });
 
-store.clear();
+// store.clear();
 
 export default store;

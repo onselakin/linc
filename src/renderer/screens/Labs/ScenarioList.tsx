@@ -1,6 +1,8 @@
 import 'renderer/App.css';
 import { Link } from 'react-router-dom';
-import Lab from '../../../types/lab';
+import Lab from 'types/lab';
+import ProgressRecord from 'types/progressRecord';
+import Scenario from '../../../types/scenario';
 
 type ScenarioListProps = {
   lab: Lab;
@@ -8,6 +10,7 @@ type ScenarioListProps = {
   needsImagePull: boolean;
   dockerEngineUnavailable: boolean;
   disabled: boolean;
+  progressRecords: ProgressRecord[];
   onStartLabClick: () => void;
   onPullImageClick: () => void;
 };
@@ -18,9 +21,20 @@ const ScenarioList = ({
   needsImagePull,
   dockerEngineUnavailable,
   disabled,
+  progressRecords,
   onStartLabClick,
   onPullImageClick,
 }: ScenarioListProps) => {
+  console.log('call scenariolist');
+
+  const isScenarioCompleted = (scenario: Scenario) =>
+    (scenario.steps ? scenario.steps.length : 1) ===
+    progressRecords.filter(r => r.labId === lab.id && r.scenarioId === scenario.id).length;
+
+  const completionPercentage = (scenario: Scenario) =>
+    (100 * progressRecords.filter(r => r.labId === lab.id && r.scenarioId === scenario.id).length) /
+    (scenario.steps ? scenario.steps.length : 1);
+
   return (
     <div className={`${drawerMode ? 'bg-container' : ''} `}>
       <div className="text-white flex flex-col">
@@ -68,12 +82,16 @@ const ScenarioList = ({
                 <Link to={`/lab/${lab.id}/scenario/${scenario.id}`}>{scenario.title}</Link>
               </div>
               <div>
-                <i className="fa-solid fa-circle-check fa-sm self-end text-gray-400" />
+                <i
+                  className={`fa-solid fa-circle-check fa-sm self-end ${
+                    isScenarioCompleted(scenario) ? 'text-green-400' : 'text-gray-400'
+                  }`}
+                />
               </div>
             </div>
-            <div className="text-xs text-gray-400 mt-1">%15 complete</div>
-            <div className="w-full mt-1">
-              <div className="absolute bg-green h-1 w-4" />
+            <div className="text-xs text-gray-400 mt-1">{completionPercentage(scenario)}% complete</div>
+            <div className="w-full mt-1 relative">
+              <div className="absolute bg-green h-1" style={{ width: `${completionPercentage(scenario)}%` }} />
             </div>
             <div className="mt-3">
               {scenario.steps.map(step => (

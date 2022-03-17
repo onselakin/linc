@@ -1,16 +1,16 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import 'renderer/App.css';
 import ScenarioList from './ScenarioList';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import labsAtom from '../../atoms/labs';
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
 import useOuterClick from 'renderer/hooks/useOuterClick';
 import { InvokeChannel } from 'ipc';
-import dockerAtom from 'renderer/atoms/docker';
-import statusAtom from 'renderer/atoms/status';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import { Status } from 'types/status';
 import { useCurrentLab } from 'renderer/hooks/useCurrent';
+import labsAtom from '../../atoms/labs';
+import dockerAtom from 'renderer/atoms/docker';
+import statusAtom from 'renderer/atoms/status';
+import progressAtom from '../../atoms/progress';
 
 const Root = () => {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const Root = () => {
   const dockerStatus = useRecoilValue(dockerAtom);
   const updateStatus = useSetRecoilState<Status>(statusAtom);
   const [imagePullInProgress, setImagePullInProgress] = useState(false);
+  const [progressRecords, setProgressRecords] = useRecoilState(progressAtom);
 
   const lab = useCurrentLab();
 
@@ -86,16 +87,18 @@ const Root = () => {
   };
 
   useEffect(() => {
-    InvokeChannel('docker:inspect', { imageName: lab.container.image })
-      .then(info => {
-        console.log(info);
+    const init = async () => {
+      setProgressRecords(await InvokeChannel('progress:load', { labId: lab.id }));
+      try {
+        await InvokeChannel('docker:inspect', { imageName: lab.container.image });
+        // TODO: Show image information
         setNeedsImagePull(false);
-      })
-      .catch(error => {
-        console.log(error);
+      } catch (error) {
         setNeedsImagePull(true);
-      });
-  }, [lab.container.image]);
+      }
+    };
+    init();
+  }, [lab, setProgressRecords]);
 
   return (
     <div className="h-full w-full">
@@ -120,6 +123,7 @@ const Root = () => {
           needsImagePull={needsImagePull}
           dockerEngineUnavailable={!dockerStatus.connected}
           disabled={imagePullInProgress}
+          progressRecords={progressRecords}
           onStartLabClick={startLab}
           onPullImageClick={pullImage}
         />

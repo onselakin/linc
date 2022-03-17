@@ -5,13 +5,14 @@ import 'renderer/App.css';
 
 import { Container, Section, Bar } from 'react-simple-resizer';
 import { useEffect, useRef, useState } from 'react';
-import Markdown from 'renderer/components/Markdown';
-import StepNavigation from 'renderer/components/StepNavigation';
 import { useCurrentLab, useCurrentScenario, useCurrentStep } from 'renderer/hooks/useCurrent';
 import { InvokeChannel } from 'ipc';
 import TerminalTabs, { TerminalTabsRef } from 'renderer/components/Terminal/TerminalTabs';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import statusAtom from '../../atoms/status';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import statusAtom from 'renderer/atoms/status';
+import progressAtom from 'renderer/atoms/progress';
+import Markdown from 'renderer/components/Markdown';
+import StepNavigation from 'renderer/components/StepNavigation';
 
 const StepRunner = () => {
   const currentLab = useCurrentLab();
@@ -27,11 +28,13 @@ const StepRunner = () => {
 
   const updateStatus = useSetRecoilState(statusAtom);
   const resetStatus = useResetRecoilState(statusAtom);
+  const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
 
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    console.log('use effect');
+    let cleanupContainerId = '';
+
     const createAndInitContainer = async () => {
       updateStatus({ icon: 'rocket', message: 'Launching container' });
 
@@ -49,6 +52,7 @@ const StepRunner = () => {
 
       try {
         const createResult = await InvokeChannel('docker:create', containerSpec);
+        cleanupContainerId = createResult.containerId;
         setContainerId(createResult.containerId);
         resetStatus();
 
@@ -68,12 +72,11 @@ const StepRunner = () => {
       }
     };
 
-    createAndInitContainer().catch(error =>
-      updateStatus({
-        icon: 'exclamation',
-        message: `Error launching container: ${error}`,
-      })
-    );
+    createAndInitContainer();
+
+    return function cleanup() {
+      InvokeChannel('docker:exit', { containerId: cleanupContainerId }).then().catch();
+    };
   }, []);
 
   const afterResizing = () => {};
@@ -92,11 +95,27 @@ const StepRunner = () => {
           script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
           shell: currentStep.scripts.shell,
         })
-          .then(({ success }) => {
+          .then(async ({ success }) => {
             resetStatus();
             if (!success) {
               reject();
               return;
+            }
+            if (
+              !labProgress.some(
+                p => p.labId === currentLab.id && p.scenarioId === currentScenario.id && p.stepId === currentStep.id
+              )
+            ) {
+              const currentProgress = [
+                ...labProgress,
+                {
+                  labId: currentLab.id,
+                  scenarioId: currentScenario.id,
+                  stepId: currentStep.id,
+                },
+              ];
+              updateLabProgress(currentProgress);
+              await InvokeChannel('progress:save', currentProgress);
             }
             resolve();
           })
@@ -148,7 +167,7 @@ const StepRunner = () => {
           <TerminalTabs
             ref={terminalTabsRef}
             containerId={containerId}
-            initialTabs={currentStep.layout.defaultTerminals}
+            initialTabs={currentStep.layout?.defaultTerminals ?? []}
             allowNewTerminals={false}
           />
         )}

@@ -1,7 +1,7 @@
 import { Settings } from './settings';
-import Progress from './progress';
+import ProgressRecord from './progressRecord';
 
 export default interface Store {
   settings: Settings;
-  progress: Progress[];
+  progressRecords: ProgressRecord[];
 }

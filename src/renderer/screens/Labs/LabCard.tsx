@@ -8,12 +8,23 @@ type LabCardProps = {
 
 const LabCard = ({ lab, onNavigate }: LabCardProps) => {
   return (
-    <div className="h-96 w-96 rounded overflow-hidden drop-shadow-xl bg-container flex flex-col text-white">
-      <div className="h-36 overflow-hidden grid place-content-center">
+    <div className="h-[500px] w-96 rounded overflow-hidden drop-shadow-xl bg-container flex flex-col text-white">
+      <div className="h-48 overflow-hidden grid place-content-center">
         <img src={lab.coverImage} alt="" />
       </div>
-      <div className="mt-1 mx-4">
+      <div className="mt-1 mx-4 flex flex-col gap-2">
         <h3 className="text-white my-2 text-xl">{lab.title}</h3>
+        <p className="text-sm">{lab.description}</p>
+        <div>
+          <p className="text-sm">
+            <span className="mr-2 text-gray-300">Author:</span>
+            <span>{lab.author}</span>
+          </p>
+          <p className="text-sm">
+            <span className="mr-2 text-gray-300">Estimated time:</span>
+            <span>{lab.estimatedTime}</span>
+          </p>
+        </div>
         <div className="flex flex-row my-4 gap-2">
           {lab.tags.split(',').map(tag => (
             <div className="rounded rounded-md bg-[#09E294] px-2 text-sm" key={tag}>
@@ -21,7 +32,6 @@ const LabCard = ({ lab, onNavigate }: LabCardProps) => {
             </div>
           ))}
         </div>
-        <p className="text-sm">{lab.description}</p>
       </div>
       <div className="self-end mx-2 mb-4 flex flex-col flex-1">
         <button

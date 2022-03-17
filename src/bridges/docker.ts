@@ -12,14 +12,34 @@ const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 const connect: Bridge<void, void, { success: boolean }> = async (_, channel) => {
+  let latestCheckResult = false;
+
   setInterval(async () => {
     try {
       const reply = Buffer.from(await docker.ping()).toString();
-      channel.notify({ success: reply === 'OK' });
+      const success = reply === 'OK';
+      if (success !== latestCheckResult) {
+        latestCheckResult = success;
+        channel.notify({ success });
+      }
     } catch (error) {
-      channel.notify({ success: false });
+      if (latestCheckResult) {
+        latestCheckResult = false;
+        channel.notify({ success: false });
+      }
     }
   }, 5000);
+};
+
+const exit: Bridge<{ containerId: string }, void> = async ({ containerId }, channel) => {
+  try {
+    const container = docker.getContainer(containerId);
+    await container.kill();
+    await container.remove();
+    channel.reply();
+  } catch (e) {
+    channel.error(e);
+  }
 };
 
 const inspect: Bridge<{ imageName: string }, unknown> = async ({ imageName }, channel) => {
@@ -150,4 +170,5 @@ export default {
   'docker:pull': pull,
   'docker:create': create,
   'docker:exec': exec,
+  'docker:exit': exit,
 };
