@@ -47,7 +47,7 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
       term.open(xtermContainer.current);
       fit.current.fit();
 
-      const channel = CreateChannel('terminal-execute');
+      const channel = CreateChannel('terminal:execute');
       channel.onReply = ({ output }) => {
         term.write(output);
       };

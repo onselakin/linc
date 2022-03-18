@@ -18,6 +18,7 @@ module.exports = {
             color: '#bbb',
             h1: {
               color: '#788AB6',
+              fontSize: '2em',
             },
             h2: {
               color: '#788AB6',

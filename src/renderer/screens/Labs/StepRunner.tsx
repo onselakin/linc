@@ -75,7 +75,11 @@ const StepRunner = () => {
     createAndInitContainer();
 
     return function cleanup() {
-      InvokeChannel('docker:exit', { containerId: cleanupContainerId }).then().catch();
+      InvokeChannel('terminal:kill')
+        .then(() => {
+          InvokeChannel('docker:exit', { containerId: cleanupContainerId }).then().catch();
+        })
+        .catch();
     };
   }, []);
 

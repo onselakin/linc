@@ -13,12 +13,12 @@ const LabCard = ({ lab, onNavigate }: LabCardProps) => {
         <img src={lab.coverImage} alt="" />
       </div>
       <div className="mt-1 mx-4 flex flex-col gap-2">
-        <h3 className="text-white my-2 text-xl">{lab.title}</h3>
-        <p className="text-sm">{lab.description}</p>
+        <h3 className="text-[#788AB6] my-2 text-xl">{lab.title}</h3>
+        <p className="text-md">{lab.description}</p>
         <div>
           <p className="text-sm">
             <span className="mr-2 text-gray-300">Author:</span>
-            <span>{lab.author}</span>
+            <span>{lab.author.name}</span>
           </p>
           <p className="text-sm">
             <span className="mr-2 text-gray-300">Estimated time:</span>

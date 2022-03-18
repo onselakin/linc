@@ -5,7 +5,15 @@ export default interface Lab {
   version: string;
   tags: string;
   title: string;
-  author: string;
+  author: {
+    name: string;
+    photo: string;
+    bio: string;
+    social: {
+      twitter: string;
+      linkedin: string;
+    };
+  };
   description: string;
   cover: string;
   difficulty: string;

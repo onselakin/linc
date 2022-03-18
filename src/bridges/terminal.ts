@@ -36,6 +36,15 @@ const executeTerminalCommand: Bridge<
   }
 };
 
+const killTerminals: Bridge<void, void> = (_, channel) => {
+  Object.keys(processes).forEach(k => {
+    processes[k].kill();
+    delete processes[k];
+  });
+  channel.reply();
+};
+
 export default {
-  'terminal-execute': executeTerminalCommand,
+  'terminal:execute': executeTerminalCommand,
+  'terminal:kill': killTerminals,
 };
