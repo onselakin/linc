@@ -2,6 +2,7 @@ import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CreateChannel } from 'ipc/ipc-emitter';
+import log from 'utils/logger';
 
 interface TerminalProps {
   size: number;
@@ -16,11 +17,8 @@ export interface TerminalRef {
   execute: (command: string) => void;
 }
 
-const createTerminal = () => {
-  return new Terminal({ cols: 80, rows: 25, fontFamily: 'Ubuntu Mono', fontSize: 16 });
-};
-
 const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerId, terminalId }, ref) => {
+  log(`Terminal Created: ${terminalId}`, 'color: magenta');
   const exitCallRef = useRef<() => void>();
   const executeCallRef = useRef<(command: string) => void>();
   const fit = useRef<FitAddon>(new FitAddon());
@@ -29,6 +27,7 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
 
   useImperativeHandle(ref, () => ({
     exit() {
+      log(`Terminal ${terminalId} exited.`);
       exitCallRef.current?.();
     },
     fit() {
@@ -40,8 +39,10 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
   }));
 
   useEffect(() => {
+    log(`Terminal useEffect: ${terminalId}`, 'color: magenta');
+    const term = new Terminal({ cols: 80, rows: 25, fontFamily: 'Ubuntu Mono', fontSize: 16 });
+
     if (xtermContainer.current !== null) {
-      const term = createTerminal();
       terminal.current = term;
       term.loadAddon(fit.current);
       term.open(xtermContainer.current);
@@ -62,6 +63,10 @@ const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerI
         channel.send({ containerId, terminalId, command });
       };
     }
+
+    return function () {
+      term.dispose();
+    };
   }, [containerId, terminalId]);
 
   useEffect(() => {

@@ -27,6 +27,7 @@ const executeTerminalCommand: Bridge<
       processes[terminalId] = pty;
       // pty.write(`docker exec -it ${containerId} /bin/bash\r`);
       pty.onData(output => {
+        console.log(`pty: `, output);
         channel.reply({ output });
       });
     }

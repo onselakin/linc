@@ -13,8 +13,10 @@ import statusAtom from 'renderer/atoms/status';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
+import log from 'utils/logger';
 
 const StepRunner = () => {
+  log('Creating StepRunner', 'color:red');
   const currentLab = useCurrentLab();
   const currentScenario = useCurrentScenario();
   const currentStep = useCurrentStep();
@@ -33,7 +35,7 @@ const StepRunner = () => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    let cleanupContainerId = '';
+    log('***** useEffect StepRunner *****', 'color:yellow');
 
     const createAndInitContainer = async () => {
       updateStatus({ icon: 'rocket', message: 'Launching container' });
@@ -52,7 +54,7 @@ const StepRunner = () => {
 
       try {
         const createResult = await InvokeChannel('docker:create', containerSpec);
-        cleanupContainerId = createResult.containerId;
+        log(`Created container: ${createResult.containerId}`);
         setContainerId(createResult.containerId);
         resetStatus();
 
@@ -64,24 +66,21 @@ const StepRunner = () => {
             script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/init.sh`,
             shell: currentStep.scripts.shell,
           });
-          setInitialized(success);
-          resetStatus();
+
+          if (!success) {
+            setInitialized(false);
+            return;
+          }
         }
+        resetStatus();
+        setInitialized(true);
       } catch (error) {
         updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` });
       }
     };
 
     createAndInitContainer();
-
-    return function cleanup() {
-      InvokeChannel('terminal:kill')
-        .then(() => {
-          InvokeChannel('docker:exit', { containerId: cleanupContainerId }).then().catch();
-        })
-        .catch();
-    };
-  }, []);
+  }, [currentLab, currentScenario, currentStep, resetStatus, updateStatus]);
 
   const afterResizing = () => {};
 
@@ -89,48 +88,50 @@ const StepRunner = () => {
     if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);
   };
 
-  const verifyStep = () => {
-    return new Promise<void>((resolve, reject) => {
-      if (currentStep.scripts.verify) {
-        updateStatus({ icon: 'spinner', message: 'Verifying step' });
+  const verifyPrevious = async () => {
+    await InvokeChannel('terminal:kill');
+    await InvokeChannel('docker:exit', { containerId });
+    setInitialized(false);
+    setContainerId('');
+    return true;
+  };
 
-        InvokeChannel('docker:exec', {
-          containerId,
-          script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
-          shell: currentStep.scripts.shell,
-        })
-          .then(async ({ success }) => {
-            resetStatus();
-            if (!success) {
-              reject();
-              return;
-            }
-            if (
-              !labProgress.some(
-                p => p.labId === currentLab.id && p.scenarioId === currentScenario.id && p.stepId === currentStep.id
-              )
-            ) {
-              const currentProgress = [
-                ...labProgress,
-                {
-                  labId: currentLab.id,
-                  scenarioId: currentScenario.id,
-                  stepId: currentStep.id,
-                },
-              ];
-              updateLabProgress(currentProgress);
-              await InvokeChannel('progress:save', currentProgress);
-            }
-            resolve();
-          })
-          .catch(error => {
-            updateStatus({ icon: 'exclamation', message: `Error launching container: ${error}` });
-            reject();
-          });
-      } else {
-        resolve();
-      }
-    });
+  const verifyNext = async () => {
+    resetStatus();
+
+    if (currentStep.scripts.verify) {
+      updateStatus({ icon: 'spinner', message: 'Verifying step' });
+
+      const success = await InvokeChannel('docker:exec', {
+        containerId,
+        script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
+        shell: currentStep.scripts.shell,
+      });
+      if (!success) return false;
+    }
+
+    if (
+      !labProgress.some(
+        p => p.labId === currentLab.id && p.scenarioId === currentScenario.id && p.stepId === currentStep.id
+      )
+    ) {
+      const currentProgress = [
+        ...labProgress,
+        {
+          labId: currentLab.id,
+          scenarioId: currentScenario.id,
+          stepId: currentStep.id,
+        },
+      ];
+      updateLabProgress(currentProgress);
+      await InvokeChannel('progress:save', currentProgress);
+    }
+
+    await InvokeChannel('terminal:kill');
+    await InvokeChannel('docker:exit', { containerId });
+    setInitialized(false);
+    setContainerId('');
+    return true;
   };
 
   return (
@@ -159,7 +160,8 @@ const StepRunner = () => {
                     }`
                   : ''
               }
-              verifyProgress={verifyStep}
+              verifyBeforePrevious={verifyPrevious}
+              verifyBeforeNext={verifyNext}
             />
           </div>
         </div>

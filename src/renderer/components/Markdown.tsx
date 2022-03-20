@@ -48,7 +48,7 @@ const InlineCode = ({ code }: { code: string }) => {
 };
 
 const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
-  console.table(config);
+  // console.table(config);
   const [solutionHidden, setSolutionHidden] = useState(config.hint !== undefined);
   const [hintVisible, setHintVisible] = useState(false);
 

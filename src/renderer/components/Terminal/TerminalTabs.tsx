@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import Term, { TerminalRef } from './Terminal';
-import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useState, forwardRef, useImperativeHandle, useEffect } from 'react';
 import TabButton from './TabButton';
 import randomId from 'utils/randomId';
 
@@ -20,20 +20,28 @@ interface TerminalTabsProps {
 }
 
 export interface TerminalTabsRef {
+  exit: () => void;
   executeCommand: (terminalId: string, command: string) => void;
 }
 
 const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
   ({ containerId, initialTabs, allowNewTerminals }, ref) => {
     const [activeTabIndex, setActiveTabIndex] = useState(0);
-    const [tabs, setTabs] = useState<Tab[]>(initialTabs);
+    const [tabs, setTabs] = useState<Tab[]>();
     const terminalRefs = useRef<TerminalRef[]>([]);
 
+    useEffect(() => {
+      setTabs(initialTabs);
+    }, [initialTabs]);
+
     useImperativeHandle(ref, () => ({
+      exit() {
+        terminalRefs.current.forEach(t => t.exit());
+      },
       executeCommand(terminalId: string, command: string) {
-        const tab = tabs.find(t => t.id === terminalId);
+        const tab = tabs!.find(t => t.id === terminalId);
         if (tab) {
-          const tabIndex = tabs.indexOf(tab);
+          const tabIndex = tabs!.indexOf(tab);
           const termRef = terminalRefs.current[tabIndex];
           termRef.execute(command);
         }
@@ -43,7 +51,7 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
     const addTab = () => {
       terminalRefs.current = [];
       const tabId = randomId();
-      const termTabs = [...tabs, { id: tabId, title: tabId, allowClose: true, cwd: '/root' }];
+      const termTabs = [...tabs!, { id: tabId, title: tabId, allowClose: true, cwd: '/root' }];
       setTabs(termTabs);
       setActiveTabIndex(termTabs.length - 1);
     };
@@ -51,9 +59,9 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
     const closeTab = (idx: number) => {
       terminalRefs.current[idx].exit();
 
-      const currentTab = tabs[activeTabIndex];
-      const tabToClose = tabs[idx];
-      const termTabs = tabs.filter(t => t !== tabToClose);
+      const currentTab = tabs![activeTabIndex];
+      const tabToClose = tabs![idx];
+      const termTabs = tabs!.filter(t => t !== tabToClose);
 
       if (idx !== activeTabIndex) {
         setActiveTabIndex(termTabs.indexOf(currentTab));
@@ -77,7 +85,7 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
       <div className="h-full w-full flex flex-col border-red-300">
         <div className="h-8 rounded-tl rounded-tr bg-container font-mono text-gray-300 flex flex-row px-2 gap-8 items-center">
           <div className="flex-1 flex flex-row gap-5">
-            {tabs.map((tab, idx) => (
+            {tabs?.map((tab, idx) => (
               <TabButton
                 idx={idx}
                 title={tab.title ?? tab.id}
@@ -97,16 +105,18 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
         </div>
         <div className="flex-1 bg-black">
           <div className="h-full w-full bg-black relative">
-            {tabs.map((tab, idx) => (
-              <Term
-                key={idx}
-                containerId={containerId}
-                terminalId={tab.id}
-                size={500}
-                ref={term => addRef(term)}
-                visible={activeTabIndex === idx}
-              />
-            ))}
+            {tabs?.map((tab, idx) => {
+              return (
+                <Term
+                  key={idx}
+                  containerId={containerId}
+                  terminalId={tab.id}
+                  size={500}
+                  ref={term => addRef(term)}
+                  visible={activeTabIndex === idx}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
