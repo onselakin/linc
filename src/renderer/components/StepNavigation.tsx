@@ -15,7 +15,7 @@ type StepNavigationProps = {
 
 const StepNavigation: React.FC<StepNavigationProps> = ({
   nextTitle = '',
-  nextVisible = '',
+  nextVisible = false,
   previousTitle = false,
   previousVisible = false,
   previous,
@@ -68,7 +68,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           <p className="text-gray-300 text-md text-right">{previousTitle}</p>
         </div>
       </button>
-      <button onClick={verifyNext} type="button" className="flex-1 h-16 text-left">
+      <button onClick={verifyNext} type="button" className="flex-1 h-16 text-left" disabled={!nextVisible}>
         <div
           className={`rounded bg-container flex flex-row h-16 items-center pl-3 pr-4  ${
             nextVisible ? 'visible' : 'invisible'
