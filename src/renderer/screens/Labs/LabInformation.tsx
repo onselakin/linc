@@ -4,7 +4,7 @@ import { useCurrentLab } from 'renderer/hooks/useCurrent';
 import AuthorBio from './AuthorBio';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dockerAtom from '../../atoms/docker';
 import { Status } from '../../../types/status';
 import statusAtom from '../../atoms/status';
@@ -58,19 +58,6 @@ const LabInformation = () => {
   const dockerStatus = useRecoilValue(dockerAtom);
   const updateStatus = useSetRecoilState<Status>(statusAtom);
   const [imagePullInProgress, setImagePullInProgress] = useState(false);
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        await InvokeChannel('docker:inspect', { imageName: lab.container.image });
-        // TODO: Show image information
-        setNeedsImagePull(false);
-      } catch (error) {
-        setNeedsImagePull(true);
-      }
-    };
-    init();
-  }, [lab]);
 
   const pullImage = () => {
     setImagePullInProgress(true);
