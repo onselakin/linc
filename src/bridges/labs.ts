@@ -12,11 +12,9 @@ import Step from 'types/step';
 
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
-const cloneLab: Bridge<
-  { url: string; username: string; password: string },
+const cloneLab: Bridge<{ url: string; username: string; password: string },
   { id: string; success: boolean },
-  { repo: string; phase: string; loaded: number; total: number }
-> = async (payload, channel) => {
+  { repo: string; phase: string; loaded: number; total: number }> = async (payload, channel) => {
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
   const match = regex.exec(payload.url);
   if (match != null) {
@@ -99,6 +97,10 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
             const stepPath = path.join(scenariosPath, dir.name, 'steps', stepDir.name);
             const step = yaml.load(fs.readFileSync(path.join(stepPath, 'step.yaml'), 'utf-8')) as Step;
             step.id = stepDir.name;
+
+            if (!step.container) {
+              step.container = lab.container;
+            }
 
             const contentFilePath = path.join(stepPath, 'content.md');
             if (fs.existsSync(contentFilePath)) {

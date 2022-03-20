@@ -17,4 +17,7 @@ export default interface Step {
     init: boolean;
     verify: boolean;
   };
+  container: {
+    image: string;
+  };
 }

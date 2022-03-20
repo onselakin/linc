@@ -13,10 +13,8 @@ import statusAtom from 'renderer/atoms/status';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import log from 'utils/logger';
 
 const StepRunner = () => {
-  log('Creating StepRunner', 'color:red');
   const currentLab = useCurrentLab();
   const currentScenario = useCurrentScenario();
   const currentStep = useCurrentStep();
@@ -35,12 +33,10 @@ const StepRunner = () => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    log('***** useEffect StepRunner *****', 'color:yellow');
-
     const createAndInitContainer = async () => {
       updateStatus({ icon: 'rocket', message: 'Launching container' });
 
-      const containerSpec: any = { imageName: currentLab.container.image, volumeBindings: [] };
+      const containerSpec: any = { imageName: currentStep.container.image, volumeBindings: [] };
       containerSpec.volumeBindings.push({
         source: `${currentLab.id}/`,
         target: '/lab',
@@ -54,7 +50,6 @@ const StepRunner = () => {
 
       try {
         const createResult = await InvokeChannel('docker:create', containerSpec);
-        log(`Created container: ${createResult.containerId}`);
         setContainerId(createResult.containerId);
         resetStatus();
 
