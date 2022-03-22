@@ -1,7 +1,7 @@
 import { InvokeChannel } from 'ipc';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import 'renderer/App.css';
+import labsAtom from 'renderer/atoms/labs';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
@@ -11,19 +11,21 @@ import ScenarioList from './ScenarioList';
 const ScenarioInformation = () => {
   const lab = useCurrentLab();
   const scenario = useCurrentScenario();
-  const [progressRecords, setProgressRecords] = useRecoilState(progressAtom);
+  const [labs, setLabs] = useRecoilState(labsAtom);
+  const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
 
   useEffect(() => {
     const init = async () => {
-      setProgressRecords(await InvokeChannel('progress:load', { labId: lab.id }));
+      const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
+      updateLabProgress(progressRecords);
     };
     init();
-  }, [lab, setProgressRecords]);
+  }, [lab, labs, setLabs, updateLabProgress]);
 
   return (
     <div className="flex my-4">
       <div className="w-80">
-        <ScenarioList lab={lab} progressRecords={progressRecords} />
+        <ScenarioList lab={lab} progressRecords={labProgress} />
       </div>
       <div className="flex-1 mx-4">
         <div className="prose max-w-none">

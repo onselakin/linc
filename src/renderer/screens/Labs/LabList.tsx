@@ -4,11 +4,11 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { InvokeChannel } from 'ipc';
 import LabCard from './LabCard';
-import labsAtom from '../../atoms/labs';
-import settingsAtom from '../../atoms/settings';
-import statusAtom from '../../atoms/status';
+import labsAtom from 'renderer/atoms/labs';
+import settingsAtom from 'renderer/atoms/settings';
+import statusAtom from 'renderer/atoms/status';
 import { useEffect } from 'react';
-import Lab from '../../../types/lab';
+import Lab from 'types/lab';
 import { useNavigate } from 'react-router-dom';
 
 const LabList = () => {
