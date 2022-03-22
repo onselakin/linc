@@ -1,11 +1,11 @@
 import { InvokeChannel } from 'ipc';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
+import { useCurrentLab, useCurrentScenario } from 'renderer/hooks/useCurrent';
 import labsAtom from 'renderer/atoms/labs';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import { useCurrentLab, useCurrentScenario } from 'renderer/hooks/useCurrent';
 import ScenarioList from './ScenarioList';
 
 const ScenarioInformation = () => {
