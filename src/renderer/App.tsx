@@ -1,9 +1,9 @@
 import './App.css';
 import '../../assets/fontawesome/css/all.css';
-import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { InvokeChannel, SetupRendererProcessListener } from 'ipc';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
+import { RecoilRoot, useRecoilState } from 'recoil';
 import dockerAtom from './atoms/docker';
 import LabList from './screens/Labs/LabList';
 import TopBar from './components/App/TopBar';
@@ -16,17 +16,22 @@ import StepRunner from './screens/Labs/StepRunner';
 SetupRendererProcessListener();
 
 const Layout = () => {
-  const setDockerStatus = useSetRecoilState(dockerAtom);
+  const [dockerStatus, setDockerStatus] = useRecoilState(dockerAtom);
+  const location = useLocation();
 
   useEffect(() => {
     const pingDocker = async () => {
       await InvokeChannel('docker:connect', undefined, ({ success }) => {
-        setDockerStatus({ connected: success });
+        setDockerStatus({ ...dockerStatus, connected: success });
       });
     };
 
     pingDocker();
-  }, []);
+  }, [setDockerStatus]);
+
+  useEffect(() => {
+    console.log('Location changed:', location.pathname);
+  }, [location]);
 
   return (
     <div className="absolute top-0 right-0 bottom-0 left-0">
