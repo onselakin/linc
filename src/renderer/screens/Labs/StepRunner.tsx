@@ -21,7 +21,7 @@ const StepRunner = () => {
   const [containerId, setContainerId] = useState('');
 
   const currentStepIdx = currentScenario.steps.indexOf(currentStep);
-  const previousStepEnabled = currentStepIdx > 0;
+  const previousStepEnabled = false;
   const nextStepEnabled = currentScenario.steps.length > currentStepIdx + 1;
 
   const terminalTabsRef = useRef<TerminalTabsRef>(null);
@@ -33,6 +33,8 @@ const StepRunner = () => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
+    let stepContainerId = '';
+
     const createAndInitContainer = async () => {
       updateStatus({ icon: 'rocket', message: 'Launching container' });
 
@@ -51,6 +53,7 @@ const StepRunner = () => {
       try {
         const createResult = await InvokeChannel('docker:create', containerSpec);
         setContainerId(createResult.containerId);
+        stepContainerId = createResult.containerId;
         resetStatus();
 
         if (currentStep.scripts.init) {
@@ -75,6 +78,11 @@ const StepRunner = () => {
     };
 
     createAndInitContainer();
+
+    return () => {
+      InvokeChannel('terminal:kill');
+      InvokeChannel('docker:exit', { containerId: stepContainerId });
+    };
   }, [currentLab, currentScenario, currentStep, resetStatus, updateStatus]);
 
   const afterResizing = () => {};
@@ -84,8 +92,6 @@ const StepRunner = () => {
   };
 
   const verifyPrevious = async () => {
-    await InvokeChannel('terminal:kill');
-    await InvokeChannel('docker:exit', { containerId });
     setInitialized(false);
     setContainerId('');
     return true;
@@ -122,8 +128,6 @@ const StepRunner = () => {
       await InvokeChannel('progress:save', currentProgress);
     }
 
-    await InvokeChannel('terminal:kill');
-    await InvokeChannel('docker:exit', { containerId });
     setInitialized(false);
     setContainerId('');
     return true;
