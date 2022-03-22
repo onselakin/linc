@@ -18,7 +18,6 @@ export interface TerminalRef {
 }
 
 const Term = forwardRef<TerminalRef, TerminalProps>(({ size, visible, containerId, terminalId }, ref) => {
-  log(`Terminal Created: ${terminalId}`, 'color: magenta');
   const exitCallRef = useRef<() => void>();
   const executeCallRef = useRef<(command: string) => void>();
   const fit = useRef<FitAddon>(new FitAddon());
