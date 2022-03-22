@@ -15,8 +15,10 @@ const ScenarioList = ({ lab, progressRecords }: ScenarioListProps) => {
     progressRecords.filter(r => r.labId === lab.id && r.scenarioId === scenario.id).length;
 
   const completionPercentage = (scenario: Scenario) =>
-    (100 * progressRecords.filter(r => r.labId === lab.id && r.scenarioId === scenario.id).length) /
-    (scenario.steps ? scenario.steps.length : 1);
+    Math.round(
+      (100 * progressRecords.filter(r => r.labId === lab.id && r.scenarioId === scenario.id).length) /
+        (scenario.steps ? scenario.steps.length : 1)
+    );
 
   return (
     <div className="text-white flex flex-col">
