@@ -87,6 +87,9 @@ const LabInformation = () => {
       setHistory(hist);
 
       const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
+      if (progressRecords.length > 0) {
+        setSectionIdx(1);
+      }
       updateLabProgress(progressRecords);
     };
     init();
