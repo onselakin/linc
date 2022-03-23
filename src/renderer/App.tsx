@@ -1,6 +1,6 @@
 import './App.css';
 import '../../assets/fontawesome/css/all.css';
-import { MemoryRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { InvokeChannel, SetupRendererProcessListener } from 'ipc';
 import { useEffect } from 'react';
 import { RecoilRoot, useRecoilState } from 'recoil';
@@ -17,7 +17,6 @@ SetupRendererProcessListener();
 
 const Layout = () => {
   const [dockerStatus, setDockerStatus] = useRecoilState(dockerAtom);
-  const location = useLocation();
 
   useEffect(() => {
     const pingDocker = async () => {
@@ -28,10 +27,6 @@ const Layout = () => {
 
     pingDocker();
   }, [setDockerStatus]);
-
-  useEffect(() => {
-    console.log('Location changed:', location.pathname);
-  }, [location]);
 
   return (
     <div className="absolute top-0 right-0 bottom-0 left-0">
