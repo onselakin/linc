@@ -52,6 +52,16 @@ const inspect: Bridge<{ imageName: string }, unknown> = async ({ imageName }, ch
   }
 };
 
+const history: Bridge<{ imageName: string }, { createdBy: string }[]> = async ({ imageName }, channel) => {
+  try {
+    const image = docker.getImage(imageName);
+    const historyInfo = await image.history();
+    channel.reply(historyInfo.map((h: any) => ({ createdBy: h.CreatedBy })));
+  } catch (error) {
+    channel.error(new Error('IMAGE_NOT_FOUND'));
+  }
+};
+
 const pull: Bridge<
   { imageName: string },
   void,
@@ -167,6 +177,7 @@ const exec: Bridge<
 export default {
   'docker:connect': connect,
   'docker:inspect': inspect,
+  'docker:history': history,
   'docker:pull': pull,
   'docker:create': create,
   'docker:exec': exec,

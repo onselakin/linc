@@ -49,7 +49,7 @@ const ScenarioList = ({ lab, progressRecords }: ScenarioListProps) => {
           </div>
           <div className="mt-3">
             {scenario.steps.map(step => (
-              <div key={step.id} className="mt-2 w-full flex flex-col">
+              <div key={step.id} className="mt-3 w-full flex flex-col">
                 <div className="text-sm text-gray-300">{step.title}</div>
               </div>
             ))}

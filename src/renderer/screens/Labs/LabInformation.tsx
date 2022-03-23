@@ -1,14 +1,21 @@
-import 'renderer/App.css';
 import Markdown from 'renderer/components/Markdown';
-import { useCurrentLab } from 'renderer/hooks/useCurrent';
 import AuthorBio from './AuthorBio';
+import Syllabus from './Syllabus';
+import { useCurrentLab } from 'renderer/hooks/useCurrent';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useState } from 'react';
-import dockerAtom from '../../atoms/docker';
-import { Status } from '../../../types/status';
-import statusAtom from '../../atoms/status';
-import { InvokeChannel } from '../../../ipc';
+import { useEffect, useState } from 'react';
+import { Status } from 'types/status';
+import { InvokeChannel } from 'ipc';
+import dockerAtom from 'renderer/atoms/docker';
+import statusAtom from 'renderer/atoms/status';
+import ImageInfo, { ImageHistory } from './ImageInfo';
+
+const sectionButton = ({ title, onClick }: { title: string; onClick: () => void }) => (
+  <button type="button" className="text-orange underline mr-4" onClick={onClick}>
+    {title}
+  </button>
+);
 
 const LabButton = ({
   needsImagePull,
@@ -54,10 +61,29 @@ const LabButton = ({
 const LabInformation = () => {
   const lab = useCurrentLab();
   const navigate = useNavigate();
-  const [needsImagePull, setNeedsImagePull] = useState(false);
   const dockerStatus = useRecoilValue(dockerAtom);
   const updateStatus = useSetRecoilState<Status>(statusAtom);
   const [imagePullInProgress, setImagePullInProgress] = useState(false);
+  const [needsImagePull, setNeedsImagePull] = useState(false);
+  const [sectionIdx, setSectionIdx] = useState(0);
+  const [history, setHistory] = useState<ImageHistory[]>([]);
+
+  useEffect(() => {
+    const getImageHistory = async () => {
+      const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
+      const promises = imageNames.map(async imageName => {
+        const items = await InvokeChannel('docker:history', { imageName });
+        return {
+          imageName,
+          history: items,
+        };
+      });
+
+      const hist = await Promise.all(promises);
+      setHistory(hist);
+    };
+    getImageHistory();
+  }, [lab]);
 
   const pullImage = () => {
     setImagePullInProgress(true);
@@ -75,8 +101,7 @@ const LabInformation = () => {
         setImagePullInProgress(false);
         updateStatus({ icon: 'check', message: '', currentProgress: 0, totalProgress: 0 });
       })
-      .catch(error => {
-        console.warn(error);
+      .catch(() => {
         setImagePullInProgress(false);
         setNeedsImagePull(true);
         updateStatus({ icon: 'triangle-exclamation', message: '', currentProgress: 0, totalProgress: 0 });
@@ -110,9 +135,16 @@ const LabInformation = () => {
           />
         </div>
       </div>
-      <div className="flex-1 flex overflow-scroll no-scrollbar my-8 ml-64">
+      <div className="flex-1 flex overflow-scroll no-scrollbar my-8 mt-4 ml-64">
         <div className="flex-1 ml-4">
-          <Markdown markdown={lab.cover} />
+          <div className="flex my-4">
+            {sectionButton({ title: `What you'll learn`, onClick: () => setSectionIdx(0) })}
+            {sectionButton({ title: `Syllabus`, onClick: () => setSectionIdx(1) })}
+            {sectionButton({ title: `Image Information`, onClick: () => setSectionIdx(2) })}
+          </div>
+          {sectionIdx === 0 && <Markdown markdown={lab.cover} />}
+          {sectionIdx === 1 && <Syllabus lab={lab} />}
+          {sectionIdx === 2 && <ImageInfo history={history} />}
         </div>
         <div className="w-96 shrink-0">
           <AuthorBio author={lab.author} />
