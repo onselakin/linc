@@ -12,9 +12,11 @@ import Step from 'types/step';
 
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
-const cloneLab: Bridge<{ url: string; username: string; password: string },
+const cloneLab: Bridge<
+  { url: string; username: string; password: string },
   { id: string; success: boolean },
-  { repo: string; phase: string; loaded: number; total: number }> = async (payload, channel) => {
+  { repo: string; phase: string; loaded: number; total: number }
+> = async (payload, channel) => {
   const regex = /^(https|git)(:\/\/|@)([^/:]+)[/:]([^/:]+)\/(.+).git$/gm;
   const match = regex.exec(payload.url);
   if (match != null) {

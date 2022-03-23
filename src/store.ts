@@ -16,6 +16,6 @@ const store: Store<AppStore> = new Store<AppStore>({
   },
 });
 
-store.clear();
+// store.clear();
 
 export default store;
