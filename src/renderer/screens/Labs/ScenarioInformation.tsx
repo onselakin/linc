@@ -1,8 +1,5 @@
-import { InvokeChannel } from 'ipc';
-import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useCurrentLab, useCurrentScenario } from 'renderer/hooks/useCurrent';
-import labsAtom from 'renderer/atoms/labs';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
@@ -11,16 +8,7 @@ import ScenarioList from './ScenarioList';
 const ScenarioInformation = () => {
   const lab = useCurrentLab();
   const scenario = useCurrentScenario();
-  const [labs, setLabs] = useRecoilState(labsAtom);
-  const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
-
-  useEffect(() => {
-    const init = async () => {
-      const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
-      updateLabProgress(progressRecords);
-    };
-    init();
-  }, [lab, labs, setLabs, updateLabProgress]);
+  const labProgress = useRecoilValue(progressAtom);
 
   return (
     <div className="flex my-4">
