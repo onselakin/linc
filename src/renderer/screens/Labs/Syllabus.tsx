@@ -15,7 +15,7 @@ const Syllabus = ({ lab, progressRecords }: SyllabusProps) => {
             {progressRecords.some(p => p.scenarioId === s.id) ? (
               <div className="absolute w-3 h-3 rounded-full mt-1.5 -left-1.5 border border-gray-900 bg-purple-500" />
             ) : (
-              <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white border-gray-900 bg-gray-700" />
+              <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border-gray-900 bg-gray-700" />
             )}
 
             <h4 className="text-md font-semibold text-gray-900 dark:text-white">{s.title}</h4>
