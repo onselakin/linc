@@ -40,7 +40,6 @@ const LabList = () => {
           .filter(l => l !== undefined)
       );
       updateLabs({ ...labs, all: results as Lab[] });
-
       updateStatus({ message: '' });
     };
 

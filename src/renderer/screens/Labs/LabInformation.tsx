@@ -90,7 +90,7 @@ const LabInformation = () => {
       if (progressRecords.length > 0) {
         setSectionIdx(1);
       }
-      updateLabProgress(progressRecords);
+      updateLabProgress([]);
     };
     init();
   }, [lab]);
@@ -169,7 +169,7 @@ const LabInformation = () => {
             {sectionButton({ title: `Syllabus`, active: sectionIdx === 1, onClick: () => setSectionIdx(1) })}
             {sectionButton({ title: `Image Information`, active: sectionIdx === 2, onClick: () => setSectionIdx(2) })}
           </div>
-          {sectionIdx === 0 && <Markdown markdown={lab.cover} />}
+          {sectionIdx === 0 && <Markdown markdown={lab.frontMatter} />}
           {sectionIdx === 1 && <Syllabus progressRecords={labProgress} lab={lab} />}
           {sectionIdx === 2 && <ImageInfo history={history} />}
         </div>

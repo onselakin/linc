@@ -19,18 +19,12 @@ const StepRunner = () => {
   const currentScenario = useCurrentScenario();
   const currentStep = useCurrentStep();
   const [containerId, setContainerId] = useState('');
-
-  const currentStepIdx = currentScenario.steps.indexOf(currentStep);
-  const previousStepEnabled = false;
-  const nextStepEnabled = currentScenario.steps.length > currentStepIdx + 1;
-
+  const [initialized, setInitialized] = useState(false);
   const terminalTabsRef = useRef<TerminalTabsRef>(null);
 
   const updateStatus = useSetRecoilState(statusAtom);
   const resetStatus = useResetRecoilState(statusAtom);
   const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
-
-  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     let stepContainerId = '';
@@ -91,12 +85,6 @@ const StepRunner = () => {
     if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);
   };
 
-  const verifyPrevious = async () => {
-    setInitialized(false);
-    setContainerId('');
-    return true;
-  };
-
   const verifyNext = async () => {
     resetStatus();
 
@@ -108,6 +96,7 @@ const StepRunner = () => {
         script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
         shell: currentStep.scripts.shell,
       });
+      resetStatus();
       if (!success) return false;
     }
 
@@ -140,28 +129,7 @@ const StepRunner = () => {
           <Markdown markdown={currentStep.content} onExecute={executeCode} />
 
           <div className="my-4">
-            <StepNavigation
-              previousVisible={previousStepEnabled}
-              nextVisible={nextStepEnabled}
-              previousTitle={previousStepEnabled ? currentScenario.steps[currentStepIdx - 1].title : ''}
-              nextTitle={nextStepEnabled ? currentScenario.steps[currentStepIdx + 1].title : ''}
-              previous={
-                previousStepEnabled
-                  ? `/lab/${currentLab.id}/scenario/${currentScenario.id}/step/${
-                      currentScenario.steps[currentStepIdx - 1].id
-                    }`
-                  : ''
-              }
-              next={
-                nextStepEnabled
-                  ? `/lab/${currentLab.id}/scenario/${currentScenario.id}/step/${
-                      currentScenario.steps[currentStepIdx + 1].id
-                    }`
-                  : ''
-              }
-              verifyBeforePrevious={verifyPrevious}
-              verifyBeforeNext={verifyNext}
-            />
+            <StepNavigation verifyBeforeNext={verifyNext} />
           </div>
         </div>
       </Section>

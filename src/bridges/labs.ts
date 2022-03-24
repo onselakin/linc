@@ -62,10 +62,17 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     lab.id = payload.id;
-    const coverFile = path.join(labPath, 'cover.md');
-    if (fs.existsSync(coverFile)) {
-      lab.cover = fs.readFileSync(coverFile, 'utf-8');
+
+    const frontFile = path.join(labPath, 'front.md');
+    if (fs.existsSync(frontFile)) {
+      lab.frontMatter = fs.readFileSync(frontFile, 'utf-8');
     }
+
+    const backFile = path.join(labPath, 'back.md');
+    if (fs.existsSync(backFile)) {
+      lab.backMatter = fs.readFileSync(backFile, 'utf-8');
+    }
+
     const scenariosPath = path.join(labPath, 'scenarios');
     // Walk through the folders and add the scenarios
     lab.scenarios = fs

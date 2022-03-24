@@ -15,7 +15,8 @@ export default interface Lab {
     };
   };
   description: string;
-  cover: string;
+  frontMatter: string;
+  backMatter: string;
   difficulty: string;
   estimatedTime: string;
   coverImage: string;
