@@ -131,10 +131,7 @@ const create: Bridge<
     container.wait(err => {
       if (err) {
         channel.error(err);
-        return;
       }
-      // TODO: Exit container
-      console.log('exit container');
     });
     channel.reply({ containerId: container.id });
   });
