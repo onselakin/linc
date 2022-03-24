@@ -1,7 +1,5 @@
 ---
-name: Question
-about: Ask a question.❓
-labels: 'question'
+name: Question about: Ask a question.❓ labels: 'question'
 ---
 
 ## Summary
@@ -9,7 +7,7 @@ labels: 'question'
 <!-- What do you need help with? -->
 
 <!---
-❗️❗️ Also, please consider donating (https://opencollective.com/electron-react-boilerplate-594) ❗️❗️
+❗️❗️ Also, please consider donating (https://opencollective.com/labwiz-594) ❗️❗️
 
 Donations will ensure the following:
 
