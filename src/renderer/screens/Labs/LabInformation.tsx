@@ -1,15 +1,15 @@
-import Markdown from 'renderer/components/Markdown';
-import AuthorBio from './AuthorBio';
-import Syllabus from './Syllabus';
 import { useCurrentLab } from 'renderer/hooks/useCurrent';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import { Status } from 'types/status';
 import { InvokeChannel } from 'ipc';
+import ImageInfo, { ImageHistory } from './ImageInfo';
+import Markdown from 'renderer/components/Markdown';
+import AuthorBio from './AuthorBio';
+import Syllabus from './Syllabus';
 import dockerAtom from 'renderer/atoms/docker';
 import statusAtom from 'renderer/atoms/status';
-import ImageInfo, { ImageHistory } from './ImageInfo';
 import progressAtom from '../../atoms/progress';
 
 const sectionButton = ({ title, active, onClick }: { title: string; active: boolean; onClick: () => void }) => (
@@ -49,7 +49,7 @@ const LabButton = ({
           className="mt-auto rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center w-72 h-10"
           onClick={onClick}
         >
-          {pullInProgress ? 'PULLING IMAGE' : 'PULL LAB IMAGE'}
+          {pullInProgress ? 'PULLING IMAGE' : 'PULL LAB IMAGES'}
         </button>
       )}
       {!dockerConnected && (
@@ -71,20 +71,44 @@ const LabInformation = () => {
   const [sectionIdx, setSectionIdx] = useState(0);
   const [history, setHistory] = useState<ImageHistory[]>([]);
   const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
+  const [missingImages, setMissingImages] = useState<string[]>([]);
 
-  useEffect(() => {
-    const init = async () => {
-      const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
-      const promises = imageNames.map(async imageName => {
+  const loadHistory = async () => {
+    const imageNames = lab.scenarios.flatMap(s => s.steps.map(step => step.container.image));
+
+    const allHistory = await Promise.all(
+      imageNames.map(async imageName => {
         const items = await InvokeChannel('docker:history', { imageName });
         return {
           imageName,
           history: items,
         };
-      });
+      })
+    );
+    setHistory(allHistory);
+  };
 
-      const hist = await Promise.all(promises);
-      setHistory(hist);
+  useEffect(() => {
+    const init = async () => {
+      const imageNames = lab.scenarios.flatMap(s => s.steps.map(step => step.container.image));
+
+      const missing = (
+        await Promise.all(
+          imageNames.map(async imageName => {
+            const { exists } = await InvokeChannel('docker:exists', { imageName });
+            return { imageName, exists };
+          })
+        )
+      )
+        .filter(m => !m.exists)
+        .map(m => m.imageName);
+
+      if (missing.length > 0) {
+        setNeedsImagePull(true);
+        setMissingImages(missing);
+      } else {
+        await loadHistory();
+      }
 
       const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
       if (progressRecords.length > 0) {
@@ -95,32 +119,50 @@ const LabInformation = () => {
     init();
   }, [lab]);
 
-  const pullImage = () => {
+  const pullImages = async () => {
     setImagePullInProgress(true);
-    const [image, tag] = lab.container.image.split(':');
-    InvokeChannel('docker:pull', { imageName: image, tag }, ({ status, currentProgress, totalProgress }) => {
+
+    const failedImagePulls: string[] = [];
+
+    await missingImages.reduce(async (acc, imageName) => {
+      await acc;
+      const [image, tag] = imageName.split(':');
+
+      try {
+        await InvokeChannel('docker:pull', { imageName: image, tag }, ({ status, currentProgress, totalProgress }) => {
+          updateStatus({
+            icon: 'download',
+            message: status,
+            currentProgress,
+            totalProgress,
+          });
+        });
+      } catch (e) {
+        failedImagePulls.push(imageName);
+      }
+    }, Promise.resolve());
+
+    updateStatus({ icon: 'triangle-exclamation', message: '', currentProgress: 0, totalProgress: 0 });
+
+    if (failedImagePulls.length > 0) {
+      setImagePullInProgress(false);
+      setNeedsImagePull(true);
       updateStatus({
-        icon: 'download',
-        message: status,
-        currentProgress,
-        totalProgress,
+        icon: 'triangle-exclamation',
+        message: 'Some of the images failed to download',
+        currentProgress: 0,
+        totalProgress: 0,
       });
-    })
-      .then(() => {
-        setNeedsImagePull(false);
-        setImagePullInProgress(false);
-        updateStatus({ icon: 'check', message: '', currentProgress: 0, totalProgress: 0 });
-      })
-      .catch(() => {
-        setImagePullInProgress(false);
-        setNeedsImagePull(true);
-        updateStatus({ icon: 'triangle-exclamation', message: '', currentProgress: 0, totalProgress: 0 });
-      });
+    } else {
+      setNeedsImagePull(false);
+      setImagePullInProgress(false);
+      updateStatus({ icon: 'check', message: '', currentProgress: 0, totalProgress: 0 });
+    }
   };
 
   const labButtonClick = async () => {
     if (needsImagePull) {
-      pullImage();
+      await pullImages();
       return;
     }
 

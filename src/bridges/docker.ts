@@ -42,6 +42,16 @@ const exit: Bridge<{ containerId: string }, void> = async ({ containerId }, chan
   }
 };
 
+const exists: Bridge<{ imageName: string }, { exists: boolean }> = async ({ imageName }, channel) => {
+  try {
+    const image = docker.getImage(imageName);
+    await image.inspect();
+    channel.reply({ exists: true });
+  } catch (error) {
+    channel.reply({ exists: false });
+  }
+};
+
 const inspect: Bridge<{ imageName: string }, unknown> = async ({ imageName }, channel) => {
   try {
     const image = docker.getImage(imageName);
@@ -173,6 +183,7 @@ const exec: Bridge<
 
 export default {
   'docker:connect': connect,
+  'docker:exists': exists,
   'docker:inspect': inspect,
   'docker:history': history,
   'docker:pull': pull,
