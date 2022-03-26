@@ -43,8 +43,22 @@ const Button = ({ text, click }: { text: string; click: () => void }) => {
   );
 };
 
-const InlineCodeBlock = ({ code }: { code: string }) => {
-  return <span className="rounded bg-[#1F2937] text-gray-300 p-2">{code}</span>;
+const InlineCodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
+  if (!config.specified || !config?.executable)
+    return <span className="rounded bg-black text-gray-300 p-2">{code}</span>;
+
+  return (
+    <button
+      className="rounded rounded-md h-10 bg-black text-gray-300 p-2"
+      type="button"
+      onClick={() => {
+        if (onExecute) onExecute(`${code}\r`, config.targetTerminal ?? '');
+      }}
+    >
+      {code}
+      <i className="fa-solid fa-arrow-turn-down fa-sm rotate-90 ml-2" />
+    </button>
+  );
 };
 
 const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
@@ -73,7 +87,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
           )}
         </div>
       </div>
-      <div className="w-full relative">
+      <div className="w-full relative not-prose">
         <Highlight className={`${config.language} ${solutionHidden ? 'blur-sm' : ''}`}>{code}</Highlight>
         <div className="absolute bottom-2 right-2 text-sm">
           {solutionHidden && !hintVisible && <Button text="Hint" click={() => setHintVisible(!hintVisible)} />}
@@ -129,7 +143,7 @@ const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
           }
 
           if (inline) {
-            return <InlineCodeBlock code={finalContents} />;
+            return <InlineCodeBlock config={config} code={finalContents} onExecute={onExecute} />;
           }
 
           return match ? (

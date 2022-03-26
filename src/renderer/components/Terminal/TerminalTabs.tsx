@@ -39,7 +39,7 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
         terminalRefs.current.forEach(t => t.exit());
       },
       executeCommand(terminalId: string, command: string) {
-        const tab = tabs!.find(t => t.id === terminalId);
+        const tab = tabs!.find(t => t.id === terminalId) || tabs![0];
         if (tab) {
           const tabIndex = tabs!.indexOf(tab);
           const termRef = terminalRefs.current[tabIndex];
