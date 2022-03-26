@@ -20,4 +20,5 @@ export default interface Step {
   container: {
     image: string;
   };
+  includes: { [key: string]: string };
 }

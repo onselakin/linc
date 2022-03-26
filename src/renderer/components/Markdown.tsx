@@ -7,8 +7,6 @@ import yaml from 'js-yaml';
 import { useState } from 'react';
 import checkIcon from '../../../assets/check.png';
 
-const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
-
 interface CodeBlockConfig {
   specified: boolean;
   title?: string;
@@ -18,10 +16,12 @@ interface CodeBlockConfig {
   editable?: boolean;
   clipboard?: boolean;
   hint?: string;
+  file?: string;
 }
 
 interface MarkdownProps {
   markdown: string;
+  includes?: { [key: string]: string };
   onExecute?: (terminalId: string, command: string) => void;
 }
 
@@ -43,12 +43,11 @@ const Button = ({ text, click }: { text: string; click: () => void }) => {
   );
 };
 
-const InlineCode = ({ code }: { code: string }) => {
+const InlineCodeBlock = ({ code }: { code: string }) => {
   return <span className="rounded bg-[#1F2937] text-gray-300 p-2">{code}</span>;
 };
 
 const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
-  // console.table(config);
   const [solutionHidden, setSolutionHidden] = useState(config.hint !== undefined);
   const [hintVisible, setHintVisible] = useState(false);
 
@@ -92,7 +91,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
   );
 };
 
-const Markdown = ({ markdown, onExecute }: MarkdownProps) => {
+const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
   return (
     <ReactMarkdown
       className="prose max-w-none"
@@ -107,22 +106,32 @@ const Markdown = ({ markdown, onExecute }: MarkdownProps) => {
             language: '',
             specified: false,
           };
+
+          const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
           const dm = configRegex.exec(contents);
           if (dm !== null) {
             config = yaml.load(dm[1]) as CodeBlockConfig;
             config.specified = true;
           }
 
-          // Remove config from the final output
-          const finalContents = contents.replace(configRegex, '');
           const match = /language-(\w+)/.exec(className || '');
           if (match) {
             // eslint-disable-next-line prefer-destructuring
             config.language = match[1];
           }
-          if (inline) {
-            return <InlineCode code={finalContents} />;
+
+          let finalContents: string;
+          if (config.file && includes) {
+            finalContents = includes[config.file];
+          } else {
+            // Remove config from the final output
+            finalContents = contents.replace(configRegex, '');
           }
+
+          if (inline) {
+            return <InlineCodeBlock code={finalContents} />;
+          }
+
           return match ? (
             <CodeBlock code={finalContents} config={config} onExecute={onExecute} />
           ) : (

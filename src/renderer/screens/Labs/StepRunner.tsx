@@ -126,7 +126,7 @@ const StepRunner = () => {
     <Container className="h-full" afterResizing={afterResizing}>
       <Section minSize={500}>
         <div className="h-full overflow-scroll no-scrollbar pr-2">
-          <Markdown markdown={currentStep.content} onExecute={executeCode} />
+          <Markdown markdown={currentStep.content} includes={currentStep.includes} onExecute={executeCode} />
 
           <div className="my-4">
             <StepNavigation verifyBeforeNext={verifyNext} />

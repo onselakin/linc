@@ -1,8 +1,7 @@
 import git, { GitProgressEvent } from 'isomorphic-git';
-
 import { Bridge } from 'ipc/ipc-handler';
-import Lab from 'types/lab';
 import { app } from 'electron';
+import Lab from 'types/lab';
 import fs from 'fs';
 import http from 'isomorphic-git/http/node';
 import path from 'path';
@@ -114,6 +113,20 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
             const contentFilePath = path.join(stepPath, 'content.md');
             if (fs.existsSync(contentFilePath)) {
               step.content = fs.readFileSync(contentFilePath, 'utf-8');
+              step.includes = {};
+
+              const configRegex = /~[^{]*\{([^}]*)}\n?~\n?/gm;
+              const configs = [...step.content.matchAll(configRegex)].map(r => r[1]);
+              configs.forEach(c => {
+                const yamlCfg: any = yaml.load(c);
+                if (yamlCfg.file) {
+                  const includeContentPath = path.join(stepPath, 'files', yamlCfg.file);
+                  if (fs.existsSync(includeContentPath)) {
+                    step.includes[yamlCfg.file] = fs.readFileSync(includeContentPath, 'utf-8');
+                  }
+                }
+              });
+              console.log(step.includes);
             }
 
             const initScriptFilePath = path.join(stepPath, 'init.sh');
@@ -130,14 +143,28 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
           });
         return scenario;
       });
-    console.log(lab);
     channel.reply(lab);
   } catch (e) {
     channel.error(e);
   }
 };
 
+const readFile: Bridge<{ labId: string; scenarioId: string; stepId: string; fileName: string }, string> = async (
+  { labId, scenarioId, stepId, fileName },
+  channel
+) => {
+  const fullFilePath = path.join(labsPath, labId, 'scenarios', scenarioId, 'steps', stepId, 'files', fileName);
+  if (!fs.existsSync(fullFilePath)) {
+    channel.error(new Error('FILE_NOT_FOUND'));
+    return;
+  }
+
+  const contents = fs.readFileSync(fullFilePath, 'utf-8');
+  channel.reply(contents);
+};
+
 export default {
   'lab:clone': cloneLab,
   'lab:load': loadLab,
+  'lab:readFile': readFile,
 };
