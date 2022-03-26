@@ -74,7 +74,7 @@ const LabInformation = () => {
   const [missingImages, setMissingImages] = useState<string[]>([]);
 
   const loadHistory = async () => {
-    const imageNames = lab.scenarios.flatMap(s => s.steps.map(step => step.container.image));
+    const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
 
     const allHistory = await Promise.all(
       imageNames.map(async imageName => {
@@ -90,7 +90,7 @@ const LabInformation = () => {
 
   useEffect(() => {
     const init = async () => {
-      const imageNames = lab.scenarios.flatMap(s => s.steps.map(step => step.container.image));
+      const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
 
       const missing = (
         await Promise.all(
@@ -110,7 +110,6 @@ const LabInformation = () => {
         await loadHistory();
       }
 
-      const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
       updateLabProgress([]);
     };
     init();
