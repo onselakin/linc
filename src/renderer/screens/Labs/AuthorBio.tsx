@@ -12,7 +12,7 @@ interface AuthorBioProps {
 
 const AuthorBio = ({ author }: AuthorBioProps) => {
   return (
-    <div className="prose max-w-none px-4 mt-12 flex flex-col">
+    <div className="prose max-w-none px-4 mt-4 flex flex-col">
       <span className="text-sm">LAB AUTHOR</span>
       <div className="flex items-center">
         <img className="object-cover w-16 h-16 rounded-full border-green border-2" src={author.photo} alt="" />

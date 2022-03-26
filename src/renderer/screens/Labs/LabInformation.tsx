@@ -36,7 +36,7 @@ const LabButton = ({
       {!needsImagePull && dockerConnected && (
         <button
           type="button"
-          className="mt-auto rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center w-72 h-10"
+          className="mt-auto rounded border-2 border-orange text-orange text-sm py-1 px-4 no-underline text-center w-full h-10"
           onClick={onClick}
         >
           {alreadyStarted ? 'CONTINUE LAB' : 'START LAB'}
@@ -111,9 +111,6 @@ const LabInformation = () => {
       }
 
       const progressRecords = await InvokeChannel('progress:load', { labId: lab.id });
-      if (progressRecords.length > 0) {
-        setSectionIdx(1);
-      }
       updateLabProgress([]);
     };
     init();
@@ -187,14 +184,8 @@ const LabInformation = () => {
   return (
     <div className="flex flex-col h-full m-4">
       <div className="h-48 shrink-0 flex">
-        <img className="object-cover w-64 h-48 rounded" src={lab.coverImage} alt="" />
-        <div className="ml-4 flex-1 prose max-w-none flex flex-col">
-          <h1 className="mb-2">{lab.title}</h1>
-          <div className="text-s">
-            <span className="text-gray-400">by </span>
-            <span>{lab.author.name}</span>
-          </div>
-          <p className="my-2">{lab.description}</p>
+        <div>
+          <img className="object-cover w-64 h-48 rounded mb-3" src={lab.coverImage} alt="" />
           <LabButton
             needsImagePull={needsImagePull}
             dockerConnected={dockerStatus.connected}
@@ -203,10 +194,26 @@ const LabInformation = () => {
             alreadyStarted={labProgress.length > 0}
           />
         </div>
+        <div className="ml-4 flex-1 prose max-w-none flex flex-col">
+          <h1 className="mb-2">{lab.title}</h1>
+          <div className="text-s">
+            <span className="text-gray-400">by </span>
+            <span>{lab.author.name}</span>
+          </div>
+          <div className="text-s">
+            <span className="text-gray-400 mr-1">Estimated time:</span>
+            <span>{lab.estimatedTime}</span>
+          </div>
+          <div className="text-s">
+            <span className="text-gray-400 mr-1">Difficulty:</span>
+            <span>{lab.difficulty}</span>
+          </div>
+          <p className="my-2">{lab.description}</p>
+        </div>
       </div>
-      <div className="flex-1 flex overflow-scroll no-scrollbar my-8 mt-4 ml-64">
+      <div className="flex-1 flex overflow-scroll no-scrollbar mb-8 ml-64">
         <div className="flex-1 ml-4">
-          <div className="flex my-4">
+          <div className="flex mt-3 mb-4">
             {sectionButton({ title: `What you'll learn`, active: sectionIdx === 0, onClick: () => setSectionIdx(0) })}
             {sectionButton({ title: `Syllabus`, active: sectionIdx === 1, onClick: () => setSectionIdx(1) })}
             {sectionButton({ title: `Image Information`, active: sectionIdx === 2, onClick: () => setSectionIdx(2) })}
