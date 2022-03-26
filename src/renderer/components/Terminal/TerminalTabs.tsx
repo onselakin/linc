@@ -22,6 +22,7 @@ interface TerminalTabsProps {
 export interface TerminalTabsRef {
   exit: () => void;
   executeCommand: (terminalId: string, command: string) => void;
+  fit: () => void;
 }
 
 const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
@@ -45,6 +46,9 @@ const TerminalTabs = forwardRef<TerminalTabsRef, TerminalTabsProps>(
           const termRef = terminalRefs.current[tabIndex];
           termRef.execute(command);
         }
+      },
+      fit() {
+        terminalRefs.current.forEach(t => t.fit());
       },
     }));
 

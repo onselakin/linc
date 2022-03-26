@@ -126,7 +126,6 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
                   }
                 }
               });
-              console.log(step.includes);
             }
 
             const initScriptFilePath = path.join(stepPath, 'init.sh');

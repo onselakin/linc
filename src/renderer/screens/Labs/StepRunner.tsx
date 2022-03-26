@@ -79,7 +79,9 @@ const StepRunner = () => {
     };
   }, [currentLab, currentScenario, currentStep, resetStatus, updateStatus]);
 
-  const afterResizing = () => {};
+  const afterResizing = () => {
+    terminalTabsRef.current?.fit();
+  };
 
   const executeCode = (code: string, targetTerminal?: string) => {
     if (targetTerminal !== undefined) terminalTabsRef.current?.executeCommand(targetTerminal, code);

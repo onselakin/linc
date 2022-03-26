@@ -15,7 +15,6 @@ const save: Bridge<ProgressRecord[], void> = async (payload, channel) => {
   try {
     const merged = [...store.get('progressRecords'), ...payload];
     store.set('progressRecords', merged);
-    console.log(store.get('progressRecords'));
     channel.reply();
   } catch (error) {
     channel.error(error);
