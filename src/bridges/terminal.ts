@@ -18,7 +18,7 @@ const executeTerminalCommand: Bridge<
 
     if (!pty) {
       const shellCmd = `bash`;
-      pty = spawn(shellCmd, ['-c', `docker exec -it ${containerId} /bin/bash`], {
+      pty = spawn(shellCmd, ['-c', `docker exec -it ${containerId} /bin/sh`], {
         name: 'xterm-color',
         cols: 80,
         rows: 30,
