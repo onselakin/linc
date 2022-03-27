@@ -182,7 +182,7 @@ const LabInformation = () => {
 
   return (
     <div className="flex flex-col h-full m-4">
-      <div className="h-48 shrink-0 flex">
+      <div className="h-48 shrink-0 flex bg-container rounded">
         <div>
           <img className="object-cover w-64 h-48 rounded mb-3" src={lab.coverImage} alt="" />
           <LabButton
@@ -196,7 +196,7 @@ const LabInformation = () => {
         <div className="ml-4 flex-1 prose max-w-none flex flex-col">
           <h1 className="mb-2">{lab.title}</h1>
           <div className="text-s">
-            <span className="text-gray-400">by </span>
+            <span className="text-gray-400">Published by: </span>
             <span>{lab.author.name}</span>
           </div>
           <div className="text-s">
@@ -207,12 +207,12 @@ const LabInformation = () => {
             <span className="text-gray-400 mr-1">Difficulty:</span>
             <span>{lab.difficulty}</span>
           </div>
-          <p className="my-2">{lab.description}</p>
+          <p className="mt-2 text-gray-200">{lab.description}</p>
         </div>
       </div>
       <div className="flex-1 flex overflow-scroll no-scrollbar mb-8 ml-64">
         <div className="flex-1 ml-4">
-          <div className="flex mt-3 mb-4">
+          <div className="flex h-10 mt-3 mb-4">
             {sectionButton({ title: `What you'll learn`, active: sectionIdx === 0, onClick: () => setSectionIdx(0) })}
             {sectionButton({ title: `Syllabus`, active: sectionIdx === 1, onClick: () => setSectionIdx(1) })}
             {sectionButton({ title: `Image Information`, active: sectionIdx === 2, onClick: () => setSectionIdx(2) })}
