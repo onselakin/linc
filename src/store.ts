@@ -7,12 +7,12 @@ const store: Store<AppStore> = new Store<AppStore>({
       labRepos: [
         {
           username: 'onselakin',
-          password: '***REMOVED***',
+          password: process.env.GITHUB_PAT,
           url: 'https://github.com/onselakin/a-guided-tour-of-go.git',
         },
         {
           username: 'onselakin',
-          password: '***REMOVED***',
+          password: process.env.GITHUB_PAT,
           url: 'https://github.com/onselakin/basic-k8s.git',
         },
       ],
