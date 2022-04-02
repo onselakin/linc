@@ -8,11 +8,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useCurrentLab, useCurrentScenario, useCurrentStep } from 'renderer/hooks/useCurrent';
 import { InvokeChannel } from 'ipc';
 import TerminalTabs, { TerminalTabsRef } from 'renderer/components/Terminal/TerminalTabs';
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import statusAtom from 'renderer/atoms/status';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
+import settingsAtom from '../../atoms/settings';
 
 const StepRunner = () => {
   const currentLab = useCurrentLab();
@@ -21,6 +22,7 @@ const StepRunner = () => {
   const [containerId, setContainerId] = useState('');
   const [initialized, setInitialized] = useState(false);
   const terminalTabsRef = useRef<TerminalTabsRef>(null);
+  const settings = useRecoilValue(settingsAtom);
 
   const updateStatus = useSetRecoilState(statusAtom);
   const resetStatus = useResetRecoilState(statusAtom);
@@ -32,7 +34,11 @@ const StepRunner = () => {
     const createAndInitContainer = async () => {
       updateStatus({ icon: 'rocket', message: 'Launching container' });
 
-      const containerSpec: any = { imageName: currentStep.container.image, volumeBindings: [] };
+      const containerSpec: any = {
+        imageName: currentStep.container.image,
+        volumeBindings: [],
+        kubeConfig: settings.labKubeConfigs[currentLab.id],
+      };
       containerSpec.volumeBindings.push({
         source: `${currentLab.id}/`,
         target: '/lab',

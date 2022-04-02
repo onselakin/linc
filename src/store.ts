@@ -16,6 +16,7 @@ const store: Store<AppStore> = new Store<AppStore>({
           url: 'https://github.com/onselakin/basic-k8s.git',
         },
       ],
+      labKubeConfigs: {},
     },
     progressRecords: [],
   },

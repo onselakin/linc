@@ -5,6 +5,7 @@ const settingsAtom = atom<Settings>({
   key: 'settingsAtom',
   default: {
     labRepos: [],
+    labKubeConfigs: [],
   },
 });
 

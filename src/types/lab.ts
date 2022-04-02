@@ -23,5 +23,7 @@ export default interface Lab {
   container: {
     image: string;
   };
+  requiresCluster: true;
+  kubeConfig: string;
   scenarios: Scenario[];
 }

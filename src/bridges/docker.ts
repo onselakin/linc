@@ -6,8 +6,13 @@ import Docker from 'dockerode';
 import path from 'path';
 import { app } from 'electron';
 import * as stream from 'stream';
+import fs from 'fs';
 
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
+const kubeConfigPath = path.join(app.getPath('userData'), 'labwiz', 'kube');
+if (!fs.existsSync(kubeConfigPath)) {
+  fs.mkdirSync(kubeConfigPath);
+}
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
@@ -102,9 +107,18 @@ const pull: Bridge<
 };
 
 const create: Bridge<
-  { imageName: string; volumeBindings: { source: string; target: string }[] },
+  {
+    imageName: string;
+    kubeConfig?: string;
+    volumeBindings: { source: string; target: string }[];
+  },
   { containerId: string }
-> = async ({ imageName, volumeBindings }, channel) => {
+> = async ({ imageName, kubeConfig, volumeBindings }, channel) => {
+  if (kubeConfig) {
+    const fileName = `${labsPath}/config`;
+    fs.writeFileSync(fileName, kubeConfig, 'utf8');
+    volumeBindings.push({ source: 'config', target: '/.kube/config' });
+  }
   // eslint-disable-next-line @typescript-eslint/ban-types
   const volumes: { [key: string]: {} } = {};
   const hostConfig: { [key: string]: string[] } = {};

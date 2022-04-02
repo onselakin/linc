@@ -4,4 +4,5 @@ export interface Settings {
     username: string;
     password: string;
   }[];
+  labKubeConfigs: Record<string, string>;
 }
