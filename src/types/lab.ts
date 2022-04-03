@@ -25,5 +25,6 @@ export default interface Lab {
   };
   requiresCluster: true;
   kubeConfig: string;
+  singleScenario: boolean;
   scenarios: Scenario[];
 }

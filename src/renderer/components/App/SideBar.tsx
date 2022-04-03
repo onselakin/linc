@@ -26,9 +26,13 @@ const Button = ({ iconName, to }: SidebarLinkProps) => {
 const SideBar = () => {
   return (
     <div className="absolute top-12 left-0 w-14 bottom-0 flex flex-col align-middle items-center bg-component pt-8 gap-8">
-      <Button iconName="chalkboard" to="/lab" />
-      <Button iconName="gears" to="/settings" />
-      <Button iconName="question" to="/info" />
+      <div>
+        <Button iconName="chalkboard" to="/lab" />
+        <Button iconName="gears" to="/settings" />
+      </div>
+      <div className="mt-auto mb-14">
+        <Button iconName="question" to="/info" />
+      </div>
     </div>
   );
 };

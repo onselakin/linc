@@ -11,8 +11,8 @@ import SideBar from './components/App/SideBar';
 import Status from './components/App/Status';
 import LabInformation from './screens/Labs/LabInformation';
 import ScenarioInformation from './screens/Labs/ScenarioInformation';
-import StepRunner from './screens/Labs/StepRunner';
 import LabComplete from './screens/Labs/Complete';
+import StepRunnerRouter from './screens/Labs/StepRunnerRouter';
 
 SetupRendererProcessListener();
 
@@ -51,7 +51,7 @@ const App = () => {
             <Route path="lab/:labId" element={<LabInformation />} />
             <Route path="lab/:labId/complete" element={<LabComplete />} />
             <Route path="lab/:labId/scenario/:scenarioId" element={<ScenarioInformation />} />
-            <Route path="lab/:labId/scenario/:scenarioId/step/:stepId" element={<StepRunner />} />
+            <Route path="lab/:labId/scenario/:scenarioId/step/:stepId" element={<StepRunnerRouter />} />
           </Route>
         </Routes>
       </Router>

@@ -81,7 +81,13 @@ const LabInformation = () => {
   const [contexts, setContexts] = useState<Context[]>();
 
   const loadHistory = async () => {
-    const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
+    const imageNames = [
+      ...new Set(
+        lab.scenarios.flatMap(s =>
+          s.steps.filter(step => step.container !== undefined).map(step => step.container.image)
+        )
+      ),
+    ];
 
     const allHistory = await Promise.all(
       imageNames.map(async imageName => {
@@ -108,7 +114,13 @@ const LabInformation = () => {
         setRequiresClusterSetup(false);
       }
 
-      const imageNames = [...new Set(lab.scenarios.flatMap(s => s.steps.map(step => step.container.image)))];
+      const imageNames = [
+        ...new Set(
+          lab.scenarios.flatMap(s =>
+            s.steps.filter(step => step.container !== undefined).map(step => step.container.image)
+          )
+        ),
+      ];
 
       const missing = (
         await Promise.all(
@@ -128,7 +140,7 @@ const LabInformation = () => {
         await loadHistory();
       }
 
-      updateLabProgress([]);
+      updateLabProgress([]); // TODO: Remove this after testing
     };
     init();
   }, [lab]);
@@ -177,6 +189,11 @@ const LabInformation = () => {
   const labButtonClick = async () => {
     if (needsImagePull) {
       await pullImages();
+      return;
+    }
+
+    if (lab.singleScenario) {
+      navigate(`/lab/${lab.id}/scenario/default-scenario/step/${lab.scenarios[0].steps[0].id}`);
       return;
     }
 

@@ -15,6 +15,11 @@ const store: Store<AppStore> = new Store<AppStore>({
           password: process.env.GITHUB_PAT,
           url: 'https://github.com/onselakin/basic-k8s.git',
         },
+        {
+          username: 'onselakin',
+          password: process.env.GITHUB_PAT,
+          url: 'https://github.com/onselakin/linc-guide.git',
+        },
       ],
       labKubeConfigs: {},
     },

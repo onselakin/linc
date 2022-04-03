@@ -13,9 +13,9 @@ import statusAtom from 'renderer/atoms/status';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import settingsAtom from '../../atoms/settings';
+import settingsAtom from '../../../atoms/settings';
 
-const StepRunner = () => {
+const TerminalStepRunner = () => {
   const currentLab = useCurrentLab();
   const currentScenario = useCurrentScenario();
   const currentStep = useCurrentStep();
@@ -157,4 +157,4 @@ const StepRunner = () => {
   );
 };
 
-export default StepRunner;
+export default TerminalStepRunner;
