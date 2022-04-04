@@ -16,6 +16,17 @@ type ImageInfoProps = {
 };
 
 const ImageInfo = ({ history }: ImageInfoProps) => {
+  if (history?.length === 0) {
+    return (
+      <div className="mr-8 prose">
+        <p>
+          <i className="fa-solid fa-info-circle fa-sm mr-3" />
+          Lab does not use any images.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="mr-8">
       {history?.map((h, idx) => (

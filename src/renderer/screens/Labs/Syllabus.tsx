@@ -7,6 +7,26 @@ type SyllabusProps = {
 };
 
 const Syllabus = ({ lab, progressRecords }: SyllabusProps) => {
+  if (lab.singleScenario) {
+    return (
+      <div>
+        <ol className="relative border-l border-gray-200 dark:border-gray-700">
+          {lab.scenarios[0].steps.map(s => (
+            <li className="mb-6 ml-4" key={s.id}>
+              {progressRecords.some(p => p.scenarioId === s.id && p.stepId === s.id) ? (
+                <div className="absolute w-3 h-3 rounded-full mt-1.5 -left-1.5 border border-gray-900 bg-purple-500" />
+              ) : (
+                <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border-gray-900 bg-gray-700" />
+              )}
+
+              <h4 className="text-md font-semibold text-gray-900 dark:text-white">{s.title}</h4>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
   return (
     <div>
       <ol className="relative border-l border-gray-200 dark:border-gray-700">
