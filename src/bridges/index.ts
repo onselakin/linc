@@ -6,6 +6,7 @@ import terminalActions from './terminal';
 import dockerActions from './docker';
 import progressActions from './progress';
 import k8sactions from './k8s';
+import windowActions from './window';
 
 const actions = {
   ...labActions,
@@ -14,5 +15,6 @@ const actions = {
   ...dockerActions,
   ...progressActions,
   ...k8sactions,
+  ...windowActions,
 };
 export default actions;
