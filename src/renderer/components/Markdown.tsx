@@ -6,6 +6,7 @@ import Highlight from 'react-highlight';
 import yaml from 'js-yaml';
 import { useState } from 'react';
 import checkIcon from '../../../assets/check.png';
+import { InvokeChannel } from '../../ipc';
 
 interface CodeBlockConfig {
   specified: boolean;
@@ -151,6 +152,17 @@ const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
           ) : (
             <div>[Unrecognized Code Block]</div>
           );
+        },
+        a({ href, children }) {
+          if (href && (href.startsWith('https') || href.startsWith('http'))) {
+            return (
+              <button className="underline" type="button" onClick={() => InvokeChannel('window:open', { url: href })}>
+                {children[0]}
+                <i className="fa-solid fa-arrow-up-right-from-square fa-xs ml-1" />
+              </button>
+            );
+          }
+          return <a href={href}>{children[0]}</a>;
         },
       }}
     >
