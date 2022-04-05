@@ -5,7 +5,6 @@ import remarkGfm from 'remark-gfm';
 import Highlight from 'react-highlight';
 import yaml from 'js-yaml';
 import { useState } from 'react';
-import checkIcon from '../../../assets/check.png';
 import { InvokeChannel } from '../../ipc';
 
 interface CodeBlockConfig {
@@ -96,7 +95,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
         {hintVisible && solutionHidden && (
           <div className="absolute rounded-b top-0 left-0 bottom-0 right-0 text-sm bg-purple-600 text-gray-100 p-2">
             <button type="button" onClick={() => setHintVisible(false)}>
-              <img className="absolute top-2 right-2 m-0 w-8 h-8" src={checkIcon} alt="" />
+              <i className="absolute top-8 right-2 m-0 fa-solid fa-circle-check fa-xl" />
             </button>
             {config.hint}
           </div>
@@ -116,6 +115,11 @@ const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
         code({ inline, className, children }) {
           const contents = children[0] as string;
 
+          const match = /language-(\w+)/.exec(className || '');
+          if (match && match[1] === 'text') {
+            return <pre className="rounded">{contents}</pre>;
+          }
+
           // Check for config
           let config: CodeBlockConfig = {
             language: '',
@@ -129,7 +133,6 @@ const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
             config.specified = true;
           }
 
-          const match = /language-(\w+)/.exec(className || '');
           if (match) {
             // eslint-disable-next-line prefer-destructuring
             config.language = match[1];

@@ -43,6 +43,9 @@ module.exports = {
               'background-color': '#2B2F42',
               'border-radius': '5px',
             },
+            th: {
+              color: '#bbb',
+            },
           },
         },
       },
