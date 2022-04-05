@@ -8,6 +8,7 @@ import { useCurrentStep } from 'renderer/hooks/useCurrent';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
 import { useEffect, useRef } from 'react';
+import Stepper from '../Stepper';
 
 const BasicStepRunner = () => {
   const currentStep = useCurrentStep();
@@ -21,6 +22,8 @@ const BasicStepRunner = () => {
     <Container className="h-full m-4">
       <Section minSize={500}>
         <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
+          <Stepper />
+
           <Markdown markdown={currentStep.content} includes={currentStep.includes} />
 
           <div className="my-8">

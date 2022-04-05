@@ -14,6 +14,7 @@ import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
 import settingsAtom from '../../../atoms/settings';
+import Stepper from '../Stepper';
 
 const TerminalStepRunner = () => {
   const currentLab = useCurrentLab();
@@ -138,6 +139,8 @@ const TerminalStepRunner = () => {
     <Container className="h-full" afterResizing={afterResizing}>
       <Section minSize={500}>
         <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
+          <Stepper />
+
           <Markdown markdown={currentStep.content} includes={currentStep.includes} onExecute={executeCode} />
 
           <div className="my-4">
