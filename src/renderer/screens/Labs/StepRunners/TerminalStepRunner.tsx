@@ -28,7 +28,11 @@ const TerminalStepRunner = () => {
   const resetStatus = useResetRecoilState(statusAtom);
   const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
 
+  const contentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    contentRef?.current?.scroll({ top: 0, behavior: 'smooth' });
+
     let stepContainerId = '';
 
     const createAndInitContainer = async () => {
@@ -133,7 +137,7 @@ const TerminalStepRunner = () => {
   return (
     <Container className="h-full" afterResizing={afterResizing}>
       <Section minSize={500}>
-        <div className="h-full overflow-scroll no-scrollbar pr-2">
+        <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
           <Markdown markdown={currentStep.content} includes={currentStep.includes} onExecute={executeCode} />
 
           <div className="my-4">
