@@ -19,7 +19,7 @@ const Syllabus = ({ lab, progressRecords }: SyllabusProps) => {
                 <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border-gray-900 bg-gray-700" />
               )}
 
-              <h4 className="text-md font-semibold text-gray-900 dark:text-white">{s.title}</h4>
+              <h4 className="text-sm font-semibold text-gray-400">{s.title}</h4>
             </li>
           ))}
         </ol>
@@ -38,10 +38,10 @@ const Syllabus = ({ lab, progressRecords }: SyllabusProps) => {
               <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border-gray-900 bg-gray-700" />
             )}
 
-            <h4 className="text-md font-semibold text-gray-900 dark:text-white">{s.title}</h4>
-            <p className="mt-2 text-base font-normal text-gray-500 dark:text-gray-400">{s.description}</p>
+            <h4 className="text-md font-semibold text-gray-900">{s.title}</h4>
+            <p className="mt-2 text-base font-normal text-gray-500">{s.description}</p>
             {s.estimatedTime && (
-              <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+              <time className="mb-1 text-sm font-normal leading-none text-gray-400">
                 Estimated time: {s.estimatedTime}
               </time>
             )}
