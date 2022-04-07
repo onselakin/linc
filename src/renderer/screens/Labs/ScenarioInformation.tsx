@@ -17,7 +17,7 @@ const ScenarioInformation = () => {
       </div>
       <div className="flex-1 mx-4">
         <div className="prose max-w-none">
-          <Markdown markdown={scenario.startContent} />
+          <Markdown markdown={scenario.startContent} assetRoot={lab.localPath} />
         </div>
         <StepNavigation
           nextSubtitle="Start Scenario"

@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import { BrowserWindow, app, ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain, protocol } from 'electron';
 
 import SetupMainProcessHandler from '../ipc/ipc-handler';
 import actions from '../bridges';
@@ -79,6 +79,7 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      webSecurity: true,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
@@ -129,6 +130,11 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    protocol.registerFileProtocol('asset', (request, callback) => {
+      const url = request.url.substring(8);
+      callback({ path: path.normalize(`${url}`) });
+    });
+
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

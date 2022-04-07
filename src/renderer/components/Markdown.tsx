@@ -23,6 +23,7 @@ interface MarkdownProps {
   markdown: string;
   includes?: { [key: string]: string };
   onExecute?: (terminalId: string, command: string) => void;
+  assetRoot?: string;
 }
 
 interface CodeBlockProps {
@@ -105,7 +106,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
   );
 };
 
-const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
+const Markdown = ({ markdown, includes, onExecute, assetRoot }: MarkdownProps) => {
   return (
     <ReactMarkdown
       className="prose max-w-none"
@@ -166,6 +167,9 @@ const Markdown = ({ markdown, includes, onExecute }: MarkdownProps) => {
             );
           }
           return <a href={href}>{children[0]}</a>;
+        },
+        img({ alt, src }) {
+          return <img alt={alt} src={`asset://${assetRoot}/assets/${src}`} />;
         },
       }}
     >

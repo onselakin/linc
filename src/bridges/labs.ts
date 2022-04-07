@@ -130,6 +130,7 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     lab.id = payload.id;
+    lab.localPath = labPath;
 
     const frontFile = path.join(labPath, 'front.md');
     if (fs.existsSync(frontFile)) {

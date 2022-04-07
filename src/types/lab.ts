@@ -27,4 +27,5 @@ export default interface Lab {
   kubeConfig: string;
   singleScenario: boolean;
   scenarios: Scenario[];
+  localPath: string;
 }

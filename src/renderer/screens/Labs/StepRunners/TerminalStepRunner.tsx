@@ -141,7 +141,12 @@ const TerminalStepRunner = () => {
         <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
           <Stepper />
 
-          <Markdown markdown={currentStep.content} includes={currentStep.includes} onExecute={executeCode} />
+          <Markdown
+            markdown={currentStep.content}
+            includes={currentStep.includes}
+            onExecute={executeCode}
+            assetRoot={currentLab.localPath}
+          />
 
           <div className="my-4">
             <StepNavigation verifyBeforeNext={verifyNext} />
