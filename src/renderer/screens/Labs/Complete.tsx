@@ -19,7 +19,7 @@ const LabComplete = () => {
           <Markdown markdown={lab.backMatter} assetRoot={lab.id} />
         </div>
         <div className="flex w-full mt-8">
-          <Link to="/lab" className="w-1/2 h-16 text-left">
+          <Link to="/lab" className="w-1/3 h-16 text-left">
             <div className="rounded bg-container flex flex-row h-16 items-center pl-3 pr-4 border-2 border-orange text-orange">
               <div className="justify-self-end w-4">
                 <i className="fa-solid fa-arrow-left" />

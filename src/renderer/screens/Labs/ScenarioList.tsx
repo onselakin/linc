@@ -20,10 +20,37 @@ const ScenarioList = ({ lab, progressRecords }: ScenarioListProps) => {
         (scenario.steps ? scenario.steps.length : 1)
     );
 
+  if (lab.singleScenario) {
+    return (
+      <div className="text-white flex flex-col">
+        <div className="h-36 overflow-hidden grid place-content-center rounded">
+          <img src={`asset://${lab.coverImage}`} alt="" />
+        </div>
+        <div className="flex flex-col p-5 pt-3 my-3 rounded bg-container">
+          <div className="flex flex-row items-center text-md">
+            <i className="fa-solid fa-flask fa-sm text-[#FFB543] w-5" />
+            <div className="flex-1 text-[#5186EF]">{lab.title}</div>
+          </div>
+          <div className="text-xs text-gray-400 mt-1">100% complete</div>
+          <div className="w-full mt-1 relative">
+            <div className="absolute bg-green h-1" style={{ width: '100%' }} />
+          </div>
+          <div className="mt-3">
+            {lab.scenarios[0].steps.map(step => (
+              <div key={step.id} className="mt-3 w-full flex flex-col">
+                <div className="text-sm text-gray-300">{step.title}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="text-white flex flex-col">
       <div className="h-36 overflow-hidden grid place-content-center rounded">
-        <img src={lab.coverImage} alt="" />
+        <img src={`asset://${lab.coverImage}`} alt="" />
       </div>
       <div className="my-3">
         <i className="fa-solid fa-flask fa-sm text-[#FFB543] w-5" />
