@@ -11,7 +11,7 @@ export default interface Step {
       cwd: string;
     }[];
   };
-  volumeTarget: string;
+  volumeName: string;
   scripts: {
     shell: string;
     init: boolean;

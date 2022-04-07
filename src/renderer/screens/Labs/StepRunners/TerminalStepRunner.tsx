@@ -48,10 +48,10 @@ const TerminalStepRunner = () => {
         source: `${currentLab.id}/`,
         target: '/lab',
       });
-      if (currentStep.volumeTarget) {
+      if (currentStep.volumeName) {
         containerSpec.volumeBindings.push({
-          source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/files/`,
-          target: currentStep.volumeTarget,
+          source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/volume/`,
+          target: currentStep.volumeName,
         });
       }
 
