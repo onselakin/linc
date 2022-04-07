@@ -16,7 +16,7 @@ const LabComplete = () => {
       </div>
       <div className="flex-1 mx-4">
         <div className="prose max-w-none">
-          <Markdown markdown={lab.backMatter} assetRoot={lab.localPath} />
+          <Markdown markdown={lab.backMatter} assetRoot={lab.id} />
         </div>
         <div className="flex w-full mt-8">
           <Link to="/lab" className="w-1/2 h-16 text-left">

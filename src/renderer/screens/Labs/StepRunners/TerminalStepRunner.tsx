@@ -145,7 +145,7 @@ const TerminalStepRunner = () => {
             markdown={currentStep.content}
             includes={currentStep.includes}
             onExecute={executeCode}
-            assetRoot={currentLab.localPath}
+            assetRoot={currentLab.id}
           />
 
           <div className="my-4">

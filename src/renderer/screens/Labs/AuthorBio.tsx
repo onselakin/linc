@@ -1,4 +1,4 @@
-import { InvokeChannel } from '../../../ipc';
+import { InvokeChannel } from 'ipc';
 
 interface AuthorBioProps {
   author: {
@@ -16,7 +16,11 @@ const AuthorBio = ({ author }: AuthorBioProps) => {
   return (
     <div className="prose max-w-none px-4 flex flex-col">
       <div className="flex items-center">
-        <img className="object-cover w-16 h-16 rounded-full border-green border-2" src={author.photo} alt="" />
+        <img
+          className="object-cover w-16 h-16 rounded-full border-green border-2"
+          src={`asset://${author.photo}`}
+          alt=""
+        />
         <span className="ml-2">{author.name}</span>
       </div>
       <div className="text-sm leading-6">{author.bio}</div>

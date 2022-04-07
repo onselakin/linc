@@ -81,7 +81,7 @@ function readScenario(scenarioPath: string, id: string, scenariosPath: string, l
 }
 
 const cloneLab: Bridge<
-  { url: string; username: string; password: string },
+  { url: string; username?: string; password?: string },
   { id: string; success: boolean },
   { repo: string; phase: string; loaded: number; total: number }
 > = async (payload, channel) => {
@@ -130,7 +130,6 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     lab.id = payload.id;
-    lab.localPath = labPath;
 
     const frontFile = path.join(labPath, 'front.md');
     if (fs.existsSync(frontFile)) {
@@ -178,6 +177,11 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
         },
       ];
     }
+
+    // Fix image paths
+    lab.coverImage = `${lab.id}/${lab.coverImage}`;
+    lab.author.photo = `${lab.id}/${lab.author.photo}`;
+
     channel.reply(lab);
   } catch (e) {
     channel.error(e);

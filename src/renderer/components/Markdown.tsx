@@ -169,7 +169,7 @@ const Markdown = ({ markdown, includes, onExecute, assetRoot }: MarkdownProps) =
           return <a href={href}>{children[0]}</a>;
         },
         img({ alt, src }) {
-          return <img alt={alt} src={`asset://${assetRoot}/assets/${src}`} />;
+          return <img alt={alt} src={`asset://${assetRoot}/${src}`} />;
         },
       }}
     >

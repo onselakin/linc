@@ -29,6 +29,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 
 SetupMainProcessHandler(ipcMain, actions);
 
@@ -132,7 +133,8 @@ app
   .then(() => {
     protocol.registerFileProtocol('asset', (request, callback) => {
       const url = request.url.substring(8);
-      callback({ path: path.normalize(`${url}`) });
+      const [assetRoot, assetName] = url.split('/');
+      callback({ path: path.normalize(`${labsPath}/${assetRoot}/assets/${assetName}`) });
     });
 
     createWindow();

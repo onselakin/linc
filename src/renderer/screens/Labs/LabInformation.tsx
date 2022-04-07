@@ -298,7 +298,7 @@ const LabInformation = () => {
 
       <div className="h-48 shrink-0 flex bg-container rounded">
         <div>
-          <img className="object-cover w-64 h-48 rounded mb-3" src={lab.coverImage} alt="" />
+          <img className="object-cover w-64 h-48 rounded mb-3" src={`asset://${lab.coverImage}`} alt="" />
           {!requiresClusterSetup && (
             <LabButton
               needsImagePull={needsImagePull}
@@ -350,7 +350,7 @@ const LabInformation = () => {
             {sectionButton({ title: `Syllabus`, active: sectionIdx === 1, onClick: () => setSectionIdx(1) })}
             {sectionButton({ title: `Image Information`, active: sectionIdx === 2, onClick: () => setSectionIdx(2) })}
           </div>
-          {sectionIdx === 0 && <Markdown markdown={lab.frontMatter} assetRoot={lab.localPath} />}
+          {sectionIdx === 0 && <Markdown markdown={lab.frontMatter} assetRoot={lab.id} />}
           {sectionIdx === 1 && <Syllabus progressRecords={labProgress} lab={lab} />}
           {sectionIdx === 2 && <ImageInfo history={history} />}
         </div>

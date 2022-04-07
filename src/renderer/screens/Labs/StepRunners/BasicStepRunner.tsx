@@ -25,7 +25,7 @@ const BasicStepRunner = () => {
         <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
           <Stepper />
 
-          <Markdown markdown={step.content} includes={step.includes} assetRoot={lab.localPath} />
+          <Markdown markdown={step.content} includes={step.includes} assetRoot={lab.id} />
 
           <div className="my-8">
             <StepNavigation verifyBeforeNext={() => Promise.resolve(true)} />

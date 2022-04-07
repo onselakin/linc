@@ -10,7 +10,7 @@ const LabCard = ({ lab, onNavigate }: LabCardProps) => {
   return (
     <div className="h-[500px] w-96 rounded overflow-hidden drop-shadow-xl bg-container flex flex-col text-white">
       <div className="h-48 overflow-hidden grid place-content-center">
-        <img src={lab.coverImage} alt="" />
+        <img src={`asset://${lab.coverImage}`} alt="" />
       </div>
       <div className="mt-1 mx-4 flex flex-col gap-2">
         <h3 className="text-[#788AB6] my-2 text-xl">{lab.title}</h3>
