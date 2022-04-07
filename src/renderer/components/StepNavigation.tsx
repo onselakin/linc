@@ -58,7 +58,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ nextSubtitle, nextTitle
 
   return (
     <div className="flex w-full mt-8 justify-end">
-      <button onClick={verifyNext} type="button" className="w-1/2 h-16 text-left">
+      <button onClick={verifyNext} type="button" className="w-1/3 h-16 text-left">
         <div className="rounded bg-container flex flex-row h-16 items-center pl-3 pr-4 border-2 border-orange text-orange">
           <div className="flex-1">
             <p className="text-gray-400 text-xs mb-1">{subtitle}</p>

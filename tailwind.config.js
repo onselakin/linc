@@ -18,13 +18,18 @@ module.exports = {
             color: '#bbb',
             h1: {
               color: '#788AB6',
-              fontSize: '2em',
+              fontSize: '1.75em',
+              margin: '0 0 1em 0',
             },
             h2: {
               color: '#788AB6',
+              fontSize: '1.5em',
+              margin: '0 0 1em 0',
             },
             h3: {
               color: '#788AB6',
+              fontSize: '1.25em',
+              margin: '0 0 1em 0',
             },
             blockquote: {
               color: '#bbb',
