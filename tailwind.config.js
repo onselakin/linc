@@ -2,7 +2,7 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx,ejs}'],
   theme: {
     fontFamily: {
-      mono: ['Ubuntu Mono'],
+      mono: ['UbuntuMono'],
     },
     extend: {
       colors: {
