@@ -69,6 +69,7 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
   if (!config.specified) {
     return <Highlight className={`${config.language} rounded`}>{code}</Highlight>;
   }
+
   return (
     <div>
       <div className="flex flex-row rounded-tl-md rounded-tr-md bg-purple-800 overflow-hidden h-12 pr-2">
@@ -88,9 +89,9 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
           )}
         </div>
       </div>
-      <div className="w-full relative not-prose">
+      <div className="w-full relative not-prose bg-container p-4">
         <Highlight className={`${config.language} ${solutionHidden ? 'blur-sm' : ''}`}>{code}</Highlight>
-        <div className="absolute bottom-2 right-2 text-sm">
+        <div className="absolute top-4 right-2 text-sm">
           {solutionHidden && !hintVisible && <Button text="Hint" click={() => setHintVisible(!hintVisible)} />}
         </div>
         {hintVisible && solutionHidden && (

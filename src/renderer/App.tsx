@@ -1,5 +1,7 @@
 import './App.css';
 import '../../assets/fontawesome/css/all.css';
+import '../../assets/highlight.css';
+import '../../assets/xterm.css';
 import { MemoryRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { InvokeChannel, SetupRendererProcessListener } from 'ipc';
 import { useEffect } from 'react';
@@ -25,7 +27,6 @@ const Layout = () => {
         setDockerStatus({ ...dockerStatus, connected: success });
       });
     };
-
     pingDocker();
   }, [setDockerStatus]);
 

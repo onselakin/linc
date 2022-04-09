@@ -13,8 +13,9 @@ import statusAtom from 'renderer/atoms/status';
 import progressAtom from 'renderer/atoms/progress';
 import Markdown from 'renderer/components/Markdown';
 import StepNavigation from 'renderer/components/StepNavigation';
-import settingsAtom from '../../../atoms/settings';
+import settingsAtom from 'renderer/atoms/settings';
 import Stepper from '../Stepper';
+import Toaster from 'renderer/components/Toaster';
 
 const TerminalStepRunner = () => {
   const currentLab = useCurrentLab();
@@ -28,6 +29,7 @@ const TerminalStepRunner = () => {
   const updateStatus = useSetRecoilState(statusAtom);
   const resetStatus = useResetRecoilState(statusAtom);
   const [labProgress, updateLabProgress] = useRecoilState(progressAtom);
+  const [toasterConfig, setToasterConfig] = useState({ visible: false, containerOutput: '' });
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -104,13 +106,17 @@ const TerminalStepRunner = () => {
     if (currentStep.scripts.verify) {
       updateStatus({ icon: 'spinner', message: 'Verifying step' });
 
-      const success = await InvokeChannel('docker:exec', {
+      const result = await InvokeChannel('docker:exec', {
         containerId,
         script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
         shell: currentStep.scripts.shell,
       });
       resetStatus();
-      if (!success) return false;
+
+      if (!result.success) {
+        setToasterConfig({ visible: true, containerOutput: result.output });
+        return false;
+      }
     }
 
     if (
@@ -136,36 +142,48 @@ const TerminalStepRunner = () => {
   };
 
   return (
-    <Container className="h-full" afterResizing={afterResizing}>
-      <Section minSize={500}>
-        <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
-          <Stepper />
+    <>
+      <Container className="h-full" afterResizing={afterResizing}>
+        <Section minSize={500}>
+          <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
+            <Stepper />
 
-          <Markdown
-            markdown={currentStep.content}
-            includes={currentStep.includes}
-            onExecute={executeCode}
-            assetRoot={currentLab.id}
-          />
+            <Markdown
+              markdown={currentStep.content}
+              includes={currentStep.includes}
+              onExecute={executeCode}
+              assetRoot={currentLab.id}
+            />
 
-          <div className="my-4">
-            <StepNavigation verifyBeforeNext={verifyNext} />
+            <div className="my-4">
+              <StepNavigation verifyBeforeNext={verifyNext} />
+            </div>
           </div>
-        </div>
-      </Section>
-      <Bar className="bg-container" size={3} style={{ cursor: 'col-resize' }} />
+        </Section>
+        <Bar className="bg-container" size={3} style={{ cursor: 'col-resize' }} />
 
-      <Section minSize={250}>
-        {containerId !== '' && initialized && (
-          <TerminalTabs
-            ref={terminalTabsRef}
-            containerId={containerId}
-            initialTabs={currentStep.layout?.defaultTerminals ?? []}
-            allowNewTerminals={false}
-          />
-        )}
-      </Section>
-    </Container>
+        <Section minSize={250}>
+          {containerId !== '' && initialized && (
+            <TerminalTabs
+              ref={terminalTabsRef}
+              containerId={containerId}
+              initialTabs={currentStep.layout?.defaultTerminals ?? []}
+              allowNewTerminals={false}
+            />
+          )}
+        </Section>
+      </Container>
+      <Toaster
+        title="Verification failed"
+        isShowing={toasterConfig.visible}
+        onClose={() => setToasterConfig({ visible: false, containerOutput: '' })}
+      >
+        <div className="">
+          <p>Step verification failed. Output from the container:</p>
+          <div className="font-mono bg-gray-700 p-2 my-2 rounded">{toasterConfig.containerOutput}</div>
+        </div>
+      </Toaster>
+    </>
   );
 };
 

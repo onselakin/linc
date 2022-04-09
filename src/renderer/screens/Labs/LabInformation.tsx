@@ -259,9 +259,9 @@ const LabInformation = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="prose inline-block w-full max-w-md p-3 my-8 overflow-hidden text-left align-middle transition-all transform bg-container shadow-xl rounded border-2 border-container">
+              <div className="prose inline-block w-full max-w-md p-2 my-8 overflow-hidden text-left align-middle transition-all transform bg-container shadow-xl rounded border-2 border-container">
                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 m-0">
-                  <div className="flex items-center h-12">
+                  <div className="flex items-center h-10">
                     <h4 className="text-gray-200 m-0 flex-1">Choose context</h4>
                     <button type="button" className="flex flex-col" onClick={() => setContextSelectionVisible(false)}>
                       <i className="fa-solid fa-circle-xmark fa-xl text-[#FFB543]" />
@@ -272,7 +272,7 @@ const LabInformation = () => {
                   {contexts?.map(c => (
                     <button
                       type="button"
-                      className="h-24 text-left hover:bg-component rounded border-container border-2 w-full p-2"
+                      className="h-24 text-left hover:bg-component rounded border-container border-2 w-full"
                       onClick={() => setContext(c.name)}
                     >
                       <div>
