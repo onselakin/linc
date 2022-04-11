@@ -27,6 +27,8 @@ const configuration: webpack.Configuration = {
 
   mode: 'production',
 
+  externals: ['node-pty', 'cpu-features'],
+
   target: 'electron-main',
 
   entry: {

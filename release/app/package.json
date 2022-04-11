@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "dockerode": "^3.3.1",
     "node-pty": "^0.10.1"
   }
 }
