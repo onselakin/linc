@@ -11,7 +11,10 @@ import fs from 'fs';
 const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
 const kubeConfigPath = path.join(app.getPath('userData'), 'labwiz', 'kube');
 if (!fs.existsSync(kubeConfigPath)) {
-  fs.mkdirSync(kubeConfigPath);
+  fs.mkdirSync(kubeConfigPath, {
+    mode: 0o744,
+    recursive: true,
+  });
 }
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
