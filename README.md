@@ -4,3 +4,7 @@ Linc is a desktop application that lets you learn new technologies for free. It 
 members of the cloud community. (Please see the Virtual Lab Authoring Guide in the app)
 
 ![](./docs/assets/linc.png)
+
+To run:
+
+`npm run start`
