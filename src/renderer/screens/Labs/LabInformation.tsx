@@ -16,7 +16,7 @@ import settingsAtom from 'renderer/atoms/settings';
 import Context from 'types/context';
 
 const sectionButton = ({ title, active, onClick }: { title: string; active: boolean; onClick: () => void }) => (
-  <button type="button" className={`text-orange ${active && 'underline'} mr-4`} onClick={onClick}>
+  <button type="button" className={`text-orange ${active ? 'underline' : 'opacity-70'} mr-4`} onClick={onClick}>
     {title}
   </button>
 );
@@ -344,7 +344,7 @@ const LabInformation = () => {
       </div>
 
       <div className="flex-1 flex overflow-scroll no-scrollbar mb-8 ml-64">
-        <div className="flex-1 ml-4">
+        <div className="flex-1 ml-4 mr-16">
           <div className="flex h-10 mt-3 mb-4">
             {sectionButton({ title: `What you'll learn`, active: sectionIdx === 0, onClick: () => setSectionIdx(0) })}
             {sectionButton({ title: `Syllabus`, active: sectionIdx === 1, onClick: () => setSectionIdx(1) })}
@@ -354,7 +354,7 @@ const LabInformation = () => {
           {sectionIdx === 1 && <Syllabus progressRecords={labProgress} lab={lab} />}
           {sectionIdx === 2 && <ImageInfo history={history} />}
         </div>
-        <div className="w-96 shrink-0">
+        <div className="w-96 shrink-0 border-2 border-gray-600 rounded-lg mt-3">
           <AuthorBio author={lab.author} />
         </div>
       </div>

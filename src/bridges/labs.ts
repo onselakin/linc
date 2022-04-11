@@ -120,7 +120,7 @@ const cloneLab: Bridge<
   }
 };
 
-const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) => {
+const loadLab: Bridge<{ id: string; summaryOnly: boolean }, Lab, unknown> = async (payload, channel) => {
   const labPath = path.join(labsPath, payload.id);
   const labFile = path.join(labsPath, payload.id, 'lab.yaml');
   if (!fs.existsSync(labFile)) {
@@ -130,6 +130,14 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
   try {
     const lab = yaml.load(fs.readFileSync(labFile, 'utf-8')) as Lab;
     lab.id = payload.id;
+
+    // Fix image paths
+    lab.coverImage = `${lab.id}/${lab.coverImage}`;
+    lab.author.photo = `${lab.id}/${lab.author.photo}`;
+
+    if (payload.summaryOnly) {
+      channel.reply(lab);
+    }
 
     const frontFile = path.join(labPath, 'front.md');
     if (fs.existsSync(frontFile)) {
@@ -177,10 +185,6 @@ const loadLab: Bridge<{ id: string }, Lab, unknown> = async (payload, channel) =
         },
       ];
     }
-
-    // Fix image paths
-    lab.coverImage = `${lab.id}/${lab.coverImage}`;
-    lab.author.photo = `${lab.id}/${lab.author.photo}`;
 
     channel.reply(lab);
   } catch (e) {
