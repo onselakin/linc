@@ -3,7 +3,7 @@ name: Feature request about: You want something added to the boilerplate. 🎉 l
 ---
 
 <!---
-❗️❗️ Also, please consider donating (https://opencollective.com/labwiz-594) ❗️❗️
+❗️❗️ Also, please consider donating (https://opencollective.com/linc-594) ❗️❗️
 
 Donations will ensure the following:
 

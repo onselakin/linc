@@ -8,8 +8,8 @@ import { app } from 'electron';
 import * as stream from 'stream';
 import fs from 'fs';
 
-const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
-const kubeConfigPath = path.join(app.getPath('userData'), 'labwiz', 'kube');
+const labsPath = path.join(app.getPath('userData'), 'linc', 'labs');
+const kubeConfigPath = path.join(app.getPath('userData'), 'linc', 'kube');
 if (!fs.existsSync(kubeConfigPath)) {
   fs.mkdirSync(kubeConfigPath, {
     mode: 0o744,

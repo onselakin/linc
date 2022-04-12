@@ -29,7 +29,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
+const labsPath = path.join(app.getPath('userData'), 'linc', 'labs');
 
 SetupMainProcessHandler(ipcMain, actions);
 

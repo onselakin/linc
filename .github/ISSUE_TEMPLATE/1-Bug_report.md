@@ -9,9 +9,9 @@ name: Bug report about: You're having technical issues. 🐞 labels: 'bug'
 <!-- If the following boxes are not ALL checked, your issue is likely to be closed -->
 
 - [ ] Using npm
-- [ ] Using an up-to-date [`main` branch](https://github.com/labwiz/labwiz/tree/main)
-- [ ] Using latest version of devtools. [Check the docs for how to update](https://labwiz.js.org/docs/dev-tools/)
-- [ ] Tried solutions mentioned in [#400](https://github.com/labwiz/labwiz/issues/400)
+- [ ] Using an up-to-date [`main` branch](https://github.com/linc/linc/tree/main)
+- [ ] Using latest version of devtools. [Check the docs for how to update](https://linc.js.org/docs/dev-tools/)
+- [ ] Tried solutions mentioned in [#400](https://github.com/linc/linc/issues/400)
 - [ ] For issue in production release, add devtools output of `DEBUG_PROD=true npm run build && npm start`
 
 ## Expected Behavior
@@ -50,12 +50,12 @@ name: Bug report about: You're having technical issues. 🐞 labels: 'bug'
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 
 - Node version :
-- labwiz version or branch :
+- linc version or branch :
 - Operating System and version :
 - Link to your project :
 
 <!---
-❗️❗️ Also, please consider donating (https://opencollective.com/labwiz-594) ❗️❗️
+❗️❗️ Also, please consider donating (https://opencollective.com/linc-594) ❗️❗️
 
 Donations will ensure the following:
 

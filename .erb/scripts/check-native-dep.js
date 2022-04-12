@@ -36,7 +36,7 @@ ${chalk.whiteBright.bgRed.bold('npm install your-package')}
  ${chalk.bold('Install the package to "./release/app/package.json"')}
 ${chalk.whiteBright.bgGreen.bold('cd ./release/app && npm install your-package')}
  Read more about native dependencies at:
-${chalk.bold('https://labwiz.js.org/docs/adding-dependencies/#module-structure')}
+${chalk.bold('https://linc.js.org/docs/adding-dependencies/#module-structure')}
  `);
       process.exit(1);
     }
