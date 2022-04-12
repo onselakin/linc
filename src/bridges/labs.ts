@@ -8,8 +8,9 @@ import path from 'path';
 import yaml from 'js-yaml';
 import Scenario from 'types/scenario';
 import Step from 'types/step';
+import log from 'electron-log';
 
-const labsPath = path.join(app.getPath('userData'), 'labwiz', 'labs');
+const labsPath = path.join(app.getPath('userData'), 'linc', 'labs');
 
 function readStep(stepPath: string, id: string, lab: Lab) {
   const step = yaml.load(fs.readFileSync(path.join(stepPath, 'step.yaml'), 'utf-8')) as Step;
@@ -91,7 +92,7 @@ const cloneLab: Bridge<
     const repoName = match[5];
     const dir = path.join(labsPath, repoName);
     try {
-      const gitConfig = {
+      const gitConfig: any = {
         fs,
         http,
         dir,
@@ -100,14 +101,16 @@ const cloneLab: Bridge<
           name: 'Onsel Akin',
           email: 'onsela@outlook.com',
         },
-        onAuth: () => ({
-          username: payload.username,
-          password: payload.password,
-        }),
         onProgress: (progress: GitProgressEvent) => {
           channel.notify({ ...progress, repo: repoName });
         },
       };
+      if (payload.username && payload.password) {
+        gitConfig.onAuth = () => ({
+          username: payload.username,
+          password: payload.password,
+        });
+      }
       if (fs.existsSync(dir)) {
         await git.pull(gitConfig);
       } else {
@@ -115,6 +118,7 @@ const cloneLab: Bridge<
       }
       channel.reply({ id: repoName, success: true });
     } catch (error) {
+      log.error(error);
       channel.reply({ id: repoName, success: false });
     }
   }
