@@ -23,6 +23,7 @@ const executeTerminalCommand: Bridge<
         cols: 80,
         rows: 30,
         cwd: process.env.HOME,
+        env: { path: process.env.PATH! },
       });
       processes[terminalId] = pty;
       // pty.write(`docker exec -it ${containerId} /bin/bash\r`);
