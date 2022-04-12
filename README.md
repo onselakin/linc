@@ -7,4 +7,7 @@ members of the cloud community. (Please see the Virtual Lab Authoring Guide in t
 
 To run:
 
-`npm run start`
+```bash
+npm install
+npm run start
+```
