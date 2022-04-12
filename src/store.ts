@@ -11,9 +11,6 @@ const store: Store<AppStore> = new Store<AppStore>({
         {
           url: 'https://github.com/onselakin/a-guided-tour-of-go.git',
         },
-        {
-          url: 'https://github.com/onselakin/basic-k8s.git',
-        },
       ],
       labKubeConfigs: {},
     },
