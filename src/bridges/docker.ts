@@ -143,10 +143,10 @@ const create: Bridge<
     OpenStdin: true,
     StdinOnce: false,
     Env: [],
-    Cmd: ['bash'],
     Image: imageName,
     Volumes: volumes,
     HostConfig: hostConfig,
+    WorkingDir: '/',
   };
   const container = await docker.createContainer(options);
 
@@ -165,14 +165,15 @@ const create: Bridge<
 };
 
 const exec: Bridge<
-  { containerId: string; shell: string; script: string },
+  { containerId: string; shell: string; script: string; workingDir: string },
   { success: boolean; output: string }
-> = async ({ containerId, shell, script }, channel) => {
+> = async ({ containerId, shell, script, workingDir }, channel) => {
   const container = docker.getContainer(containerId);
   const execOptions = {
     Cmd: [shell, script],
     AttachStdout: true,
     AttachStderr: true,
+    WorkingDir: workingDir,
   };
 
   const responsePayload = { output: '', success: true };

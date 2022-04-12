@@ -12,6 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import { BrowserWindow, app, ipcMain, protocol } from 'electron';
+import MenuBuilder from './menu';
 
 import SetupMainProcessHandler from '../ipc/ipc-handler';
 import actions from '../bridges';
@@ -102,14 +103,8 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  // const menuBuilder = new MenuBuilder(mainWindow);
-  // menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
-  // mainWindow.webContents.setWindowOpenHandler(edata => {
-  //   shell.openExternal(edata.url);
-  //   return { action: 'deny' };
-  // });
+  const menuBuilder = new MenuBuilder(mainWindow);
+  menuBuilder.buildMenu();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

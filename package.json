@@ -30,8 +30,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "LinC",
+    "appId": "com.container-solutions.linc",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -98,20 +98,15 @@
     "url": "git+https://github.com/onselakin/linc.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://linc.js.org"
+    "name": "Onsel Akin",
+    "email": "onsel.akin@container-solutions.com",
+    "url": "https://www.linkedin.com/in/onselakin/"
   },
   "contributors": [
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
+      "name": "Onsel Akin",
+      "email": "onsel.akin@container-solutions.com",
+      "url": "https://www.linkedin.com/in/onselakin/"
     }
   ],
   "license": "MIT",

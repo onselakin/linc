@@ -1,11 +1,11 @@
 {
   "name": "linc",
   "version": "4.5.0",
-  "description": "A foundation for scalable desktop apps",
+  "description": "Virtual Labs in Containers",
   "main": "./dist/main/main.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
+    "name": "Onsel Akin",
+    "email": "onsel.akin@container-solutions.com",
     "url": "https://github.com/onselakin/linc.git"
   },
   "scripts": {

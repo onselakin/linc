@@ -3,14 +3,14 @@
 
 import 'renderer/App.css';
 
-import { useCurrentLab } from 'renderer/hooks/useCurrent';
+import { useCurrentStep } from 'renderer/hooks/useCurrent';
 import BasicStepRunner from './StepRunners/BasicStepRunner';
 import TerminalStepRunner from './StepRunners/TerminalStepRunner';
 
 const StepRunnerRouter = () => {
-  const lab = useCurrentLab();
+  const step = useCurrentStep();
 
-  if (lab.singleScenario) {
+  if (step.layout.type === 'basic') {
     return <BasicStepRunner />;
   }
 

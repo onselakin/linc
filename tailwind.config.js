@@ -33,6 +33,7 @@ module.exports = {
             },
             blockquote: {
               color: '#bbb',
+              fontSize: '1.25em',
             },
             hr: {
               'border-color': '#788AB6',

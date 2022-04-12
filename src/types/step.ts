@@ -3,6 +3,7 @@ export default interface Step {
   title: string;
   content: string;
   layout: {
+    type: 'basic' | 'contentWithTerminal';
     allowNewTerminals: boolean;
     defaultTerminals: {
       id: string;

@@ -12,6 +12,7 @@ interface CodeBlockConfig {
   title?: string;
   language?: string;
   executable?: boolean;
+  executeScript?: string;
   targetTerminal?: string;
   editable?: boolean;
   clipboard?: boolean;
@@ -83,7 +84,13 @@ const CodeBlock = ({ code, config, onExecute }: CodeBlockProps) => {
             <Button
               text="Execute"
               click={() => {
-                if (onExecute) onExecute(code, config.targetTerminal ?? '');
+                if (onExecute) {
+                  if (config.executeScript) {
+                    onExecute(config.executeScript, config.targetTerminal ?? '');
+                  } else {
+                    onExecute(code, config.targetTerminal ?? '');
+                  }
+                }
               }}
             />
           )}

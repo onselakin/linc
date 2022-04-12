@@ -46,13 +46,11 @@ const TerminalStepRunner = () => {
         volumeBindings: [],
         kubeConfig: settings.labKubeConfigs[currentLab.id],
       };
-      containerSpec.volumeBindings.push({
-        source: `${currentLab.id}/`,
-        target: '/lab',
-      });
       if (currentStep.volumeName) {
         containerSpec.volumeBindings.push({
-          source: `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/volume/`,
+          source: currentLab.singleScenario
+            ? `${currentLab.id}/steps/${currentStep.id}/volume/`
+            : `${currentLab.id}/scenarios/${currentScenario.id}/steps/${currentStep.id}/volume/`,
           target: currentStep.volumeName,
         });
       }
@@ -70,6 +68,7 @@ const TerminalStepRunner = () => {
             containerId: createResult.containerId,
             script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/init.sh`,
             shell: currentStep.scripts.shell,
+            workingDir: '/',
           });
 
           if (!success) {
@@ -110,6 +109,7 @@ const TerminalStepRunner = () => {
         containerId,
         script: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}/verify.sh`,
         shell: currentStep.scripts.shell,
+        workingDir: `/lab/scenarios/${currentScenario.id}/steps/${currentStep.id}`,
       });
       resetStatus();
 
