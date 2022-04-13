@@ -274,6 +274,5 @@
     "arrowParens": "avoid",
     "printWidth": 120
   },
-  "packageManager": "yarn@1.22.17",
   "version": "0.0.0"
 }
