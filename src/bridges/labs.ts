@@ -30,7 +30,7 @@ function readStep(stepPath: string, id: string, lab: Lab) {
     configs.forEach(c => {
       const yamlCfg: any = yaml.load(c);
       if (yamlCfg.file) {
-        const includeContentPath = path.join(stepPath, 'files', yamlCfg.file);
+        const includeContentPath = path.join(stepPath, 'volume', yamlCfg.file);
         if (fs.existsSync(includeContentPath)) {
           step.includes[yamlCfg.file] = fs.readFileSync(includeContentPath, 'utf-8');
         }
