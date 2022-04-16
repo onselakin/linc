@@ -143,9 +143,9 @@ const TerminalStepRunner = () => {
 
   return (
     <>
-      <Container className="h-full" afterResizing={afterResizing}>
+      <Container className="h-full mx-1" afterResizing={afterResizing}>
         <Section minSize={500}>
-          <div ref={contentRef} className="h-full overflow-scroll no-scrollbar pr-2">
+          <div ref={contentRef} className="h-full overflow-scroll no-scrollbar px-2">
             <Stepper />
 
             <Markdown
