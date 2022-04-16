@@ -35,6 +35,35 @@ body {
   .title {
     @apply text-white;
   }
+
+  .hint {
+    @apply p-3 rounded-lg;
+    border-left-width: 10px;
+  }
+
+  .hint.info {
+    @apply bg-[#A8C594];
+    @apply text-gray-800;
+    border-left-color: #009400;
+  }
+
+  .hint.warning {
+    @apply bg-[#FFE135];
+    @apply text-gray-800;
+    border-left-color: #9c8033;
+  }
+
+  .hint.error {
+    @apply bg-[#D82E3F];
+    @apply text-gray-200;
+    border-left-color: #dd6d6d;
+  }
+
+  .hint.note {
+    @apply bg-gray-500;
+    @apply text-gray-200;
+    border-left-color: #ababab;
+  }
 }
 
 @layer utilities {

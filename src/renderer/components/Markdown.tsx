@@ -2,6 +2,7 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkHint from 'utils/remarkHint';
 import Highlight from 'react-highlight';
 import yaml from 'js-yaml';
 import { useState } from 'react';
@@ -32,6 +33,13 @@ interface CodeBlockProps {
   code: string;
   onExecute?: (terminalId: string, command: string) => void;
 }
+
+const hintIcons: Record<string, string> = {
+  info: 'fa-circle-info',
+  warning: 'triangle-exclamation',
+  error: 'circle-exclamation',
+  note: 'note-sticky',
+};
 
 const Button = ({ text, click }: { text: string; click: () => void }) => {
   return (
@@ -118,7 +126,7 @@ const Markdown = ({ markdown, includes, onExecute, assetRoot }: MarkdownProps) =
   return (
     <ReactMarkdown
       className="prose max-w-none"
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, remarkHint]}
       components={{
         pre: 'div',
         code({ inline, className, children }) {
@@ -175,6 +183,18 @@ const Markdown = ({ markdown, includes, onExecute, assetRoot }: MarkdownProps) =
             );
           }
           return <a href={href}>{children[0]}</a>;
+        },
+        p({ children, className }) {
+          if (className) {
+            const subclass = className.split(' ')[1];
+            return (
+              <p className={className}>
+                <i className={`fa-solid fa-${hintIcons[subclass]} fa-md mr-2`} />
+                {children[0]}
+              </p>
+            );
+          }
+          return <p>{children[0]}</p>;
         },
         img({ alt, src }) {
           return <img alt={alt} src={`asset://${assetRoot}/${src}`} />;
