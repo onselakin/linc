@@ -172,7 +172,6 @@ ssh2@^1.4.0:
     asn1 "^0.2.4"
     bcrypt-pbkdf "^1.0.2"
   optionalDependencies:
-    cpu-features "~0.0.4"
     nan "^2.15.0"
 
 string_decoder@^1.1.1:
