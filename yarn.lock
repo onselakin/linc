@@ -1149,10 +1149,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.60.tgz#35f3d6213daed95da7f0f73e75bcc6980e90597b"
   integrity sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==
 
-"@types/node@^16.11.26":
-  version "16.11.27"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.27.tgz#5da19383bdbeda99bc0d09cfbb88cab7297ebc51"
-  integrity sha512-C1pD3kgLoZ56Uuy5lhfOxie4aZlA3UMGLX9rXteq4WitEZH6Rl80mwactt9QG0w0gLFlN/kLBTFnGXtDVWvWQw==
+"@types/node@^14.6.2":
+  version "14.18.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.13.tgz#6ad4d9db59e6b3faf98dcfe4ca9d2aec84443277"
+  integrity sha512-Z6/KzgyWOga3pJNS42A+zayjhPbf2zM3hegRQaOPnLOzEi86VV++6FLDWgR1LGrVCRufP/ph2daa3tEa5br1zA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -3762,13 +3762,13 @@ electron-updater@^4.6.5:
     lodash.isequal "^4.5.0"
     semver "^7.3.5"
 
-electron@^18.0.4:
-  version "18.0.4"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-18.0.4.tgz#7b9b094db32805d4a7826d9f7a1b376d9d7b9f86"
-  integrity sha512-xfsozNpFr3WzeM1EFlw2qqiqXbCrgQNBJJMlcC4/DUYVpkF8364SZenX7FFFA42NmwXiOEahkvvho/u7UrAcGg==
+electron@^16.0.5:
+  version "16.2.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-16.2.2.tgz#abb8863ae5309744f90aa55991e812a40ffe7601"
+  integrity sha512-MOZCewpDvhiuYCw8UnJnQxU/9cni4tlHHWBdi0JWbcdBOrGsDMSt17nuPwR5wSf1e7mSfofGIUPg9iHS5KA8Eg==
   dependencies:
     "@electron/get" "^1.13.0"
-    "@types/node" "^16.11.26"
+    "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
 emittery@^0.8.1:
