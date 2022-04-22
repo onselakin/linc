@@ -14,6 +14,6 @@ Some screenshots:
 To run:
 
 ```bash
-npm install
-npm run start
+yarn
+yarn start
 ```
