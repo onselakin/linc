@@ -31,7 +31,7 @@ const SideBar = () => {
         <Button iconName="gears" to="/settings" />
       </div>
       <div className="mt-auto mb-14">
-        <Button iconName="question" to="/info" />
+        <Button iconName="question" to="/help" />
       </div>
     </div>
   );
