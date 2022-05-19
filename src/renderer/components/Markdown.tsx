@@ -194,7 +194,7 @@ const Markdown = ({ markdown, includes, onExecute, assetRoot }: MarkdownProps) =
               </p>
             );
           }
-          return <p>{children[0]}</p>;
+          return <p>{children}</p>;
         },
         img({ alt, src }) {
           return <img alt={alt} src={`asset://${assetRoot}/${src}`} />;
