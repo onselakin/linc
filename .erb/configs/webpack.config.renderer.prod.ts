@@ -77,6 +77,10 @@ const configuration: webpack.Configuration = {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
+      {
+        test: /.md$/i,
+        type: 'asset/source',
+      },
     ],
   },
 
